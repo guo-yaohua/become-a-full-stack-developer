@@ -7,6 +7,7 @@
 一步。
 (3)如果 n 不能被 k 整除，则用 k+1 作为 k 的值,重复执行第一步。
 
+注：代码规范遵守 《阿里巴巴Java开发手册》
 */
 
 import java.util.Scanner;
@@ -18,11 +19,11 @@ public class Ex4 {
 		int n = sc.nextInt();
 		System.out.print(n + "=");
 		for (int i = 2; i <= n; i++) {
-			if (n%i == 0) {
+			if (n % i == 0) {
 				System.out.print(i);
-				n = n/i;
+				n = n / i;
 				i = 1;
-				if (n != 0 && n!= 1) {
+				if (n != 0 && n != 1) {
 					System.out.print("*");
 				}
 			}

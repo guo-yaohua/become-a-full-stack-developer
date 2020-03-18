@@ -5,24 +5,22 @@
 数，反之是素数。
 
 方法：循环判断。
+注：代码规范遵守 《阿里巴巴Java开发手册》
 */
 
 public class Ex2 {
-	public static boolean IsPrime(int n) {
-		int i;
-		boolean IsP = true;
-		for(i = 2;i <= Math.sqrt(n);i++) {
-			if(n%i == 0){
-				IsP = false;
-				break;
+	public static boolean isPrime(int n) {
+		for(int i = 2; i <= Math.sqrt(n); i++) {
+			if (n % i == 0) {
+				return false;	// 能被整除即非素数
 			}
 		}
-		return IsP;
+		return true;
 	}
 	public static void main(String[] args) {
 		int i,n,num;
-		for(i = 101,num = 0; i<=200; i++) {
-			if(IsPrime(i)) {	//如果为素数，就 +1
+		for(i = 101,num = 0; i <= 200; i++) {
+			if (isPrime(i)) {	// 如果为素数，就 +1
 				num++;
 			}
 		}
