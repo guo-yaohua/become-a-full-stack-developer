@@ -21,9 +21,10 @@ public class Ex2 {
 		int i,n,num;
 		for(i = 101,num = 0; i <= 200; i++) {
 			if (isPrime(i)) {	// 如果为素数，就 +1
+				System.out.print(i + " ");
 				num++;
 			}
 		}
-		System.out.println(num);
+		System.out.printf("\n共 %d 个\n", num);
 	}
 }
