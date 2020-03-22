@@ -11,14 +11,15 @@ public class Ex45 {
 		System.out.print("输入一个数：");
 		int num = sc.nextInt();
 		sc.close();
+
 		int s = 0;
 		int n = num;
-
 		while(n % 9 == 0) {
 			s++;
 			n = n / 9;
 		}
-		if (s == 0) {
+
+		if (s == 0) {	// 仍为 0，则不能被 9 整除
 			System.out.printf("%d 不能被 9 整除\n",num);
 		} else {
 			System.out.printf("%d 能被 %d 个 9 整除\n",num,s);

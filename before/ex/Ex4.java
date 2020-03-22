@@ -17,14 +17,16 @@ public class Ex4 {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("输入一个正整数：");
 		int n = sc.nextInt();
-		System.out.print(n + "=");
+		sc.close();
+
+		System.out.print("分解质因数：" + n + " =");
 		for (int i = 2; i <= n; i++) {
 			if (n % i == 0) {
 				System.out.print(i);
 				n = n / i;
-				i = 1;
-				if (n != 0 && n != 1) {
-					System.out.print("*");
+				i = 1;	// 整除一次后，i 重置为 2（还有一个 i++）
+				if (n != 0 && n != 1) {	// 如果还能分解加一个乘号
+					System.out.print(" * ");
 				}
 			}
 		}

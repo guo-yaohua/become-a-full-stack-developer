@@ -7,9 +7,10 @@ import java.util.Scanner;
 
 public class Ex38 {
 	public static void main(String[] args) {
+		System.out.print("输入一个字符串：");
 		Scanner sc = new Scanner(System.in);
-		System.out.println("输入一个字符串：");
 		String str = sc.nextLine();
+		sc.close();
 		System.out.println("字符串长度：" + str.length());
 	}
 }

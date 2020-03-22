@@ -14,7 +14,7 @@ public class Ex47 {
 			float num = sc.nextFloat();
 			if (num > 50 || num < 1) {
 				System.out.println("输入有误！");
-				i--;
+				i--;	// 输错的话，本次不算
 				continue;
 			}
 			for (int j = 0; j < (int)num; j++) {

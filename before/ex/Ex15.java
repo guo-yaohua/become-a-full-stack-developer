@@ -9,10 +9,13 @@ import java.util.Scanner;
 
 public class Ex15 {
 	public static void main(String[] args) {
+		System.out.print("输入三个数：");
 		Scanner sc = new Scanner(System.in);
 		int x = sc.nextInt();
 		int y = sc.nextInt();
 		int z = sc.nextInt();
+		sc.close();
+
 		int temp;
 		if (x > y) {
 			temp = x;
@@ -29,8 +32,7 @@ public class Ex15 {
 			z = y;
 			y = temp;
 		}
-		System.out.println(x);
-		System.out.println(y);
-		System.out.println(z);
+
+		System.out.println("递增排序后：" + x + " " + y + " " + z);
 	}
 }

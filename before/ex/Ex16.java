@@ -11,7 +11,7 @@ public class Ex16 {
 				// System.out.print(i + " + " + j + "=" + i * j);
 				System.out.printf("%d * %d = %2d\t",i, j, i * j);	// java 中也有 printf
 			}
-			System.out.println("");
+			System.out.println("");	// 换行
 		}
 	}
 }

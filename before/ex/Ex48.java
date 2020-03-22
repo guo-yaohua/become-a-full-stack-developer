@@ -14,8 +14,8 @@ public class Ex48 {
 		int input = sc.nextInt();
 		sc.close();
 
+		// 转换成数组
 		int[] date = new int[4];
-
 		for (int i = 0; i < 4; i++) {
 			date[i] = ((input % 10) + 5) % 10;
 			input /= 10;

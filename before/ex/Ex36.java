@@ -32,26 +32,25 @@ public class Ex36 {
 		Scanner sc2 = new Scanner(input);
 		while(sc2.hasNextInt()) {
 			arr[length] = sc2.nextInt();
-			length++;
+			length++;	// 记录数组长度
 		}
-
-		System.out.print("当前数组为：");
-		for (int i = 0; i < length; i++) {
-			System.out.print(arr[i] + " ");
-		}
-		System.out.println();
 
 		System.out.print("向后移动多少位：");
 		Scanner sc = new Scanner(System.in);
 		int m = sc.nextInt();
-		trans(arr,0,length - m -1 );
-		trans(arr,length - m,length - 1);
-		trans(arr,0,length - 1);
+
+		trans(arr,0,length - m -1 );	// 转置前半段
+		trans(arr,length - m,length - 1);	// 转置后半段
+		trans(arr,0,length - 1);	// 全部转置
 
 		System.out.printf("向后移动 %d 位后：",m);
 		for (int i = 0; i < length; i++) {
 			System.out.print(arr[i] + " ");
 		}
+
+		sc1.close();
+		sc2.close();
+		sc.close();
 	}
 }
 

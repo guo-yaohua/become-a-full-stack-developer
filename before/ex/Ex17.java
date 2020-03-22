@@ -9,9 +9,10 @@
 public class Ex17 {
 	public static void main(String[] args) {
 		int todayEat = 1;
-		for (int i = 10; i > 1; i--) {
-			todayEat = (todayEat + 1) * 2;
+		for (int i = 9; i >= 1; i--) {
+			todayEat = (todayEat + 1) * 2;	// 第 i 天还有多少
 		}
-		System.out.println(todayEat);
+		
+		System.out.println("第一天摘了 " + todayEat + " 个");
 	}
 }

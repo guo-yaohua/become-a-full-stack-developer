@@ -15,14 +15,17 @@ public class Ex8 {
 		System.out.print("输入数字及项数：");
 		int a = sc.nextInt();
 		int n = sc.nextInt();
+		sc.close();
+
 		int s = 0;
 		int aN = 0;	// 第 N 项
-		int carry = 1;	// 1 10 100 1000
+		int carry = 1;	// 单位 1 10 100 1000
 		for (int i = 1; i <= n; i++) {
-			aN = aN + a *carry;	// 求第 N 项的值
+			aN = aN + a * carry;	// 求第 N 项的值
 			s += aN;
 			carry *= 10;
  		}
-		System.out.println(s);
+
+		System.out.println("和值：" + s);
 	}
 }

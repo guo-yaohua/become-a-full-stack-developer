@@ -5,6 +5,7 @@
 */
 
 public class Ex21 {
+	// 阶乘
 	public static long factorial(int n) {
 		long fac = 1L;
 		for (int i = 1; i <= n; i++) {
@@ -12,8 +13,9 @@ public class Ex21 {
 		}
 		return fac;
 	}
+
 	public static void main(String[] args) {
-		long sum = 0L;
+		long sum = 0L;	// 需要定义为 long 型
 		for (int i = 1; i <= 20; i++) {
 			sum += factorial(i);
 		}

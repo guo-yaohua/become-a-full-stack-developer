@@ -14,6 +14,9 @@ public class Ex5 {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("输入学生成绩：");
 		int n = sc.nextInt();
+		sc.close();
+
+		System.out.print("分数等级：");
 		System.out.println((n < 60) ? "C": (n < 90) ? "B" : "A");
 	}
 }

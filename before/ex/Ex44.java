@@ -25,7 +25,7 @@ public class Ex44 {
 
 		for (int i = 1; i <= num/2; i++) {
 			if (isPrime(i) && isPrime(num - i)) {
-				System.out.printf("该偶数 = %d + %d\n",i,num - i);
+				System.out.printf("%d = %d + %d\n",num, i, num - i);
 				isOk = true;
 			}
 		}

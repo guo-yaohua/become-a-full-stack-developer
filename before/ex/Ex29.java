@@ -11,12 +11,16 @@ public class Ex29 {
 		Scanner sc = new Scanner(System.in);
 		int[][] matrix = new int[3][3];
 		int num = 0;
+
+		// 输入矩阵
 		System.out.print("输入一个 3 * 3 矩阵：");
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
 				matrix[i][j] = sc.nextInt();
 			}
 		}
+		sc.close();
+		
 		for (int i = 0; i < 3; i++) {
 			num += matrix[i][i];
 		}

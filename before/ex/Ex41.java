@@ -14,7 +14,7 @@ public class Ex41 {
 
 			// 5 次达标才符合
 			for (i = 1; i <= 5; i++) {
-				if ((peach - 1) % 5 != 0) {
+				if ((peach - 1) % 5 != 0) {	// 扔掉 1 个，是否能分成 5 份
 					break;
 				} else {
 					peach = (peach - 1) / 5 * 4;

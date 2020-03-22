@@ -11,6 +11,8 @@ public class Ex32 {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("输入一个数（位数大于7）：");
 		long num = sc.nextLong();
+		sc.close();
+		
 		num = num / 1000;
 		num = num % 10000;
 		System.out.println("4~7 位为：" + num);

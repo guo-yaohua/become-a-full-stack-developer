@@ -4,6 +4,7 @@
 */
 
 public class Ex27 {
+	// 判断是否是素数
 	public static boolean isPrime(int n) {
 		for(int i = 2; i <= Math.sqrt(n); i++) {
 			if (n % i == 0) {
@@ -14,6 +15,8 @@ public class Ex27 {
 	}
 	public static void main(String[] args) {
 		int i,n;
+		System.out.print("100 以内的素数有：");
+		
 		for(i = 1; i <= 100; i++) {
 			if (isPrime(i)) {	// 如果为素数，就 +1
 				System.out.print(i + " ");

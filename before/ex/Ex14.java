@@ -14,9 +14,11 @@ public class Ex14 {
 		int year = sc.nextInt();
 		int month = sc.nextInt();
 		int day = sc.nextInt();
+		sc.close();
+
 		int dayTh = 0;
 		for (int i = 1; ; i++) {
-			if (i == month) {	// 第 i 月，加上日期并退出
+			if (i == month) {	// 第本月，则加上日期并退出
 				dayTh += day;
 				break;
 			} else{
@@ -34,6 +36,7 @@ public class Ex14 {
 				}
 			}
 		}
-		System.out.println(dayTh);
+
+		System.out.println("该天是该年的第 " + dayTh + " 天");
 	}
 }

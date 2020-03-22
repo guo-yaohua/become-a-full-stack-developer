@@ -9,17 +9,19 @@
 
 public class Ex3{
 	public static boolean isNarcissistic(int n) {
-		int a, b, c;
+		int a, b, c;	// 个位，十位，百位
 		a = n % 10;
 		b = (n / 10) % 10;
 		c = n / 100;
+
 		if (Math.pow(a, 3) + Math.pow(b, 3) + Math.pow(c, 3) == n) {
 			return true;
 		} else
 			return false;
 	}
+
 	public static void main(String[] args) {
-		for (int i = 100; i < 999; i++) {
+		for (int i = 100; i <= 999; i++) {
 			if (isNarcissistic(i)) {
 				System.out.println(i);
 			}

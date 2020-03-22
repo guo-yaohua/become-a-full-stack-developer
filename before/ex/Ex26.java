@@ -22,19 +22,20 @@ public class Ex26 {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("输入第一个字母：");
 		String str = sc.nextLine();
+
 		char week = str.charAt(0);
-		switch(week) {
+		switch(week) {	// 考虑大小写
 			case 'M':
 			case 'm':
-				System.out.println("是星期一");
+				System.out.println("Monday 星期一");
 				break;
 			case 'W':
 			case 'w':
-				System.out.println("是星期三");
+				System.out.println("Wednesday 是星期三");
 				break;
 			case 'F':
 			case 'f':
-				System.out.println("是星期五");
+				System.out.println("Friday 星期五");
 				break;
 			case 'T':
 			case 't':
@@ -42,9 +43,9 @@ public class Ex26 {
 				str = sc.nextLine();
 				week = str.charAt(0);
 				if (week == 'U' || week == 'u') {
-					System.out.println("是星期二");
+					System.out.println("Tuesday 星期二");
 				} else if (week == 'H' || week == 'h') {
-					System.out.println("是星期四");
+					System.out.println("Thursday 是星期四");
 				} else {
 					System.out.println("输入有误！");
 				}
@@ -55,9 +56,9 @@ public class Ex26 {
 				str = sc.nextLine();
 				week = str.charAt(0);
 				if (week == 'A' || week == 'a') {
-					System.out.println("是星期六");
+					System.out.println("Saturday 星期六");
 				} else if (week == 'U' || week == 'u') {
-					System.out.println("是星期日");
+					System.out.println("Sunday 星期日");
 				} else {
 					System.out.println("输入有误！");
 				}
@@ -65,5 +66,7 @@ public class Ex26 {
 			default :
             	System.out.println("输入有误！");
 		}
+		
+		sc.close();	// 可能会有第二次输入，放在最后关闭
 	}
 }

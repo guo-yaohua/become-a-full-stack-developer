@@ -8,13 +8,13 @@
 */
 
 public class Ex23 {
+	// 递归
 	public static int age(int n) {
 		if (n == 1) return 10;
-		return age(n - 1) + 2;
+		return age(n - 1) + 2;	// 第 i 个人比第 i - 1 个人大 2 岁
 	}
+
 	public static void main(String[] args) {
-		for (int i = 1; i <= 5; i++) {
-			System.out.printf("第 %d 个人 %d 岁。\n",i,age(i));
-		}
+		System.out.printf("第 5 个人 %d 岁。\n",age(5));
 	}
 }

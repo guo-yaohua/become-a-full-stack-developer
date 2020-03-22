@@ -10,20 +10,24 @@
 import java.util.Scanner;
 
 public class Ex6 {
+	// 求最大公约数
 	public static int gcd(int a,int b) {
     	int temp;
-    	while(b != 0) {	// 辗除法，直到 b == 0；int 无法转换为 boolean
+    	while(b != 0) {	// 辗除法，直到 b == 0；int 无法转换为 boolean，不能用 (b) 判断
 	        temp = b;
 	        b = a % b;
 	        a = temp;
 	    }
     	return a;
 	}
+	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		System.out.print("输入两个正整数（用空格隔开）：");
+		System.out.print("输入两个正整数：");
 		int m = sc.nextInt();
 		int n = sc.nextInt();
+		sc.close();
+
 		System.out.println("最大公约数为：" + gcd(m, n));
 		System.out.println("最小公倍数为：" + m * n / gcd(m, n));
 	}

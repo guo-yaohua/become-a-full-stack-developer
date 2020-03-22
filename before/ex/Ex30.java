@@ -9,24 +9,25 @@ import java.util.Scanner;
 
 public class Ex30 {
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
 		int[] arr = new int[100];
-		System.out.print("输入一个有序数组(输入 -1 结束)：");
+		System.out.print("输入一个有序数组：");
 		int i = 0;
-		/*
-		while(true){
-			arr[i] = sc.nextInt();
-			if (arr[i] == -1) {
-				break;
-			}
+
+		// 通过设置 2 个 Scanner，达到 「\n 停止输入」 的效果
+		Scanner sc1 = new Scanner(System.in);
+		String input = sc1.nextLine();
+		Scanner sc2 = new Scanner(input);
+		while(sc2.hasNextInt()) {
+			arr[i] = sc2.nextInt();
 			i++;
 		}
-		*/
-		while((arr[i] = sc.nextInt()) != -1)
-			i++;
 		int length = i;	// 数组长度
+
 		System.out.print("插入一个数：");
-		int n = sc.nextInt();
+		int n = sc1.nextInt();
+		sc1.close();
+		sc2.close();
+
 		if (arr[0] > arr[length - 1]) {	// 如果是从大到小
 			for (i = length - 1; i >= 0; i--)
 				if (arr[i] < n) {
@@ -44,6 +45,7 @@ public class Ex30 {
 					break;
 				}
 		}
+		
 		System.out.print("新的有序数组：");
 		for (i = 0; i < length + 1; i++) {
 			System.out.print(arr[i] + " ");

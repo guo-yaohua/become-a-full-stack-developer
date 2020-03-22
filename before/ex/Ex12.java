@@ -13,9 +13,12 @@ import java.util.Scanner;
 public class Ex12 {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		System.out.print("输入当月利润：");
+		System.out.print("输入当月利润（元）：");
 		long n = sc.nextInt();
+		sc.close();
 		double bonus;
+
+		// 分段函数
 		if (n <= 100000) {
 			bonus = n * 0.1;
 		} else if (n <= 200000) {
@@ -29,6 +32,7 @@ public class Ex12 {
 		} else {
 			bonus = 100000 * 0.1 + 100000 * 0.075 + 200000 * 0.05 + 200000 * 0.03 + 400000 * 0.015 + (n - 1000000) * 0.01 ;
 		}
+
 		System.out.println("应发奖金 " + bonus + "元");
 	}
 }

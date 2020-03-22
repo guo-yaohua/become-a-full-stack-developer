@@ -8,16 +8,17 @@
 
 public class Ex9 {
 	public static void main(String[] args) {
-		int s;
-		for (int j = 1; j <= 1000; j++) {
-			s = 0;
-			for (int i = 1; i < j; i++) {
+		System.out.print("1000 以内所有完数：");
+		for (int j = 1; j <= 1000; j++) {	// 遍历 1~1000
+			int s = 0;
+			for (int i = 1; i < j; i++) {	// 求出所有因子之和
 				if (j % i == 0) {
 					s += i;
 				}
 			}
-			if (s == j) {
-				System.out.println(s);		
+
+			if (s == j) {	// 如果是完数
+				System.out.print(s + " ");		
 			}
 		}
 	}

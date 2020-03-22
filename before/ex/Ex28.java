@@ -16,6 +16,9 @@ public class Ex28 {
 		for (i = 0; i < 10; i++) {
 			nums[i] = sc.nextInt();
 		}
+		sc.close();
+
+		// 选择排序
 		for (i = 0; i < 9; i++) {
 			min = i;
 			for (j = i + 1; j < 10; j++) {
@@ -27,6 +30,7 @@ public class Ex28 {
 			nums[min] = nums[i];
 			nums[i] = temp;
 		}
+		
 		System.out.print("从小到大排列：");
 		for (i = 0; i < 10; i++) {
 			System.out.print(nums[i] + " ");

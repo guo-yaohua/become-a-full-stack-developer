@@ -14,15 +14,15 @@
 
 public class Ex19 {
 	public static void main(String[] args) {
-		for (int i = 1; i <= 7; i++) {
-			if (i <= 4) {
+		for (int i = 1; i <= 7; i++) {	// 7 行
+			if (i <= 4) {	// 前 4 行
 				for (int j = 1; j <= 4 - i; j++) {
 					System.out.print(" ");
 				}
 				for (int j = 1; j <= (2 * i - 1); j++) {
 					System.out.print("*");
 				}
-			} else {
+			} else {	// 后 3行
 				for (int j = 1; j <= i - 4; j++) {
 					System.out.print(" ");
 				}
@@ -30,7 +30,7 @@ public class Ex19 {
 					System.out.print("*");
 				}
 			}
-			System.out.println();
+			System.out.println();	// 每行结束需要换行
 		}
 	}
 }

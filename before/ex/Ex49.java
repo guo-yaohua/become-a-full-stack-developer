@@ -16,15 +16,16 @@ public class Ex49 {
 
 		int i, j, sum = 0;
 		for (i = 0; i <= str1.length() - str2.length(); i++) {
-			for (j = 0; j < str2.length(); j++) {
+			for (j = 0; j < str2.length(); j++) {	// 与字串第一个字符相同他，就对比
 				if (str1.charAt(i + j) != str2.charAt(j)) {
 					break;
 				}
 			}
-			if (j == str2.length()) {
+			if (j == str2.length()) {	// 字串能遍历一次都相同，即出现一次
 				sum++;
 			}
 		}
-		System.out.println("字符串出现了 " + sum + " 次");
+		
+		System.out.println("子串出现了 " + sum + " 次");
 	}
 }

@@ -8,12 +8,12 @@ import java.util.Scanner;
 public class Ex46 {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		System.out.print("输入两个字符串");
+		System.out.print("输入两个字符串：");
 		String str1 = sc.nextLine();
 		String str2 = sc.nextLine();
 		sc.close();
 
 		String str3 = str1 + str2;
-		System.out.println(str3);
+		System.out.println("拼接后：" + str3);
 	}
 }

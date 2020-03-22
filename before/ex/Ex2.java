@@ -9,6 +9,7 @@
 */
 
 public class Ex2 {
+	// 判断是否是素数
 	public static boolean isPrime(int n) {
 		for(int i = 2; i <= Math.sqrt(n); i++) {
 			if (n % i == 0) {
@@ -17,8 +18,10 @@ public class Ex2 {
 		}
 		return true;
 	}
+
 	public static void main(String[] args) {
-		int i,n,num;
+		int i,n,num;	// num 记录个数
+
 		for(i = 101,num = 0; i <= 200; i++) {
 			if (isPrime(i)) {	// 如果为素数，就 +1
 				System.out.print(i + " ");

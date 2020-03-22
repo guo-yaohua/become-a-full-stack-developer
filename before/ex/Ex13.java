@@ -7,9 +7,10 @@
 
 public class Ex13 {
 	public static void main(String[] args) {
-		for (long i = 0; i <= 100000; i++) {
-			long n1 = (long)Math.sqrt(i + 100);
-			long n2 = (long)Math.sqrt(i + 368);
+		for (int i = 0; i <= 100000; i++) {
+			int n1 = (int)Math.sqrt(i + 100);
+			int n2 = (int)Math.sqrt(i + 368);
+
 			if (Math.pow(n1, 2) == (i + 100) && Math.pow(n2, 2) == (i + 368)) {
 				System.out.println(i);
 				break;

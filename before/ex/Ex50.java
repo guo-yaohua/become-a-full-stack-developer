@@ -19,7 +19,7 @@ import java.util.Scanner;
 public class Ex50 {
 	public static void main(String[] args) throws IOException {
 		// 学生信息用 4 个数组保存
-		int[] studentId = new int[5];	// 学号
+		String[] studentId = new String[5];	// 学号
 		String[] studentName = new String[5];	// 姓名
 		int[][] studentCourse = new int[5][3];	// 三门课
 		float[] averageScore = new float[3];	// 每门课的平均成绩
@@ -29,8 +29,7 @@ public class Ex50 {
 		int i, j;
 		for (i = 0; i < 5; i++) {
 			System.out.printf("现在输入第 %d 个学生的信息\n学号：", i+1);
-			studentId[i] = sc.nextInt();
-			sc.nextLine();	// nextInt 输入后，回车会跳过一个 nextLine
+			studentId[i] = sc.nextLine();
 
 			System.out.print("姓名：");
 			studentName[i] = sc.nextLine();
@@ -39,16 +38,18 @@ public class Ex50 {
 				System.out.printf("课 %d 的成绩：", j + 1);
 				studentCourse[i][j] = sc.nextInt();
 			}
+			sc.nextLine();	// nextInt 后回车，会跳过一个 nextLine
 		}
 
 		// 计算
+		System.out.println();
 		for (i = 0; i < 3; i++) {
 			averageScore[i] = 0;
 			for (j = 0; j < 5; j++) {
 				averageScore[i] += studentCourse[j][i];
 			}
 			averageScore[i] /= 5;
-			System.out.printf("\n课 %d 的平均成绩为：%.2f\n", i + 1, averageScore[i]);
+			System.out.printf("课 %d 的平均成绩为：%.2f\n", i + 1, averageScore[i]);
 		}
 
 		// 写入文件
