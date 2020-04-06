@@ -112,7 +112,7 @@ JDK8 下载地址：https://www.oracle.com/java/technologies/javase-jdk8-downloa
 PATH 环境变量是操作系统的环境属性，告诉操作系统可执行程序（javac）路径。  
 官方推荐的配置 PATH 环境变量方式：  
 1. JAVA_HOME 环境变量：xx\xx\xx\jdk1.8  
-2. $JAVA_HOME$\bin
+2. 配置 PATH 环境变量：$JAVA_HOME$\bin
 
 CLASSPATH 环境变量是所有 *.class 文件的执行路径，给 JVM 用，告诉 JVM 到哪里加载 *.class 文件。  
 
