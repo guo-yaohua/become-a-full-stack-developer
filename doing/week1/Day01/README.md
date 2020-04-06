@@ -18,5 +18,7 @@ public class HelloWorld {
 2.  
 Java 语言是跨平台的，JVM 不是跨平台的。  
 3.  
-`set path=C:\MyPrograms\Tencent\QQ\Bin`  
-![Q3](./Q3.png)
+添加环境变量：  
+![Q3](./Q3a.png)  
+或命令行设置：`set path=C:\MyPrograms\Tencent\QQ\Bin`  
+![Q3](./Q3b.png)
