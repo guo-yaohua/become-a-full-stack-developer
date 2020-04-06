@@ -100,7 +100,7 @@ Java 是由 Sun 公司于 1995 年 5 月推出的 Java 面向对象程序设计�
 
 ### JDK的下载和安装
 
-JDK8 下载地址：https://www.oracle.com/java/technologies/javase-jdk8-downloads.html。  
+JDK8 下载地址：https://www.oracle.com/java/technologies/javase-jdk8-downloads.html 。  
 建议 JDK 安装路径中不要有中文，同时当提示安装 JRE 时，可以选择不安装。
 
 ### JAVA程序运行原理
