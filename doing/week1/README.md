@@ -10,13 +10,13 @@
 ## 目录
 
 - [Java语言概述](#Java语言概述)  
-  - [JAVA 语言的诞生](#JAVA语言的诞生)
-  - [JAVA 语言的平台版本](#JAVA语言的平台版本)
-  - [JAVA 语言的特点](#JAVA语言的特点)
-  - [JDK 与 JRE](#JDK与JRE)
-  - [JDK 的下载和安装](#JDK的下载和安装)
-  - [JAVA 程序运行原理](#JAVA程序运行原理)
-  - [PATH 和 CLASSPATH 环境变量](#PATH和CLASSPATH环境变量)
+  - [JAVA语言的诞生](#JAVA语言的诞生)
+  - [JAVA语言的平台版本](#JAVA语言的平台版本)
+  - [JAVA语言的特点](#JAVA语言的特点)
+  - [JDK与JRE](#JDK与JRE)
+  - [JDK的下载和安装](#JDK的下载和安装)
+  - [JAVA程序运行原理](#JAVA程序运行原理)
+  - [PATH和CLASSPATH环境变量](#PATH和CLASSPATH环境变量)
 
 - [HelloWorld](#HelloWorld)  
   - [命令行](#命令行)  
