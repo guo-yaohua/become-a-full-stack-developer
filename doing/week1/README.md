@@ -133,7 +133,7 @@ CLASSPATH 环境变量是所有 *.class 文件的执行路径，给 JVM 用，�
 
 ### 命令行
 
-用创建 HelloWorld.java 文件，用文本编辑器打开编辑：  
+创建 HelloWorld.java 文件，用文本编辑器打开编辑：  
 ```java
 public class HelloWorld {
 	public static void main(String[] args) {
@@ -186,7 +186,7 @@ Java 代码一般存放在 src 目录下，在此新建一个包：
 
 关键字的注意事项：  
 - 高级的编辑器或者专门的开发工具中，关键字会有高亮效果。
-- goto 和 const 作为保留字存在,目前并不使用。
+- goto 和 const 作为保留字存在，目前并不使用。
 
 ### 标识符
 
