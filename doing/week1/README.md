@@ -278,7 +278,7 @@ Java 语言的注释分类：
   只有 true 和 false。  
 
 - 空常量  
-  null  
+  只有 null。  
 
 JAVA中的整数型常量的表现形式：  
 - 二进制  
