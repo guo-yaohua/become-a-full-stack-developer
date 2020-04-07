@@ -18,9 +18,9 @@
   - [JAVA 程序运行原理](#JAVA程序运行原理)
   - [PATH 和 CLASSPATH 环境变量](#PATH和CLASSPATH环境变量)
 
-- [HelloWorld](HelloWorld)  
-  - [命令行](命令行)  
-  - [IDEA](IDEA)
+- [HelloWorld](#HelloWorld)  
+  - [命令行](#命令行)  
+  - [IDEA](#IDEA)
 
 - [Java语言基础](#Java语言基础)  
   - 关键字  
