@@ -41,3 +41,50 @@ class Solution {
     }
 }
 ```
+
+## Day02
+
+题目：  
+![Day02](./img/d2.jpg)  
+
+思路：  
+一共两个坐标，所以第一步把 k 分成两部分 x 和 y = k - x  
+第二步把 x 和 y 各自拆分，组成一个数，因为题目要求 1<= n，m < =100，所以拆 2 份就行。且组成的数字范围在 m - 1 和 n - 1 内。  
+
+然后发现上述暴力遍历不可，因为机器人按规则移动，有些位置压根去不了。按照机器人移动路径遍历，可以考虑深度优先搜索。
+
+代码：  
+```java
+ class Solution {
+    static int[][] arr = new int[100][100];
+
+	public int compose(int n){
+        return n % 10 + n / 10;
+    }
+    public boolean isOk(int x, int y, int m, int n, int k) { // 判断坐标是否合法
+    	if (x >= 0 && x < m && y >= 0 && y < n && compose(x) + compose(y) <= k && arr[x][y] == 0) {
+            return true;
+    	}
+        return false;
+    }
+
+	public int result(int x, int y, int m, int n ,int k) {
+		if (isOk(x ,y, m, n, k)) {
+            arr[x][y] = 1;
+            return 1 + result(x + 1, y, m, n, k) + result(x, y+1, m, n, k);
+        } else {
+            arr[x][y] = 1;
+            return 0;
+        }
+	}
+
+    public int movingCount(int m, int n, int k) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                arr[i][j] = 0;
+            }
+        }
+        return result(0, 0, m, n, k);
+    }
+}
+```
