@@ -88,3 +88,34 @@ class Solution {
     }
 }
 ```
+
+## Day03
+
+题目：  
+![day03](./img/d3.jpg)
+
+代码：
+```java
+class Solution {
+    List<String> result = new ArrayList<>();
+
+    private void dfs(int left, int right, String str) {
+        if (left == 0 && right == 0) { // 左右括号都不剩余了，本次递归终止
+            result.add(str);
+        }
+
+        if (left > 0) { // 如果左括号数不为 0，就可以拼接左括号
+            dfs(left - 1, right, str + "(");
+        }
+        if (right > left) { // 当右括号剩余数比左括号多时才可以拼接右括号
+            dfs(left, right - 1, str + ")");
+        }
+    }
+
+    public List<String> generateParenthesis(int n) {
+        String str = "";    // 空字符串
+        dfs(n, n, str);  // 深度优先遍历
+        return result;
+    }
+}
+```
