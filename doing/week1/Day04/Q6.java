@@ -12,7 +12,7 @@ public class Q6 {
                     num++;
                 }
             }
-            if (num == 0) { // 出现 0 次
+            if (num == 0) { // 出现 1 次
                 System.out.println(arr[i] + " ");
             }
         }
