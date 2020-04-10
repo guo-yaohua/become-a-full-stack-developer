@@ -119,3 +119,70 @@ class Solution {
     }
 }
 ```
+
+## Day04
+
+![day04](./img/d4.jpg)  
+
+代码：  
+```java
+class Solution {
+    public String reverseWords(String s) {
+        char[] ch = new char[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            ch[i] = s.charAt(i);
+        }
+
+        // 计算字符串的有效长度（去掉多余空格）
+        int trueStart = 0;  // 找到真正开头
+        while (trueStart < s.length() && ch[trueStart] == ' ') {
+            trueStart++;
+        }
+
+        int endSpace = 0;
+        if (trueStart != s.length()) {
+            while (s.length() - 1 - endSpace >= 0 && ch[s.length() - 1 - endSpace] == ' ') {
+                endSpace++;
+            }
+        }
+
+        int resLen = s.length() - trueStart - endSpace;    // 去掉开头和结尾空格有多长
+
+        for (int i = trueStart; i < s.length() - endSpace - 1; i++) {
+            if (ch[i] == ' ' && ch[i + 1] == ' ') {
+                resLen--;
+            }
+        }
+
+        char[] res = new char[resLen];  // 创建结果数组，其长度为真实字符串长度
+
+        int index = resLen; // index 记录处理结果数组时的坐标
+        for (int i = 0; i < s.length(); i++) {
+            if (ch[i] == ' ') {
+                continue;
+            }
+
+            // 计算这次的单词长度
+            int charLen = 0;
+            while (i + charLen < s.length() && ch[i + charLen] != ' ') {
+                charLen++;
+            }
+
+            index -= charLen;
+            for (int j = 0; j < charLen; j++) {
+                res[index + j] = ch[i + j];
+            }
+
+            if (index != 0) {
+                res[index - 1] = ' ';
+                index--;
+            }
+
+            i += charLen;
+        }
+
+        String str = new String(res);
+        return str;
+    }
+}
+```
