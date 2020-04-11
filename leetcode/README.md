@@ -186,3 +186,39 @@ class Solution {
     }
 }
 ```
+
+## Day05
+
+题目：  
+![day05](./img/d5.jpg)  
+
+代码：  
+```java
+class Solution {
+    public int superEggDrop(int K, int N) {
+        int[] res = new int[N + 1];
+        for (int i = 0; i <= N; i++) {  // 初始化默认 N 层需要 N 次
+            res[i] = i;
+        }
+
+        for (int k = 2; k <= K; k++) {
+            int[] arr = new int[N + 1];
+            arr[0] = 0;
+
+            for (int n = 1, x = 1; n <= N; ++n) {  // 当 K 确定时，随着 N 的增加，最优解递增
+                while (x < n && Math.max(res[x - 1], arr[n - x]) >= Math.max(res[x], arr[n - x - 1])) { // x 为当前楼层
+                    x++;
+                }
+
+                arr[n] = 1 + Math.max(res[x - 1], arr[n - x]); // arr 存储当前优解
+            }
+
+            for (int n = 1; n <= N; ++n) {
+                res[n] = arr[n];
+            }
+        }
+
+        return res[N];
+    }
+}
+```
