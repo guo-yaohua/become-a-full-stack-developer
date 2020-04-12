@@ -309,7 +309,7 @@ JAVA 中的整数型常量的表现形式：
 - 十六进制  
   由 0\~9，A\~F(或 a\~f) 表示 0\~15，以 `0x` 开头。  
 
-转换方式可以查看 <a href="https://github.com/guo-yaohua/wdxly/blob/master/before/查阅并梳理知识点.md">查阅并梳理知识点</a> -> 计算机体系结构及组成原理 -> Q3 进制转换  
+转换方式可以查看 <a href="https://github.com/guo-yaohua/wdxly/blob/master/before/README.md/#知识点整理">知识点整理</a> -> 计算机体系结构及组成原理 -> Q3 进制转换  
 
 注：从 Java 7 开始，可以为数字字变量加下划线，如用 1_000_000（或 0b1111_0100_0010_0100_0000）表示一百万。这些下划线只是为了让人更易读。Java 编译器会去除这些下划线。
 
