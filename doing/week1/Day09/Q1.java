@@ -30,6 +30,7 @@ public class Q1 {
             stus[i].print();
         }
 
+        // 计算 java 成绩
         int max = stus[0].java;
         int min = stus[0].java;
         int average = stus[0].java;
