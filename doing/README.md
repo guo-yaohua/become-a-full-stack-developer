@@ -28,15 +28,15 @@
 JAVA 语言基础 3 周（视大家学习能力调整)。  
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p1.png"/> 
+<img src="./img/p1.png"/> 
 </div>  
 ### 第二个阶段
 
 Java 集合、数据结构和算法、数据库（共 3 周）。 
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p2a.png"/> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p2b.png"/> 
+<img src="./img/p2a.png"/> 
+<img src="./img/p2b.png"/> 
 </div>    
 
 ### 第三个阶段
@@ -44,7 +44,7 @@ Java 集合、数据结构和算法、数据库（共 3 周）。
 前端基本知识（1 周），JAVA EE 规范、服务器开发基石（2 周），WEB 开发基础项目一（1 周）。
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p3.png"/> 
+<img src="./img/p3.png"/> 
 </div>  
 
 ### 第四个阶段
@@ -52,7 +52,7 @@ Java 集合、数据结构和算法、数据库（共 3 周）。
 SSM 框架详解（2 周），SSM 综合项目实战（1.5 周）。
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p4.png"/> 
+<img src="./img/p4.png"/> 
 </div> 
 
 ### 第五个阶段
@@ -60,8 +60,8 @@ SSM 框架详解（2 周），SSM 综合项目实战（1.5 周）。
 段新技术增强补充介绍及项目（2 周）。
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p5a.png"/> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p5b.png"/> 
+<img src="./img/p5a.png"/> 
+<img src="./img/p5b.png"/> 
 </div>     
 
 ### 第六个阶段
@@ -69,7 +69,7 @@ SSM 框架详解（2 周），SSM 综合项目实战（1.5 周）。
 求职阶段（就业及面试）  
 
 <div align="center"> 
-<img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p6.png"/> 
+<img src="./img/p6.png"/> 
 </div> 
 
 PS：本课程安排可能会根据上课进度在顺序或内容上做部分调整，请知悉！
