@@ -2,11 +2,14 @@
 
 ## 前言
 
-记录本人在王道训练营 22th Java 班的学习笔记。对底层知识点不做详细赘述，适合 CS 专业同学或者有编程基础的跨专业同学借鉴学习。  
+记录本人在王道训练营 22th Java 班的学习过程。对底层知识点不做详细赘述，适合 CS 专业同学或者有编程基础的跨专业同学借鉴学习。   
 
-文档格式遵循 <a href = "https://github.com/sparanoid/chinese-copywriting-guidelines">中文文档排版指北</a>。  
+笔记内容按照课程安排进行分章，比如 week1 代表课程安排中 week1 的所有内容，并非第一周的学习内容（week1 实际学习了两周）。
 
-笔记内容除个人总结外，还摘抄一些优秀资料，包括王道课件、《第一行代码》、《Java核心技术第10版 卷Ⅰ》等。
+笔记内容除个人总结、王道课件外，还摘抄一些优秀资料，包括《第一行代码Java》、《Java核心技术第10版 卷Ⅰ》等。
+
+文档格式参考 <a href = "https://github.com/sparanoid/chinese-copywriting-guidelines">中文文档排版指北</a> 和 <a href = "https://github.com/ruanyf/document-style-guide">中文技术文档的写作规范（阮一峰）</a> 。  
+
 
 ## 目录
 
@@ -24,7 +27,7 @@
 
 JAVA 语言基础 3 周（视大家学习能力调整)。
 
-![part1](./img/p1.png)
+<div align="center"> <img src="https://github.com/guo-yaohua/wdxly/tree/master/doing/img/p1.png"/> </div>  
 
 ### 第二个阶段
 
