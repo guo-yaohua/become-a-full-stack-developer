@@ -49,7 +49,9 @@ public class Ex1 {
 ```
 
 运行截图：  
-![Ex1](./img/Ex1.png)  
+<div align="center"> 
+<img src="./img/Ex1.png"/> 
+</div>  
 
 ### Ex2
 
@@ -91,7 +93,9 @@ public class Ex2 {
 ```
 
 运行截图：  
-![Ex2](./img/Ex2.png)  
+<div align="center"> 
+<img src="./img/Ex2.png"/> 
+</div>  
 
 ### Ex3
 
@@ -125,7 +129,9 @@ public class Ex3{
 ```
 
 运行截图：  
-![Ex3](./img/Ex3.png)  
+<div align="center"> 
+<img src="./img/Ex3.png"/> 
+</div>  
 
 ### Ex4
 
@@ -164,7 +170,9 @@ public class Ex4 {
 ```
 
 运行截图：  
-![Ex4](./img/Ex4.png)  
+<div align="center"> 
+<img src="./img/Ex4.png"/> 
+</div>  
 
 ### Ex5
 
@@ -190,7 +198,9 @@ public class Ex5 {
 ```
 
 运行截图  
-![Ex5](./img/Ex5.png)  
+<div align="center"> 
+<img src="./img/Ex5.png"/> 
+</div>  
 
 ### Ex6
 
@@ -228,7 +238,9 @@ public class Ex6 {
 ```
 
 运行截图：  
-![Ex6](./img/Ex6.png)  
+<div align="center"> 
+<img src="./img/Ex6.png"/> 
+</div>  
 
 ### Ex7
 
@@ -271,7 +283,9 @@ public class Ex7 {
 ```
 
 运行截图：  
-![Ex7](./img/Ex7.png)  
+<div align="center"> 
+<img src="./img/Ex7.png"/> 
+</div>  
 
 ### Ex8
 
@@ -307,7 +321,9 @@ public class Ex8 {
 ```
 
 运行截图：  
-![Ex8](./img/Ex8.png)  
+<div align="center"> 
+<img src="./img/Ex8.png"/> 
+</div>  
 
 ### Ex9
 
@@ -336,7 +352,9 @@ public class Ex9 {
 ```
 
 运行截图：  
-![Ex9](./img/Ex9.png)
+<div align="center"> 
+<img src="./img/Ex9.png"/> 
+</div>  
 
 ### Ex10
 
@@ -361,7 +379,9 @@ public class Ex10 {
 ```
 
 运行截图：  
-![Ex10](./img/Ex10.png)
+<div align="center"> 
+<img src="./img/Ex10.png"/> 
+</div>  
 
 ### Ex11
 
@@ -396,7 +416,9 @@ public class Ex11 {
 ```
 
 运行截图：  
-![Ex11](./img/Ex11.png)  
+<div align="center"> 
+<img src="./img/Ex11.png"/> 
+</div>  
 
 ### Ex12
 
@@ -437,7 +459,9 @@ public class Ex12 {
 ```
 
 运行截图：  
-![Ex12](./img/Ex12.png)
+<div align="center"> 
+<img src="./img/Ex12.png"/> 
+</div>  
 
 ### Ex13
 
@@ -463,7 +487,9 @@ public class Ex13 {
 ```
 
 运行截图：
-![Ex13](./img/Ex13.png)  
+<div align="center"> 
+<img src="./img/Ex13.png"/> 
+</div>  
 
 ### Ex14
 
@@ -511,7 +537,9 @@ public class Ex14 {
 ```
 
 运行截图：  
-![Ex14](./img/Ex14.png)
+<div align="center"> 
+<img src="./img/Ex14.png"/> 
+</div>  
 
 ### Ex15
 
@@ -556,7 +584,9 @@ public class Ex15 {
 ```
 
 运行截图：  
-![Ex15](./img/Ex15.png)
+<div align="center"> 
+<img src="./img/Ex15.png"/> 
+</div>  
 
 ### Ex16
 
@@ -580,7 +610,9 @@ public class Ex16 {
 ```
 
 运行截图：  
-![Ex16](./img/Ex16.png)  
+<div align="center"> 
+<img src="./img/Ex16.png"/> 
+</div>  
 
 ### Ex17
 
@@ -604,7 +636,9 @@ public class Ex17 {
 ```
 
 运行截图：  
-![Ex17](./img/Ex17.png)
+<div align="center"> 
+<img src="./img/Ex17.png"/> 
+</div>  
 
 ### Ex18
 
@@ -641,13 +675,18 @@ public class Ex18 {
 ```
 
 运行截图：  
-![Ex18](./img/Ex18.png)  
+<div align="center"> 
+<img src="./img/Ex18.png"/> 
+</div>  
 
 ### Ex19
 
 程序 19 打印菱形图案 
 题目：打印出如下图案（菱形）  
-![rhombus](./img/rhombus.png)  
+<div align="center"> 
+<img src="./img/rhombus.png"/> 
+</div> 
+
 程序分析：先把图形分成两部分来看待，前四行一个规律，后三行一个规律，利用双重 for 循环，第一
 层控制行，第二层控制列。
 
@@ -678,7 +717,9 @@ public class Ex19 {
 ```
 
 运行截图：  
-![Ex19](./img/Ex19.png)  
+<div align="center"> 
+<img src="./img/Ex19.png"/> 
+</div>  
 
 ### Ex20
 
@@ -713,7 +754,9 @@ public class Ex20 {
 ```
 
 运行截图：  
-![Ex20](./img/Ex20.png)
+<div align="center"> 
+<img src="./img/Ex20.png"/> 
+</div>  
 
 ### Ex21
 
@@ -744,7 +787,9 @@ public class Ex21 {
 ```
 
 运行截图：  
-![Ex21](./img/Ex21.png)  
+<div align="center"> 
+<img src="./img/Ex21.png"/> 
+</div> 
 
 ### Ex22
 
@@ -771,7 +816,9 @@ public class Ex22 {
 ```
 
 运行截图：  
-![Ex22](./img/Ex22.png)  
+<div align="center"> 
+<img src="./img/Ex22.png"/> 
+</div> 
 
 ### Ex23
 
@@ -795,7 +842,9 @@ public class Ex23 {
 ```
 
 运行截图：  
-![Ex23](./img/Ex23.png)  
+<div align="center"> 
+<img src="./img/Ex23.png"/> 
+</div> 
 
 ### Ex24
 
@@ -832,7 +881,9 @@ public class Ex24 {
 ```
 
 运行截图：  
-![Ex24](./img/Ex24.png)  
+<div align="center"> 
+<img src="./img/Ex24.png"/> 
+</div> 
 
 ### Ex25
 
@@ -866,7 +917,9 @@ public class Ex25 {
 ```
 
 运行截图：  
-![Ex25](./img/Ex25.png)  
+<div align="center"> 
+<img src="./img/Ex25.png"/> 
+</div> 
 
 ### Ex26
 
@@ -947,7 +1000,9 @@ public class Ex26 {
 ```
 
 运行截图：  
-![Ex26](./img/Ex26.png)  
+<div align="center"> 
+<img src="./img/Ex26.png"/> 
+</div> 
 
 ### Ex27
 
@@ -980,7 +1035,9 @@ public class Ex27 {
 ```
 
 运行截图：  
-![Ex27](./img/Ex27.png)  
+<div align="center"> 
+<img src="./img/Ex27.png"/> 
+</div> 
 
 ### Ex28
 
@@ -1025,7 +1082,9 @@ public class Ex28 {
 ```
 
 运行截图：  
-![Ex28](./img/Ex28.png)  
+<div align="center"> 
+<img src="./img/Ex28.png"/> 
+</div> 
 
 ### Ex29
 
@@ -1061,7 +1120,9 @@ public class Ex29 {
 ```
 
 运行截图：  
-![Ex29](./img/Ex29.png)  
+<div align="center"> 
+<img src="./img/Ex29.png"/> 
+</div> 
 
 ### Ex30
 
@@ -1122,7 +1183,9 @@ public class Ex30 {
 ```
 
 运行截图：  
-![Ex30](./img/Ex30.png)  
+<div align="center"> 
+<img src="./img/Ex30.png"/> 
+</div> 
 
 ### Ex31
 
@@ -1155,7 +1218,9 @@ public class Ex31 {
 ```
 
 运行截图：  
-![Ex31](./img/Ex31.png)  
+<div align="center"> 
+<img src="./img/Ex31.png"/> 
+</div> 
 
 ### Ex32
 
@@ -1181,14 +1246,18 @@ public class Ex32 {
 ```
 
 运行截图：  
-![Ex32](./img/Ex32.png)  
+<div align="center"> 
+<img src="./img/Ex32.png"/> 
+</div> 
 
 ### Ex33
 
 程序 33 杨辉三角  
 题目：打印出杨辉三角形（要求打印出 10 行如下图）
 程序分析：  
-![yh](./img/yh.png)  
+<div align="center"> 
+<img src="./img/yh.png"/> 
+</div>  
 
 源代码：  
 ```java
@@ -1227,7 +1296,9 @@ public class Ex33 {
 ```
 
 运行截图：  
-![Ex33](./img/Ex33.png)  
+<div align="center"> 
+<img src="./img/Ex33.png"/> 
+</div> 
 
 ### Ex34
 
@@ -1263,7 +1334,9 @@ public class Ex34 {
 ```
 
 运行截图：  
-![Ex34](./img/Ex34.png)  
+<div align="center"> 
+<img src="./img/Ex34.png"/> 
+</div> 
 
 ### Ex35
 
@@ -1327,7 +1400,9 @@ public class Ex35 {
 ```
 
 运行截图：  
-![Ex35](./img/Ex35.png)  
+<div align="center"> 
+<img src="./img/Ex35.png"/> 
+</div> 
 
 ### Ex36
 
@@ -1391,7 +1466,9 @@ public class Ex36 {
 ```
 
 运行截图：  
-![Ex36](./img/Ex36.png)
+<div align="center"> 
+<img src="./img/Ex36.png"/> 
+</div> 
 
 ### Ex37
 
@@ -1446,7 +1523,9 @@ public class Ex37 {
 ```
 
 运行截图：  
-![Ex37](./img/Ex37.png)
+<div align="center"> 
+<img src="./img/Ex37.png"/> 
+</div> 
 
 ### Ex38
 
@@ -1469,7 +1548,9 @@ public class Ex38 {
 ```
 
 运行截图：  
-![Ex38](./img/Ex38.png)  
+<div align="center"> 
+<img src="./img/Ex38.png"/> 
+</div> 
 
 ### Ex39
 
@@ -1503,7 +1584,9 @@ public class Ex39 {
 ```
 
 运行截图：  
-![Ex39](./img/Ex39.png)  
+<div align="center"> 
+<img src="./img/Ex39.png"/> 
+</div> 
 
 ### Ex40
 
@@ -1555,7 +1638,9 @@ public class Ex40 {
 ```
 
 运行截图：  
-![Ex40](./img/Ex40.png)
+<div align="center"> 
+<img src="./img/Ex40.png"/> 
+</div> 
 
 ### Ex41
 
@@ -1591,7 +1676,9 @@ public class Ex41 {
 ```
 
 运行截图：  
-![Ex41](./img/Ex41.png)
+<div align="center"> 
+<img src="./img/Ex41.png"/> 
+</div> 
 
 ### Ex42
 
@@ -1619,7 +1706,9 @@ public class Ex42 {
 ```
 
 运行截图：  
-![Ex42](./img/Ex42.png)
+<div align="center"> 
+<img src="./img/Ex42.png"/> 
+</div> 
 
 ### Ex43
 
@@ -1699,7 +1788,9 @@ public class Ex43 {
 ```
 
 运行截图：  
-![Ex43](./img/Ex43.png)  
+<div align="center"> 
+<img src="./img/Ex43.png"/> 
+</div> 
 
 ### Ex44
 
@@ -1742,7 +1833,9 @@ public class Ex44 {
 ```
 
 运行截图：  
-![Ex44](./img/Ex44.png)  
+<div align="center"> 
+<img src="./img/Ex44.png"/> 
+</div> 
 
 ### Ex45
 
@@ -1777,7 +1870,9 @@ public class Ex45 {
 ```
 
 运行截图：  
-![Ex45](./img/Ex45.png)  
+<div align="center"> 
+<img src="./img/Ex45.png"/> 
+</div> 
 
 ### Ex46
 
@@ -1803,7 +1898,9 @@ public class Ex46 {
 ```
 
 运行截图：  
-![Ex46](./img/Ex46.png)  
+<div align="center"> 
+<img src="./img/Ex46.png"/> 
+</div> 
 
 ### Ex47
 
@@ -1837,7 +1934,9 @@ public class Ex47 {
 ```
 
 运行截图：  
-![Ex47](./img/Ex47.png)  
+<div align="center"> 
+<img src="./img/Ex47.png"/> 
+</div> 
 
 ### Ex48
 
@@ -1872,7 +1971,9 @@ public class Ex48 {
 ```
 
 运行截图：  
-![Ex48](./img/Ex48.png)
+<div align="center"> 
+<img src="./img/Ex48.png"/> 
+</div> 
 
 ### Ex49
 
@@ -1911,7 +2012,9 @@ public class Ex49 {
 ```
 
 运行截图：  
-![Ex49](./img/Ex49.png)  
+<div align="center"> 
+<img src="./img/Ex49.png"/> 
+</div> 
 
 ### Ex50
 
@@ -1997,7 +2100,9 @@ public class Ex50 {
 ```
 
 运行截图：  
-![Ex50](./img/Ex50.png)  
+<div align="center"> 
+<img src="./img/Ex50.png"/> 
+</div> 
 
 
 ## 编程基础知识
@@ -2117,8 +2222,10 @@ A3：二进制记数只用 0 和 1 两个符号，无需其他符号。同理，
   规则：用 2 整除十进制整数，可以得到一个商和余数，再用 2 去除商，又会得到一个商和余数，如此进行，直到商为小于 1 时为止，然后把先得到的余数作为二进制数的低位有效位，后得到的余数作为二进制数的高位有效位，依次排列起来即得到所对应的十进制整数。  
   用十进制的小数乘以 2 并取走结果的整数（必是 0 或 1），然后再用剩下的小数重复刚才的步骤，直到剩余的小数为 0 时停止，最后将每次得到的整数部分按先后顺序从左到右排列即得到所对应二进制小数。  
   例如：十进制数 125.8125 转二进制为 1111101.1101  
-  ![整数部分](./img/d1.png)   
-  ![小数部分](./img/d2.png)   
+  <div align="center"> 
+  <img src="./img/d1.png"/> 
+  <img src="./img/d2.png"/>
+  </div>   
 
 - 八进制转二进制  
   方法 1：转十进制再转二进制  
