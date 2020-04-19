@@ -27,7 +27,7 @@
 
 JAVA 语言基础 3 周（视大家学习能力调整)。  
 
-<div align="center"> <img src="https://github.com/guo-yaohua/wdxly/blob/master/doing/img/p1.png"/> </div>  
+<div align="center"> <img src="./img/p1.png"/> </div>  
 
 ### 第二个阶段
 
