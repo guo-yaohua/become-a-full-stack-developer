@@ -1,5 +1,6 @@
 # Day 13 JavaObject03
 
+## 作业
 1. 为某研究所编写一个通用程序，用来计算每一种交通工具运行 1000 公里所需的时间。已知每种交通工具的参数都是 3 个整数常量 A、B、C 的表达式。  
   现有两种工具：Car 和 Plane，  
   其中 Car 的速度运算公式为：A * B / C，  
@@ -28,3 +29,10 @@
     篮球教练：   nama age salary bonus
                 eat()，sleep(), teach()
     ```
+
+## 答
+1. 见代码
+
+2. 抽象类：Human、Coach、Athlete；  
+  接口：SpecialSkill；  
+  具体类：TableTennisAthlete、TableTennisCoach、BasketballAthlete、BasketballCoach。
