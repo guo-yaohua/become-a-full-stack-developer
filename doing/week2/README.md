@@ -286,3 +286,123 @@ finalize 方法刚刚好就是在对象变成垃圾，并且被垃圾回收器�
 
 ### String类
 
+Java 没有内置的字符串类型，而是标准 Java 类库中提供了一个预定义类 String。每个用双引号括起来的字符串都是 String 类的一个实例。  
+```
+// 构造方法
+
+public String()
+// 空字符串 ""
+public String(byte[] bytes)
+/* 利用字节数组，创建字节数组所表示的字符串
+   字符 -> 数值形式 'a' -> 97，所以可以用多个字节值，表示多个字符 -> 即字符序列
+*/
+public String(byte[] bytes,int offset,int length)
+// 利用字节数数组的一部分，创建字符序列, 从 byte 数组的 offset 开始的 length 个字节值
+
+public String(char[] value)
+// 利用一个字符数组创建字符数组，代表的字符序列
+public String(char[] value,int offset,int count)
+// 创建 value 字符数组中，从第 offset 位置开始的 count 个字符所代表的字符串对象
+
+public String(String original)
+```
+
+字符串是常量，它的值在创建之后不能更改。
+
+String 类的的判断功能：  
+```java
+boolean equals(Object obj)  // 比较字符串内容
+boolean equalsIgnoreCase(String str) // 比较字符串内容，但是忽略字符串大小写
+
+boolean contains(String str) // 判断当前字符串中是否包含，参数字符串
+
+boolean startsWith(String str) // 当前字符串是否以参数字符串开头
+boolean endsWith(String str)
+
+boolean isEmpty() // 判断字符串是否为空串
+```
+
+String类的的获取功能：  
+```java
+int  length()   //返回当前字符串中包含的字符个数
+
+char charAt(int index)  // 获取字符串指定位置的字符（字符串中的字符，从左到右，从 0 开始编号）
+
+int indexOf(int ch) // 在当前字符串中，查找参数字符，如果当前字符串中存在，则返回首次出现的位置，若不存在则返回 -1
+
+int indexOf(String str) // 在当前字符串中，查找参数字符串首次出现的位置如果找到返回，参数字符串首次出现的首字母的位置，否则返回 -1
+
+int indexOf(int ch, int fromIndex) // 指定从字符串的 fromIndex 位置开始，向后查找指定字符，找到返回其从 formIndex 开始，首次出现的位置，否则返回 -1
+
+int indexOf(String str, int fromIndex) // 指定从字符串的 fromIndex 位置开始，向后查找指定字符串，找到返回其从 formIndex 开始，首次出现的位置，否则返回 -1
+
+String substring(int start)  //生成当前字符串的子串，字串的取值是原字符串的 [start, length()-1]
+
+String substring(int start, int end) //生成当前字符串的子串，字串的取值是原字符串的 [start, end)
+```
+
+String 类的的转换功能：
+```java
+byte[] getBytes()  // 获取表示一个字符串中，多个字符对应多个字节值
+
+char[] toCharArray() // 获取表示一个字符串中，多个字符对应多个字符
+
+static String valueOf(char[] chs) // 把一个字符数组转化成一个字符串
+
+static String valueOf(int i) // 把一个整数值，转化成其字符串表示形式
+
+String toLowerCase() // 把一个字符串的所有字符转化成小写，返回该新的字符串对象
+
+String toUpperCase() // 把一个字符串的所有字符转化成大写，返回该新的字符串对象
+
+String concat(String str) // 完成字符串拼接 了解
+```
+
+String类的替换功能：  
+```java
+String replace(char old,char new) // 在新的字符串中，用新 （new） 字符，替换旧 （old） 字符
+
+String replace(String old, String new) // 在新的字符串中，用新的字符串（new）, 替换旧（old）字符串
+```
+
+String类去除空字符串：  
+```
+String trim() //在新的字符串中，去掉开头和结尾的空格字符
+```
+
+String类的比较功能：
+```
+int compareTo(String str)
+int compareToIgnoreCase(String str)
+```
+- 字符串的大小如何比较：  
+  按照字典序比较字符串的大小。字典序原本的含义实质：英文单词在字典中出现的先后顺序（在字典中，先出现的字符串小，后出现的字符串大）。具体到编程语言，是根据两个字符串字符串从左往右数，第一个对应位置的不同字符，来决定两字符串的大小
+
+- compareTo 几乎就是按照字典序，来比较两个字符串大小的。  
+  格式：`字符串对象.compareTo(字符串对象)`。  
+  对于 CompareTo 方法：String 类实现了一个接口：  
+  ```java
+  interface Comparable<String> {
+    int compareTo(String anotherStr);
+  }
+  ```
+  该接口定义了一种比较规则，该规则规定：  
+  1. 对于大于这种比较结果 `> 0` 表示大于关系；  
+  2. 对于小于这种比较结果 `< 0` 表示小于关系；  
+  3. 对于等于这种比较结果 `0` 表示相等关系。
+
+
+## Java异常
+
+简单来说异常就是用来表示 Java 程序运行过程中的错误（信息）。  
+
+Java 异常机制的由来：  
+- C 语言时代的错误处理。
+
+- Java 的基本理念。  
+  尽量把一切错误摒弃在 JVM 之外，最好在程序之前发现程序错误（编译器）。有一部分错误是编译器可以在程序运行前帮我们发现的，但是还有一些错误，是 Java 程序不运行，编译器发现不了。
+
+- 错误恢复机制（Java 异常处理机制）。  
+  Java 语言退而求其次，可以让 Java 程序运行的时候出错，但是同时，Java 语言本身提供了一种通用的错误处理机制 —— 异常处理机制。  
+  - 异常处理机制：异常的发现，和异常的处理（一致性的错误报告模型）。
+  - 简单来说，就是一旦发生错误，就把该错误信息层层向上报告。如果上层知道怎么处理这个错误，上层可以捕获该错误信息并处理。如果上层不知道该怎么处理，可以将错误继续向上报告。
