@@ -250,12 +250,14 @@ hashCode 的常规协定是：
 创建并返回此对象的一个副本。「副本」的准确含义可能依赖于对象的类。
 
 对于任何对象 x，表达式：
+- `x.clone() != x` 为 true。  
+  说明 clone 创建了一个新的对象。
 
-- `x.clone() != x` 为 true。说明 clone 创建了一个新的对象。
+- `x.clone().getClass() == x.getClass()` 为 true。  
+  说明 clone 创建的对象和原对象是同一个类的对象。
 
-- `x.clone().getClass() == x.getClass()` 为 true。说明 clone 创建的对象和原对象是同一个类的对象。
-
-- `x.clone().equals(x)` 为 true。说明复制对象和原对象的内容（成员变量值）也相同。  
+- `x.clone().equals(x)` 为 true。  
+  说明复制对象和原对象的内容（成员变量值）也相同。  
 
 注：被 clone() 方法复制的对象，所属的类必须实现一个接口 Cloneable。  
 
@@ -267,6 +269,9 @@ public interface Cloneable {
 空接口也被称之为标记接口：做标记（数据类型层面的标记）。比如说对于 clone 方法而言，Cloneable 就是一个标记，因为 clone 只会复制，实现类了 Cloneable 接口的类的对象。  
 利用 instanceof 运算符判断：`对象  instanceof  Cloneable`。
 
+浅拷贝（Shallow Clone）：被复制对象的所有变量都含有与原来对象相同的值，而所有对其它对象的引用仍然指向原来的对象。换而言之，浅拷贝仅仅复制所考虑的对象，而不复制它所引用的对象。  
+
+深拷贝（Deep Clone）：被复制对象的所有变量都含有与原来对象相同的值，除去那些引用其它对象的变量。那些引用其它对象的变量将指向被复制的新对象，而不再是原有的那些被引用的对象。换而言之，深拷贝把复制的对象所引用的对象都复制了一遍。  
 
 **（6）finalize()**  
 
