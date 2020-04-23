@@ -358,19 +358,19 @@ String toUpperCase() // 把一个字符串的所有字符转化成大写，返�
 String concat(String str) // 完成字符串拼接 了解
 ```
 
-String类的替换功能：  
+String 类的替换功能：  
 ```java
 String replace(char old,char new) // 在新的字符串中，用新 （new） 字符，替换旧 （old） 字符
 
 String replace(String old, String new) // 在新的字符串中，用新的字符串（new）, 替换旧（old）字符串
 ```
 
-String类去除空字符串：  
+String 类去除空字符串：  
 ```
 String trim() //在新的字符串中，去掉开头和结尾的空格字符
 ```
 
-String类的比较功能：
+String 类的比较功能：
 ```
 int compareTo(String str)
 int compareToIgnoreCase(String str)
