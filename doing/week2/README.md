@@ -287,22 +287,24 @@ finalize 方法刚刚好就是在对象变成垃圾，并且被垃圾回收器�
 ### String类
 
 Java 没有内置的字符串类型，而是标准 Java 类库中提供了一个预定义类 String。每个用双引号括起来的字符串都是 String 类的一个实例。  
-```
+```java
 // 构造方法
 
-public String()
-// 空字符串 ""
-public String(byte[] bytes)
+public String() // 空字符串 ""
+
 /* 利用字节数组，创建字节数组所表示的字符串
    字符 -> 数值形式 'a' -> 97，所以可以用多个字节值，表示多个字符 -> 即字符序列
 */
-public String(byte[] bytes,int offset,int length)
-// 利用字节数数组的一部分，创建字符序列, 从 byte 数组的 offset 开始的 length 个字节值
+public String(byte[] bytes)
 
-public String(char[] value)
+// 利用字节数数组的一部分，创建字符序列, 从 byte 数组的 offset 开始的 length 个字节值
+public String(byte[] bytes,int offset,int length)
+
 // 利用一个字符数组创建字符数组，代表的字符序列
-public String(char[] value,int offset,int count)
+public String(char[] value)
+
 // 创建 value 字符数组中，从第 offset 位置开始的 count 个字符所代表的字符串对象
+public String(char[] value,int offset,int count)
 
 public String(String original)
 ```
