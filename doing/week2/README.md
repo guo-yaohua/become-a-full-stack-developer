@@ -547,7 +547,7 @@ throw
 选择处理策略的原则：
 - 如果该功能内部可以将问题处理，用 try。
 
-- 如果处理不了则交由调用者处理，用throws。
+- 如果处理不了则交由调用者处理，用 throws。
 
 注：异常一旦被捕获，并且没有再次被抛出，那么上层是感知不到该异常的！！！！
 
@@ -580,9 +580,9 @@ finally 相关的面试题：
 
 ## File类
 
-File类概述：文件和目录路径名的抽象表达形式。
+File 类概述：文件和目录路径名的抽象表达形式。
 
-File的构造方法：  
+File 的构造方法：  
 ```java
 File (String pathname)
 
@@ -591,7 +591,7 @@ File (String parent, Sting child)
 File (File parent, String child)
 ```
 
-File类的成员方法：  
+File 类的成员方法：  
 ```java
 // 创建功能
 public boolean createNewFile() 
