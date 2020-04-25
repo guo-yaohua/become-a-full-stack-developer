@@ -597,56 +597,135 @@ finally 相关的面试题：
 
 ## File类
 
+### File类概述
+
+操作系统中，所有需要永久保存的数据，都是以文件的形式存在。
+
 File 类概述：文件和目录路径名的抽象表达形式。
 
-File 的构造方法：  
+路径：  
+- 绝对路径名是完整的路径名，不需要任何其他信息就可以定位它所表示的文件或目录。如 windows 下：`E:\first\a.txt`。  
+
+- 相反，相对路径名必须使用取自其他路径名的信息进行解释（相对路径本身表示信息不完整）。如 `dir\a.txt`。
+
+- 默认情况下，java.io 包中的类总是根据当前用户目录来解析相对路径名。  
+  此目录由系统属性 user.dir 指定，通常是 Java 虚拟机的调用目录。
+
+路径表示：  
+- 对于 UNIX 平台，绝对路径名的前缀始终是 "/"。相对路径名没有前缀。表示根目录的绝对路径名的前缀为 "/" 且名称序列为空。  
+  绝对路径表示：`/data/a.log`。  
+  相对路径：`home/6379.conf`。  
+  `/:` 表示根目录。
+
+- 对于 Microsoft Windows 平台，包含盘符的路径名前缀由驱动器号和一个 `:` 组成。如果路径名是绝对路径名，还可能后跟 `\\`，而相对路径没有盘符前缀。  
+  绝对路径：`E:\first\dir\a.txt`  
+  相对路径：`dir\a.txt`  
+
+### File类的构造方法
+
 ```java
+// 通过将给定路径名字符串转换为抽象路径名来创建一个新 File 实例。
 File (String pathname)
 
+// 根据 parent 路径名字符串和 child 路径名字符串创建一个新 File 实例。
 File (String parent, Sting child)
 
+// 根据 parent 抽象路径名和 child 路径名字符串创建一个新 File 实例。
 File (File parent, String child)
 ```
 
-File 类的成员方法：  
+### File类的成员方法
+
+**（1）创建功能**  
 ```java
-// 创建功能
+// 当且仅当不存在具有此抽象路径名指定名称的文件时，不可分地创建一个新的空文件。
 public boolean createNewFile() 
+
+// 创建此抽象路径名指定的目录。
 public boolean mkdir()
+
+// 创建此抽象路径名指定的目录，包括所有必需但不存在的父目录。
 public boolean mkdirs()
-
-// 删除功能
-public boolean delete()
-
-// 重命名功能
-public boolean renameTo(File dest)
-
-// 判断功能
-public boolean isFile()
-public boolean isDirectory()
-public boolean exists()
-public boolean canRead()
-public boolean canWrite()
-public boolean isHidden()
-
-// 基本获取功能
-public File getAbsoluteFile()
-public String getPath()
-public String getName()
-public long length()
-public long lastModified()
-
-// 高级获取功能
-public String[] list()
-public File[] listFiles()
-
-// 自定义获取功能
-File[] listFiles(FileFilter filter)
 ```
 
-两种过滤器接口 FileFilter：  
+**（2）删除功能**  
 ```java
-public interface FileFilter {
-  boolean accept(File pathname);
-}
+// 删除此抽象路径名表示的文件或目录，如果此路径名表示一个目录，则该目录必须为空才能删除。
+public boolean delete()
+```
+
+**（3）重命名功能**  
+```java
+// 重新命名此抽象路径名表示的文件。
+public boolean renameTo(File dest)
+```
+当目标 File 对象所表示抽象路径如果和原文件的路径在同一目录下，该方法实现的效果仅仅只是重命名。  
+当目标 File 对象所表示抽象路径如果和原文件的路径不在同一目录下，该方法实现的效果：文件移动 + 重命名。  
+
+**（4）判断功能**  
+```java
+// 判断此抽象路径名表示的文件是否是一个标准文件。
+public boolean isFile()
+
+// 判断此抽象路径名表示的文件是否是一个目录。
+public boolean isDirectory()
+
+// 判断该 File 对象所表示的文件或目录是否物理存在。
+public boolean exists()
+
+// 判断该 File 对象所表示的文件目录是否有读取权。
+public boolean canRead()
+
+public boolean canWrite()
+
+// 判断此抽象路径名指定的文件是否是一个隐藏文件。
+public boolean isHidden()
+```
+
+**（5）基本获取功能**  
+```java
+// 返回此抽象路径名的绝对路径名形式。
+public File getAbsoluteFile()
+
+// 将此抽象路径名转换为一个路径名字符串。
+public String getPath()
+
+// 返回由此抽象路径名表示的文件或目录的名称。
+public String getName()
+
+// 返回由此抽象路径名表示的文件的长度。
+public long length()
+
+// 返回此抽象路径名表示的文件最后一次被修改的时间。
+public long lastModified()
+```
+
+**（6）高级获取功能**  
+```java
+// 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的文件和目录。
+public String[] list()
+
+// 返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。
+public File[] listFiles()
+```
+`public String[] list()` 
+- 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的 文件 和 目录（其实返回的就是当前目录下的所有目录或文件的名字）。  
+
+- 如果此抽象路径名不表示一个目录，那么此方法将返回 null。
+
+`public File[] listFiles()` 
+- 仅返回当前目录下的子文件或子目录的名称。  
+
+- 返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。
+
+- 如果此抽象路径名不表示一个目录，那么此方法将返回 null。
+
+
+**（7）自定义获取功能**  
+```java
+// 返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
+File[] listFiles(FileFilter filter)
+
+// 返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
+File[] listFiles(FilenameFilter filter)
 ```
