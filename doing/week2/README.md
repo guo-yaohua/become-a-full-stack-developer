@@ -590,3 +590,46 @@ File (String parent, Sting child)
 
 File (File parent, String child)
 ```
+
+File类的成员方法：  
+```java
+// 创建功能
+public boolean createNewFile() 
+public boolean mkdir()
+public boolean mkdirs()
+
+// 删除功能
+public boolean delete()
+
+// 重命名功能
+public boolean renameTo(File dest)
+
+// 判断功能
+public boolean isFile()
+public boolean isDirectory()
+public boolean exists()
+public boolean canRead()
+public boolean canWrite()
+public boolean isHidden()
+
+// 基本获取功能
+public File getAbsoluteFile()
+public String getPath()
+public String getName()
+public long length()
+public long lastModified()
+
+// 高级获取功能
+public String[] list()
+public File[] listFiles()
+
+// 自定义获取功能
+File[] listFiles(FileFilter filter)
+```
+
+两种过滤器接口 FileFilter：  
+```java
+public interface FileFilter {
+  boolean accept(File pathname);
+}
+```
