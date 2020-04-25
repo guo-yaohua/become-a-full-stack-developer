@@ -587,6 +587,13 @@ finally 相关的面试题：
 - 如果 catch 里面有 return 语句，请问 finally 的代码还会执行吗？如果会，请问是在 return 前还是 return 后。  
   即使在 finally 代码块之前有 return 语句，finally 代码块仍然会执行。
 
+### 自定义异常  
+
+自定义异常分两种：  
+- 继承自 Exception。
+
+- 继承自 RuntimeException。
+
 
 ## File类
 
