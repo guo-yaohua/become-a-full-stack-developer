@@ -648,7 +648,7 @@ File 类概述：文件和目录路径名的抽象表达形式。
 
 - 在 java.io.File 类里面提供了一个路径分隔符常量：`public static String separator;` 利用此常量可以在不同的操作系统中自动转换为适合该操作系统的路径分隔符。所以在实际开发中，如果要定义 File 类对象往往会使用如下形式的操作代码。  
   ```java
-  File file = new File("d:" + File.separator + "test.txt");  // 设置文件路径`
+  File file = new File("d:" + File.separator + "test.txt");  // 设置文件路径
   ```
 
 ### File类的构造方法
@@ -739,7 +739,7 @@ public String[] list()
 public File[] listFiles()
 ```
 `public String[] list()` 
-- 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的 文件 和 目录（其实返回的就是当前目录下的所有目录或文件的名字）。  
+- 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的文件和目录（其实返回的就是当前目录下的所有目录和文件的名字）。  
 
 - 如果此抽象路径名不表示一个目录，那么此方法将返回 null。
 
