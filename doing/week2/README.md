@@ -646,7 +646,7 @@ File 类概述：文件和目录路径名的抽象表达形式。
   绝对路径：`E:\first\dir\a.txt`  
   相对路径：`dir\a.txt`  
 
-- 在 java.io.File 类里面提供了一个路径分隔符常量：`public static String separator;` 利用此常量可以在不同的操作系统中自动转换为适合该操作系统的路径分隔符。所有在实际开发中，如果要定义 File 类对象往往会使用如下形式的操作代码。  
+- 在 java.io.File 类里面提供了一个路径分隔符常量：`public static String separator;` 利用此常量可以在不同的操作系统中自动转换为适合该操作系统的路径分隔符。所以在实际开发中，如果要定义 File 类对象往往会使用如下形式的操作代码。  
   ```java
   File file = new File("d:" + File.separator + "test.txt");  // 设置文件路径`
   ```
