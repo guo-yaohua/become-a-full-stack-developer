@@ -14,17 +14,16 @@ public class Solution2 {
 
     // 递归复制
     public static void copyAllJavaText(File file) throws IOException {
-        for(File sonFile : file.listFiles()) {
+        for (File sonFile : file.listFiles()) {
             if (sonFile.isDirectory()) {
                 copyAllJavaText(sonFile);
             } else {
                 // 还需要判断是否是 java 后缀
-                if (sonFile.getName().endsWith("java")) {
+                if (sonFile.getName().endsWith(".java")) {
                     copyFileByBufferBytes(sonFile.getAbsolutePath(), "d:copy/" + sonFile.getName());
                 }
             }
         }
-        return;
     }
 
     // 复制功能
