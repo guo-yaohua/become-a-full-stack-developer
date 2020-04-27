@@ -813,7 +813,7 @@ public void write(byte[] b,int off, int len)
 
   2. 在 JVM 内存中，创建 FileOutputStream 对象；  
   
-  3. 在FileOutputStream对象和目标文件之间，建立数据传输通道。
+  3. 在 FileOutputStream 对象和目标文件之间，建立数据传输通道。
 
 - 数据写成功后，为什么要 `close()`？  
   1. 关闭此输出流；
@@ -893,7 +893,7 @@ int read(byte[] b, int off, int len)
 BufferedOutputStream(OutputStream out)
 ```
 
-字节缓冲输入流：BufferedInputStream。
+字节缓冲输入流：BufferedInputStream。  
 构造方法：
 ```java
 // 创建一个 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。
@@ -901,7 +901,6 @@ BufferedInputStream(InputStream in)
 ```
 
 关于缓冲输出流的注意事项：
-- void flush()  
-  刷新此缓冲的输出流。 flush 可以可以帮助我们，强制把缓冲流中的字节数字，写入底层流中，从而写入目标文件中。
+- void flush() 刷新此缓冲的输出流。flush 可以帮助我们，强制把缓冲流中的字节数字，写入底层流中，从而写入目标文件。
 
 - BufferedOutputStream 的 close 方法先调用其 flush 方法，然后调用其基础输出流的 close 方法。      
