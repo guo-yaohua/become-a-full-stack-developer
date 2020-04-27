@@ -759,3 +759,43 @@ File[] listFiles(FileFilter filter)
 // 返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
 File[] listFiles(FilenameFilter filter)
 ```
+
+## 字节流与字符流
+
+使用 java.io.File 类虽然可以操作文件，但是却不能操作文件的内容。如果要进行文件的内容操作，就必须依靠I / O（Input / Output） 流来完成。  
+
+Java 语言主要通过输入流和输出流，完成 I / O 的功能，从而实现和外设的数据交互。而且针对此操作提供以下两类支持。  
+- 字节流（JDK 1.0 开始提供）：InputStream（输入字节流）、OutputStream（输出字节流）。  
+
+- 字符流（JDK 1.1 开始提供）：Reader（输入字符流）、Writer（输出字符流）。
+
+实际应用中，文本数据用字符流，如果不确定内容，就用字节流。  
+
+这四个操作流的类都是抽象类，所以在使用这些类时，一定要通过子类对象的向上转型来进行抽象类对象的实例化操作。  
+由这四个类派生出来的子类名称都是以其父类名作为子类名的后缀。如：  
+- InputStream 的子类 FileInputStream。  
+- Reader 的子类 FileReader。
+
+
+
+### IO-字节流
+
+**（1）字节流写数据**  
+
+使用 OutputStream 对象，完成向文本文件中输出。但 OutputStream 是抽象类，如果要使用 OutputStream 对象，只能使用其子类对象，完成写入功能。
+
+FileOutputStream 的构造方法：
+```java
+FileOutputStream(File file)
+
+FileOutputStream(String name)
+```
+
+字节流写数据的方式：  
+```java
+public void write(int b)
+
+public void write(byte[] b)
+
+public void write(byte[] b,int off,int len)
+```
