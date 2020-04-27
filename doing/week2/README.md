@@ -786,16 +786,122 @@ Java 语言主要通过输入流和输出流，完成 I / O 的功能，从而�
 
 FileOutputStream 的构造方法：
 ```java
+// 创建一个向指定 File 对象表示的文件中写入数据的文件输出流。
 FileOutputStream(File file)
 
+// 创建一个向具有指定名称的文件中写入数据的输出文件流。
 FileOutputStream(String name)
 ```
 
-字节流写数据的方式：  
+FileOutputStream 的成员方法：  
 ```java
+// 将指定字节写入此文件输出流。
 public void write(int b)
 
+// 将 b.length 个字节从指定 byte 数组写入此文件输出流中。
 public void write(byte[] b)
 
-public void write(byte[] b,int off,int len)
+// 将指定 byte 数组中从偏移量 off 开始的 len 个字节写入此文件输出流。
+public void write(byte[] b,int off, int len)
 ```
+
+字节流写数据常见问题：  
+- 创建字节输出流到底做了哪些事情？  
+  1. FileOutputStream 对象在被创建之前，JVM 会首先到操作系统中找目标文件；  
+      - 找到的话，先清空已经存在的目标文件内容（因为默认向文件汇总写入数据中的方式，从文件头开始写入）。
+      - 找不到，JVM 会创建一个新的目标文件。
+
+  2. 在 JVM 内存中，创建 FileOutputStream 对象；  
+  
+  3. 在FileOutputStream对象和目标文件之间，建立数据传输通道。
+
+- 数据写成功后，为什么要 `close()`？  
+  1. 关闭此输出流；
+
+  2. 并释放与此流有关的所有系统资源。
+
+- 如何实现数据的换行？  
+  核心是向文件中写入换行字符。  
+  1. windows操作系统: `\r \n`（在不同的 windows 操作系统上，可能表现不一样）；
+  
+  2. 类 unix 操作系统：`\n`。
+
+
+- 如何实现数据的追加写入？  
+  1. `FileOutputStream(String name, boolean append)` 创建一个向具有指定 name 的文件中写入数据的输出文件流；  
+
+  2. `FileOutputStream(File file, boolean append)` 创建一个向指定 File 对象表示的文件中写入数据的文件输出流。
+
+
+- 给 I / O 流操作加上异常处理。
+
+**（2）字节流读取数据**  
+
+使用 InputStream 可以读取文本中的内容。同时，注意到 InputStream 是抽象类，不能直接实例化，需要使用其子类对象来实现功能。  
+
+FileInputStream 的构造方法：
+```java
+// 通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的 File 对象 file 指定。
+FileInputStream(File file)
+
+// 通过打开一个到实际文件的连接来创建一个 FileInputStream，该文件通过文件系统中的路径名 name 指定。
+FileInputStream(String name)
+```
+
+创建一个 FileInputStream 对象，JVM 作了哪些工作：  
+1. FileInputStream 对象在被创建之前，JVM 会首先到操作系统中，找目标文件；  
+    - 找到，就不做任何额外工作。
+    - 找不到，则直接抛出异常 FileNotFoundException。
+
+2. 在 JVM 内存中，创建 FileInputStream 对象。
+
+3. 在 FileInputStream 对象和目标文件之间，建立数据传输通道。
+
+FileInputStream 的成员方法:
+```java
+/*
+从此输入流中读取一个数据字节。
+返回 0 到 255 范围内的 int 字节值。如果因为已经到达流末尾而没有可用的字节，则返回值 -1。
+*/
+public int read()
+
+/* 
+此输入流中将最多 b.length 个字节的数据读入一个 byte 数组中。
+返回值：
+  1. 以整数形式返回实际读取的字节数；
+  2. 如果因为已经到达流末尾而不再有数据可用，则返回 -1。
+*/
+public int read(byte[] b)
+
+/*
+将输入流中最多 len 个数据字节读入 byte 数组。
+返回值：
+  1. 以整数形式返回实际读取的字节数；
+  2. 如果因为已经到达流末尾而不再有数据可用，则返回 -1。
+*/
+int read(byte[] b, int off, int len)
+```
+
+**（3）字节缓冲流**  
+
+字节流一次读写一个数组的速度明显比一次读写一个字节的速度快很多，这是加入了数组这样的缓冲区效果，Java 本身在设计的时候也考虑到了这样的情况，所以提供了字节缓冲区流。
+
+字节缓冲输出流：BufferedOutputStream。  
+构造方法：
+```java
+// 创建一个新的缓冲输出流，以将数据写入指定的底层输出流。
+BufferedOutputStream(OutputStream out)
+```
+
+字节缓冲输入流：BufferedInputStream。
+构造方法：
+```java
+// 创建一个 BufferedInputStream 并保存其参数，即输入流 in，以便将来使用。
+BufferedInputStream(InputStream in)
+```
+
+关于缓冲输出流的注意事项：
+- void flush()  
+  刷新此缓冲的输出流。 flush 可以可以帮助我们，强制把缓冲流中的字节数字，写入底层流中，从而写入目标文件中。
+
+- BufferedOutputStream 的 close 方法先调用其 flush 方法，然后调用其基础输出流的 close 方法。      
