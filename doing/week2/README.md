@@ -815,11 +815,13 @@ public void write(int b)
 // 将 b.length 个字节从指定 byte 数组写入此文件输出流中。
 public void write(byte[] b)
 
-// 将指定 byte 数组中从偏移量 off 开始的 len 个字节写入此文件输出流。
+// 将指定 byte 数组中从偏移量 off 开始的 len 个字节写入此文件输出流。（开发中常用方法）
 public void write(byte[] b,int off, int len)
 ```
 
 数据写成功后，需要调用 close() 方法关闭此输出流，并释放与此流有关的所有系统资源。
+
+由于 OutputStream 只适合输出字节数据，当输出字符串时，需要先将自定的字符串利用 getBytes() 方法转换为字节数组。  
 
 向文件中写入换行字符实现数据的换行：    
 - Windows操作系统: `\r \n`（在不同的 Windows 操作系统上，可能表现不一样）。
