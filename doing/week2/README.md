@@ -831,7 +831,7 @@ public void write(byte[] b,int off, int len)
 
 **（2）字节流读取数据**  
 
-使用 InputStream 可以读取文本中的内容。同时，注意到 InputStream 是抽象类，不能直接实例化，需要使用其子类对象来实现功能。  
+InputStream 依然属于一个抽象类，如果想要实现文件读取功能，需要使用 FileInputStream 子类。  
 
 FileInputStream 的构造方法：
 ```java
@@ -842,7 +842,7 @@ FileInputStream(File file)
 FileInputStream(String name)
 ```
 
-创建一个 FileInputStream 对象，JVM 作了哪些工作：  
+创建字节输入流过程：  
 1. FileInputStream 对象在被创建之前，JVM 会首先到操作系统中，找目标文件；  
     - 找到，就不做任何额外工作。
     - 找不到，则直接抛出异常 FileNotFoundException。
