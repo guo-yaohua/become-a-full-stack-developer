@@ -782,16 +782,30 @@ Java 语言主要通过输入流和输出流，完成 I / O 的功能，从而�
 
 **（1）字节流写数据**  
 
-使用 OutputStream 对象，完成向文本文件中输出。但 OutputStream 是抽象类，如果要使用 OutputStream 对象，只能使用其子类对象，完成写入功能。
+OutputStream 本身是一个抽象类，想要完成字节输出功能就需要一个子类。如果要进行文件操作，则可以使用 FileOutputStream 子类完成操作。  
 
 FileOutputStream 的构造方法：
 ```java
 // 创建一个向指定 File 对象表示的文件中写入数据的文件输出流。
 FileOutputStream(File file)
 
+// 如果讲布尔参数设置为 true，表示追加新的内容到文件中。
+FileOutputStream(File file, boolean append)
+
 // 创建一个向具有指定名称的文件中写入数据的输出文件流。
 FileOutputStream(String name)
+
+FileOutputStream(String name, boolean append)
 ```
+
+创建字节输出流过程：  
+1. FileOutputStream 对象在被创建之前，JVM 会首先到操作系统中找目标文件；  
+    - 找到的话，先清空已经存在的目标文件内容（因为默认向文件汇总写入数据中的方式，从文件头开始写入）。
+    - 找不到，JVM 会创建一个新的目标文件。
+
+2. 在 JVM 内存中，创建 FileOutputStream 对象；  
+
+3. 在 FileOutputStream 对象和目标文件之间，建立数据传输通道。
 
 FileOutputStream 的成员方法：  
 ```java
@@ -805,35 +819,13 @@ public void write(byte[] b)
 public void write(byte[] b,int off, int len)
 ```
 
-字节流写数据常见问题：  
-- 创建字节输出流到底做了哪些事情？  
-  1. FileOutputStream 对象在被创建之前，JVM 会首先到操作系统中找目标文件；  
-      - 找到的话，先清空已经存在的目标文件内容（因为默认向文件汇总写入数据中的方式，从文件头开始写入）。
-      - 找不到，JVM 会创建一个新的目标文件。
+数据写成功后，需要调用 close() 方法关闭此输出流，并释放与此流有关的所有系统资源。
 
-  2. 在 JVM 内存中，创建 FileOutputStream 对象；  
-  
-  3. 在 FileOutputStream 对象和目标文件之间，建立数据传输通道。
+向文件中写入换行字符实现数据的换行：    
+- Windows操作系统: `\r \n`（在不同的 Windows 操作系统上，可能表现不一样）。
 
-- 数据写成功后，为什么要 `close()`？  
-  1. 关闭此输出流；
+- 类 Unix 操作系统：`\n`。
 
-  2. 并释放与此流有关的所有系统资源。
-
-- 如何实现数据的换行？  
-  核心是向文件中写入换行字符。  
-  1. windows操作系统: `\r \n`（在不同的 windows 操作系统上，可能表现不一样）；
-  
-  2. 类 unix 操作系统：`\n`。
-
-
-- 如何实现数据的追加写入？  
-  1. `FileOutputStream(String name, boolean append)` 创建一个向具有指定 name 的文件中写入数据的输出文件流；  
-
-  2. `FileOutputStream(File file, boolean append)` 创建一个向指定 File 对象表示的文件中写入数据的文件输出流。
-
-
-- 给 I / O 流操作加上异常处理。
 
 **（2）字节流读取数据**  
 
