@@ -760,6 +760,27 @@ File[] listFiles(FileFilter filter)
 File[] listFiles(FilenameFilter filter)
 ```
 
+### File实战
+
+**（1）递归地列出一个目录下所有文件**  
+
+```java
+public static void listAllFiles(File dir) {
+    if (dir == null || !dir.exists()) {
+        return;
+    }
+    if (dir.isFile()) {
+        System.out.println(dir.getName());
+        return;
+    }
+    for (File file : dir.listFiles()) {
+        listAllFiles(file);
+    }
+}
+```
+
+
+
 ## 字节流与字符流
 
 使用 java.io.File 类虽然可以操作文件，但是却不能操作文件的内容。如果要进行文件的内容操作，就必须依靠I / O（Input / Output） 流来完成。  
@@ -903,17 +924,37 @@ BufferedInputStream(InputStream in)
 
 计算机中所有信息都是由二进制数据组成的，因此所有能够描述出的中文文字都是经过处理后的结果。在计算机的世界里，所有的语言文字都会使用编码来进行描述。例如：最常见的编码是 ASC II 码。  
 在实际工作中，最为常见的 4 种编码如下：  
-- GBK、GB2312：中文的国际标码，其中 GBK 包含简体中文与繁体中文两种，而 GB2312 只包含简体中文。  
+- GBK、GB2312：中文的国际标码，其中 GBK 包含简体中文与繁体中文两种，而 GB2312 只包含简体中文。    
+  GBK 编码中，中文字符占 2 个字节，英文字符占 1 个字节。
 
 - ISO8859-1：是国际编码，可以描述任何文字信息（中文需要转码）。  
 
 - UNICODE：是十六进制编码，但是在传递字符信息时会造成传输的数据较大。  
 
-- UTF 编码（Unicode Transformation Format）：是一种 UNICODE 的可变长编码，常见的编码为 UTF-8 编码。
+- UTF 编码（Unicode Transformation Format）：是一种 UNICODE 的可变长编码，常见的编码为 UTF-8 编码。  
+  UTF-8 编码中，中文字符占 3 个字节，英文字符占 1 个字节。  
+  UTF-16be 编码中，中文字符和英文字符都占 2 个字节。
+
+UTF-16be 中的 be 指的是 Big Endian，也就是大端。相应地也有 UTF-16le，le 指的是 Little Endian，也就是小端。  
+
+Java 的内存编码使用双字节编码 UTF-16be，这不是指 Java 只支持这一种编码方式，而是说 char 这种类型使用 UTF-16be 进行编码。char 类型占 16 位，也就是两个字节，Java 使用这种双字节编码是为了让一个中文或者一个英文都能使用一个 char 来存储。
 
 注：项目开发中全部都要使用 UTF-8 编码。
 
+String 可以看成一个字符序列，可以指定一个编码方式将它编码为字节序列，也可以指定一个编码方式将一个字节序列解码为 String。
+```java
+String str1 = "中文";
+byte[] bytes = str1.getBytes("UTF-8");
+String str2 = new String(bytes, "UTF-8");
+System.out.println(str2);
+```
+
 ### 字符流
+
+不管是磁盘还是网络传输，最小的存储单元都是字节，而不是字符。但是在程序中操作的通常是字符形式的数据，因此需要提供对字符进行操作的方法。
+- InputStreamReader 实现从字节流解码成字符流；
+
+- OutputStreamWriter 实现字符流编码成为字节流。
 
 **（1）字符输出流（转换流）：Writer**  
 
