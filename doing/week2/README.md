@@ -1096,7 +1096,7 @@ System.out 的类型是 PrintStream 是 OutputStream 的子类。
 
 2. 当没有键盘输入数据的时候，此时执行标准输入流的 read 方法，read 不会执行完，而是在执行过程中的某一步阻塞，等着我们键盘输入数据
 
-3. 如何让键盘输入的循环终止呢？ 自己定义键盘输入的结束规则。如：  
+3. 可以自己定义键盘输入的结束规则，让键盘输入的循环终止。如：  
     ```java
     while ((s = br.readLine()) != null) {
       System.out.println("接收到了：" + s);
