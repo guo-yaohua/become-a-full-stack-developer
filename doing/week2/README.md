@@ -1068,7 +1068,7 @@ public FileReader(File file)
 
 **（4）字符缓冲流**  
 
-同在字节流中引入缓冲流的原因相同，出于效率的考虑，在字符流中，我们同样引入缓冲流。
+操作字符类型数据，主要操作类是 Reader、Writer 的子类；使用缓冲区缓冲字符，不关闭流就不会输出任何内容。
 
 BufferedWriter
 - 构造方法：`BufferedWriter(Writer out)`。创建一个使用默认大小输出缓冲区的缓冲字符输出流。
@@ -1083,7 +1083,7 @@ BufferedReader
 
 ### 其它流
 
-（1）标准输入输出流
+**（1）标准输入输出流**  
 
 标准输入流：System 类中的字段 in 代表了系统的标准输入，默认的输入设备是键盘。  
 System.in 的类型是 InputStream。
