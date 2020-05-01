@@ -1116,7 +1116,10 @@ System.out 的类型是 PrintStream 是 OutputStream 的子类。
 ### 引入多线程
 
 进程（process），是指计算机中已运行的程序。  
-线程（thread）是操作系统能够进行运算调度的最小单位。大部分情况下，它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。 
+线程（thread）是操作系统能够进行运算调度的最小单位。大部分情况下，它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。  
+
+多线程是指一个进程在执行过程中可以产生多个线程，这些线程可以同时存在、同时运行。  
+多线程是实现并发机制的一种有效手段。
 
 
 多线程和单线程的执行路径对比：  
@@ -1141,7 +1144,7 @@ Java 命令运行一个程序的过程（`java 字节码文件名`）：
   并行： 同一时间点, 同时执行。
 
 
-### 多线程实现之方式一
+### 多线程实现方式一（继承Thread类）
 
 步骤：  
 1. 继承 Thread；
@@ -1152,10 +1155,59 @@ Java 命令运行一个程序的过程（`java 字节码文件名`）：
 
 4. 启动线程 start()。
 
-注：
-- 一个 Thread 类( Thread 子类) 对象代表一个线程；
+格式：  
+```java
+class 类名称 extends Thread {
+  属性
+  方法
+  public void run {
+    线程主题方法
+  }
+}
+```
 
-- 重写 Thread 类中的 run 方法。  
+举例：
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        MyThread mt1 = new MyThread("线程 A");    // 实例化
+        MyThread mt2 = new MyThread("线程 B");
+        MyThread mt3 = new MyThread("线程 C");
+
+        mt1.start();    // 启动多线程
+        mt2.start();
+        mt3.start();
+    }
+}
+
+class MyThread extends Thread {
+    private String name;    // 属性
+    public MyThread(String name) {   // 构造方法
+        this.name = name;
+    }
+    @Override
+    public void run() { // 覆盖 run() 方法，作为线程的主操作方法
+        for (int i = 0; i < 3; i++) {
+            System.out.println(this.name + " --> " + i);
+        }
+    }
+}
+/*可能的输出结果：
+线程 A --> 0
+线程 B --> 0
+线程 B --> 1
+线程 B --> 2
+线程 C --> 0
+线程 C --> 1
+线程 C --> 2
+线程 A --> 1
+线程 A --> 2
+*/
+```
+注：
+- 一个 Thread 类（Thread 子类）对象代表一个线程；
+
+- 必须重写 Thread 类中的 run 方法。  
   只有 Thread run() 方法中的代码，才会执行在子线程中。
 
 - 如果想要让代码在子线程中运行，并非一定要把代码写在 run 方法方法体中。  
@@ -1163,11 +1215,71 @@ Java 命令运行一个程序的过程（`java 字节码文件名`）：
   
   即，一个方法被哪个线程中的代码调用，被调用的方法，就运行在调用它的线程中。
 
-- 必须使用 start() 方法来启动线程，这样才能使 Thread 中的 run 方法运行在子线程中。  
-  如果通过调用 run 方法，来执行 Thread 的 run 方法代码，这仅仅只是普通的方法调用。
+- 必须使用 start() 方法来启动线程，这样才能使 Thread 中的 run() 方法运行在子线程中。  
+  如果通过调用 run() 方法，来执行 Thread 的 run() 方法代码，这仅仅只是普通的方法调用。
 
 - 同一个 Thread 或 Thread 子类对象（代表同一个线程），只能被启动一次。  
-  如果，我们要启动多个线程，只能创建多个线程对象，并启动这些线程对象。
+  如果想要启动多个线程，只能创建多个线程对象，并启动这些线程对象。
+
+### 多线程实现方式二（实现Runnable接口）
+
+步骤：  
+1. 定义实现 Runnable 接口的子类。
+
+2. 实现 Runnable 接口的 run 方法。
+
+3. 创建该子类对象。
+
+4. 在创建 Thread 对象的时候，将创建好的 Runnable 子类对象作为初始化参数，传递给 Thread 对象。
+
+5. 启动 Thread 对象（启动线程）。
+
+举例：
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        MyThread mt1 = new MyThread("线程 A");    // 实例化多线程类对象
+        MyThread mt2 = new MyThread("线程 B");
+        MyThread mt3 = new MyThread("线程 C");
+
+        new Thread(mt1).start();    // 利用 Thread 启动多线程
+        new Thread(mt2).start();
+        new Thread(mt3).start();
+    }
+}
+class MyThread implements Runnable {
+    private String name;
+    public MyThread(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 3; i++) {
+            System.out.println(this.name + " --> " + i);
+        }
+    }
+}
+```
+
+
+注：  
+- Runnable 接口子类的 run() 方法代码，会运行在子线程当中。所以在线程的第二种实现方式中，我们自己定义子类，实现 Runnable 接口的 run 方法。  
+  Runnable 子类对象并不代表线程，它只代表要在线程中执行的任务。
+
+- 从逻辑上说，第二种实现方式逻辑十分清晰：
+  1. 线程就是一条执行路径，至于在线程这条执行路径上，究竟执行的是什么样的具体代码，应该和线程本身没有关系的；
+
+  2. 线程实现的第二种方式，把线程（Thread 对象代表线程） 和在线程上执行的任务（Ruannable 子类对象） 分开。
+
+两种方式比较：
+- 方式一实现步骤较方式二少。
+
+- 方式一的实现方式，存在单重继承的局限性。
+
+- 方式二将线程和任务解耦。
+
+- 方式二，便于多线程数据的共享。
 
 
 ### 线程调度和线程优先级
@@ -1246,35 +1358,234 @@ public void interrupt()
 
 死亡：线程正常或异常终止（run() 方法执行完毕），线程对象成为垃圾，等待垃圾回收器回收。
 
-### 多线程实现之方式二
-
-步骤：  
-1. 定义实现 Runnable 接口的子类。
-
-2. 实现 Runnable 接口的 run 方法。
-
-3. 创建该子类对象。
-
-4. 在创建 Thread 对象的时候，将创建好的 Runnable 子类对象作为初始化参数，传递给 Thread 对象。
-
-5. 启动 Thread 对象（启动线程）。
-
-注：  
-- 我们 Runnable 接口子类的 run() 方法代码，会运行在子线程当中。所以在线程的第二种实现方式中，我们自己定义子类，实现 Runnable 接口的 run 方法。  
-  Runnable子类对象，并不代表线程，它只代表，要在线程中执行的任务。
-
-- 从逻辑上说，第二种实现方式逻辑十分清晰：
-  1. 线程就是一条执行路径，至于在线程这条执行路径上，究竟执行的是什么样的具体代码，应该和线程本身没有关系的；
-
-  2. 线程实现的第二种方式，把线程（Thread 对象代表线程） 和在线程上执行的任务（Ruannable 子类对象） 分开。
-
-两种方式比较：
-- 方式一实现步骤较方式二少。
-
-- 方式一的实现方式，存在单重继承的局限性。
-
-- 方式二将线程和任务解耦。
-
-- 方式二，便于多线程数据的共享。
-
 ### 多线程安全问题
+
+多个线程操作同一资源就有可能出现不同步的问题，出现问题的原因：  
+- 多线程运行环境（打破不了这个原因）。
+
+- 数据共享（无法打破该条件）。
+
+- 共享数据的非原子操作（可以打破）。  
+  原子操作：一组不可分割的操作，这一组操作要么一次全部执行完毕，要么不执行。
+
+**（1）synchronized**  
+想要解决这类问题，就必须使用同步操作。在 Java 中想要实现线程的同步，操作可以使用 synchronized 关键字。synchronized 关键字可以通过以下两种方式进行使用。
+- 同步代码块：利用 synchronized 包装的代码块，但是需要指定同步对象（锁对象），一般设置为 this。  
+  > **前情回顾**  
+    之前讲过 Java 中有 4 种代码块：普通代码块、构造代码块、静态块、同步块。这里的同步代码块即同步块。  
+    **知识提示**  
+    Java 中方法的完整定义格式如下：  
+  > ```java
+  > [public | protected | private] [static] [final] [native] [synchronized] 方法返回值类型 方法名称(参数列表 | 可变参数) [throws 异常, 异常,...] {}
+  > ```
+- 同步方法：利用 synchronized 定义的方法。
+
+
+同步代码块示例：  
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        MyThread mt = new MyThread();
+
+        new Thread(mt, "票贩子 A").start(); // 启动多线程
+        new Thread(mt, "票贩子 B").start();
+        new Thread(mt, "票贩子 C").start();
+    }
+}
+
+class MyThread implements Runnable {
+    private int ticket = 5;
+
+    @Override
+    public void run() {
+        while (ticket > 0) {
+            synchronized (this) { // 定义同步代码块
+                if (this.ticket > 0) {
+                    try {
+                        Thread.sleep(100);  // 休眠 1 s，模拟延迟
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(Thread.currentThread().getName() + " 卖出第 " + ticket-- + " 张票");
+                }
+            }
+        }
+    }
+}
+/*可能输出的结果：
+票贩子 A 卖出第 5 张票
+票贩子 C 卖出第 4 张票
+票贩子 B 卖出第 3 张票
+票贩子 C 卖出第 2 张票
+票贩子 A 卖出第 1 张票
+*/
+```
+
+注：
+- synchronized 代码块中的锁对象，可以是 Java 语言中的任意对象。  
+  锁对象，就充当着锁的角色。所谓的加锁解锁，其实就是设置随对象的标志位，来表示加锁解锁的状态。而 Java 中所有对象内部都存在一个标志位，表示加锁和解锁的状态。  
+
+- 当加锁线程执行完了同步代码块中的代码（对共享变量的一组操作），在退出同步代码块之前，JVM 自动清理锁对象的标志位，将锁对象变成未上锁状态。
+
+- 对于同一个共享变量的每一组操作，如果说要让他们变成原子操作，必须使用同一个锁对象。
+
+
+
+同步方法示例：
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        MyThread mt = new MyThread();
+
+        new Thread(mt, "票贩子 A").start();
+        new Thread(mt, "票贩子 B").start();
+        new Thread(mt, "票贩子 C").start();
+    }
+}
+
+class MyThread implements Runnable {
+    private int ticket = 5;
+
+    @Override
+    public void run() {
+        while (ticket > 0) {
+            this.sale();    // 买票操作
+        }
+    }
+
+    public synchronized void sale() {   // 同步方法
+        if (this.ticket > 0) {
+            try {
+                Thread.sleep(100);  // 休眠 1 s，模拟延迟
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println(Thread.currentThread().getName() + " 卖出第 " + ticket-- + " 张票");
+        }
+    }
+}
+/* 可能出现的结果：
+票贩子 A 卖出第 5 张票
+票贩子 C 卖出第 4 张票
+票贩子 C 卖出第 3 张票
+票贩子 C 卖出第 2 张票
+票贩子 B 卖出第 1 张票
+*/
+```
+
+注：一个线程进入一个对象的 synchronized 方法后，其它线程不能访问此对象的其它方法，因为一个对象操作一个 synchronized 方法只能由一个线程访问。
+
+**（2）Lock锁**  
+
+实现同步代码块，除了使用 synchronized 之外，在 JDK1.5 之后，提供了另外的方式 —— Lock 锁机制。 
+Lock：表示锁的接口，其实现机制与 synchronized 不同。
+- lock()
+- unlock()
+
+常用子类：ReentrantLock
+
+示例：
+```java
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class TestDemo {
+    public static void main(String[] args) {
+        MyThread mt = new MyThread();
+
+        new Thread(mt, "票贩子 A").start();
+        new Thread(mt, "票贩子 B").start();
+        new Thread(mt, "票贩子 C").start();
+    }
+
+    private static void synchronizedBlock() {
+        Object lock = new Object();
+        synchronized (lock) {
+        }
+    }
+}
+
+class MyThread implements Runnable {
+    private int ticket = 5;
+
+    private Lock lock = new ReentrantLock();    // 创建锁对象
+
+    @Override
+    public void run() {
+        while (ticket > 0) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // //利用 Lock 锁机制，构造同步代码块
+            lock.lock();
+            try {
+                if (ticket > 0) {
+                    System.out.println(Thread.currentThread().getName() + "卖出第" + ticket-- + "张票");
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
+}
+```
+
+
+**（3）死锁问题**  
+
+同步就是指一个线程要等待另外一个线程执行完毕才会继续执行的一种操作形式，虽然在一个程序中，使用同步可以保证资源共享操作的正确性，但是过多的同步也会产生问题。例如：张三想要李四的画，李四想要张三的书，那么张三对李四说了：“把你的画给我，我就给你书”，李四也对张三说了：“把你的书给我，我就给你画”，此时张三在等李四的答复，而李四也在等张三的答复，这样下去最终完成不了交换。这就是死锁问题。  
+死锁就是指两个以上的线程在执行过程中，因为争夺资源而产生的一种相互等待的现象。
+
+死锁问题的解决：
+- 调整获取多把锁的顺序，让所有线程，获取多把锁的顺序相同
+
+- 当锁的获取顺序不能调整的时候，就让一个线程要么一次持有所有的锁，要么一把锁都不持有。  
+  如果把一次持有多把锁，当成是一组原子操作，我们就可以重新在定义一把锁，利用这把锁（结合 synchronized）把一次获取多把锁，变成一组原子操作
+
+注：死锁是一种需要回避的代码，并且在多线程的开发中，死锁都是需要通过大量测试后才可以被检查出来的一种程序非法状态。
+
+
+### 生产者消费者模型
+
+<div align="center">
+<img src="./img/p3.png">
+</div>
+
+在生产者消费者模型中，生产者不断生产，并将产品放置在缓冲区，然后消费者从此缓存区中取走产品。  
+多个生产者和多个消费者各自都是以异步的方式运行，但是在某些情况写，生产者和消费者之间必须保持协作：
+- 当缓冲区空的时候，不允许消费者到缓冲区中取数据。
+
+- 当缓冲区满的时候，不允许生产者向缓冲区中放入数据。
+
+- 同时缓冲区中的一个单元，只能放入一个产品。
+
+同时还要注意，因为生产者和消费者都是异步的，但是它们都共享缓冲区。
+
+线程间通信，Java 中主要通过 Object 中的 3 个方法来实现：
+- `public final void wait() throws InterruptedException`：线程的等待。
+
+- `public final void notify()`：唤醒第一个等待的线程。
+
+- `public final void notifyAll()`：唤醒全部等待的线程。
+
+阻塞：在哪个线程中调用了 wait()（`对象a.wait()`），将导致调用 wait() 方法的线程处于阻塞状态。  
+  wait() 方法除了使线程阻塞之外，还发布对此监视器的所有权并等待，直到其他线程通过调用 notify() 方法或 notifyAll() 方法通知在此对象的监视器上等待的线程醒来。然后该线程将等到重新获得对监视器的所有权后才能继续执行。
+
+唤醒：在其他线程调用此对象的 notify() 方法或 notifyAll()方法。
+  - 前提条件：当前线程必须拥有此对象监视器 (当前线程必须持有这个锁对象)。  
+  
+  - notify() 唤醒在此对象监视器上等待的单个线程。如果所有线程都在此对象上等待，则会选择唤醒其中一个线程。选择是任意性的。
+
+  - notifyAll() 唤醒在此对象监视器上等待的所有线程。
+
+完整的线程状态转化：  
+<div align="center">
+<img src="./img/p4.png">
+</div>
+
