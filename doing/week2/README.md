@@ -1589,3 +1589,74 @@ class MyThread implements Runnable {
 <img src="./img/p4.png">
 </div>
 
+### 线程池
+
+JDK5 提供了 Executors 来产生线程池，有如下方法：  
+```java
+/*
+1. 创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。
+2. 对于执行很多短期异步任务的程序而言，这些线程池通常可提高程序性能。
+3. 如果现有线程没有可用的，则创建一个新线程并添加到池。
+4. 终止并从缓存中移除那些已有 60 秒钟未被使用的线程。
+*/
+ExecutorService newCachedThreadPool()
+
+/*
+1.创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程
+2.以共享的无界队列方式来运行这些线程。在任意点，在大多数 nThreads 线程会处于处理任务的活动状态。
+3.如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待
+*/
+ExecutorService newFixedThreadPool(int nThreads)
+
+/*
+1.创建一个使用单个 worker 线程的 Executor；
+2.以无界队列方式来运行该线程。
+*/
+ExecutorService newSingleThreadExecutor()
+```
+
+对于线程池而言可以向他提交两种类型的异步任务：
+- Runnable 子类对象没有返回值。
+
+- Callable。
+
+线程池的使用：ExecutorService(接口)
+- Future<T> submit(Callable<T> task)
+
+- Future<?> submit(Runnable task)
+
+### 定时任务
+
+在实际开发中，我们需要一些任务在如下情况下执行：
+- 在指定的时间延迟之后，比如 3s 后执行。
+
+- 在未来某固定的时间点执行。
+
+- 以固定的时间间隔重复执行等等。
+
+这些待执行的任务统统称之为，定时任务。我们通过定时器 Timer 来控制定时任务的执行。
+
+Timer：一种工具，线程用其安排以后在后台线程中执行的任务。可安排任务执行一次，或者定期重复执行。  
+Timer 用来安排任务执行的时间， 但具体在指定的时间执行的任务是由 TimerTask 对象决定。
+
+```java
+// 安排在指定的时间执行指定的任务。
+schedule(TimerTask task, Date time)
+      
+// 安排指定的任务在指定的时间开始进行重复的固定延迟执行。（period 毫秒）
+void schedule(TimerTask task, Date firstTime, long period)  
+      
+// 安排在指定延迟后执行指定的任务。
+void schedule(TimerTask task, long delay)
+      
+// 安排指定的任务从指定的延迟后开始进行重复的固定延迟执行。
+void schedule(TimerTask task, long delay, long period)
+      
+// 安排指定的任务在指定的时间开始进行重复的固定速率执行。
+void scheduleAtFixedRate(TimerTask task, Date firstTime, long period)
+```    
+
+cancel 方法：
+-  Timer 的 cancel 方法：当前 Timer 中所有的定时任务都会被取消。
+
+- TimerTask 的 cancel方法：只终止一个 TimerTask 的执行，前提是（他还没有被 Timer 调度执行）。
