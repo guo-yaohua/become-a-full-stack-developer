@@ -1379,6 +1379,7 @@ public void interrupt()
   原子操作：一组不可分割的操作，这一组操作要么一次全部执行完毕，要么不执行。
 
 **（1）synchronized**  
+
 想要解决这类问题，就必须使用同步操作。在 Java 中想要实现线程的同步操作，可以使用 synchronized 关键字。synchronized 关键字可以通过以下两种方式进行使用。
 - 同步代码块：利用 synchronized 包装的代码块，但是需要指定同步对象（锁对象），一般设置为 this。  
   > **前情回顾**  
@@ -1669,4 +1670,4 @@ void scheduleAtFixedRate(TimerTask task, Date firstTime, long period)
 cancel 方法：
 -  Timer 的 cancel 方法：当前 Timer 中所有的定时任务都会被取消。
 
-- TimerTask 的 cancel方法：只终止一个 TimerTask 的执行，前提是（他还没有被 Timer 调度执行）。
+- TimerTask 的 cancel 方法：只终止一个 TimerTask 的执行，前提是（他还没有被 Timer 调度执行）。
