@@ -1812,6 +1812,14 @@ Socket传输的原理：
 
 ### UDP传输
 
+网络编程的核心意义在于不同的电脑主机之间进行的数据交互，但是在 Java 中将这一概念又进一步进行了简化，即 Java 是以 JVM 进程划分网络的（如果一台电脑运行多个 JVM，那么这些不同的 JVM 彼此都是一台主机）。  
+
+网络编程的实质意义在于数据的交互，而在交互的过程中一定会分为服务器端与客户端，而这两端的开发就会存在以下两种方式。  
+- C/S 结构（Client/Server）：一般需要编写两套程序，一套是客户端代码，另一套属于服务器端代码。由于需要有编写程序，所有对开发以及维护的成本比较高。但是由于其使用的是自己的连接端口与交换协议，所有安全性比较高。而 C/S 结构程序的开发分为两种：TCP（传输控制协议，可靠的传输）和 UDP（数据报协议）。  
+
+- B/S 结构（Brower/Server）：不再单独开发客户端代码，只开发一套服务端程序，客户端利用浏览器进行访问，这种模式只需要开发一套程序，但是安全性不高，因为使用的是公共的 HTTP 协议以及公共的 80 端口。  
+
+
 **（1）UDP发送端**  
 
 步骤：
@@ -1940,70 +1948,143 @@ public class Receiver {
 - DatagramSocket 的 receive 方法是一个阻塞方法，当没有数据发送的时候，如果执行到 receive 方法，该方法会阻塞。
 
 
+### TCP传输
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!---
-### 网络编程
-
-网络编程的核心意义在于不同的电脑主机之间进行的数据交互，但是在 Java 中将这一概念又进一步进行了简化，即 Java 是以 JVM 进程划分网络的（如果一台电脑运行多个 JVM，那么这些不同的 JVM 彼此都是一台主机）。  
-
-网络编程的实质意义在于数据的交互，而在交互的过程中一定会分为服务器端与客户端，而这两端的开发就会存在以下两种方式。  
-- C/S 结构（Client/Server）：一般需要编写两套程序，一套是客户端代码，另一套属于服务器端代码。由于需要有编写程序，所有对开发以及维护的成本比较高。但是由于其使用的是自己的连接端口与交换协议，所有安全性比较高。而 C/S 结构程序的开发分为两种：TCP（传输控制协议，可靠的传输）和 UDP（数据报协议）。  
-
-- B/S 结构（Brower/Server）：不再单独开发客户端代码，只开发一套服务端程序，客户端利用浏览器进行访问，这种模式只需要开发一套程序，但是安全性不高，因为使用的是公共的 HTTP 协议以及公共的 80 端口。  
-
-我们要学习的是 C/S 开发中的 TCP 程序实现。
-
-### java.net包
-
-java.net 包提供了网络编程有关的开发工具类，在此包中有以下两个核心操作类。  
+java.net 包提供了网络编程有关的开发工具类，在此包中有以下两个 TCP 核心操作类：
 - ServerSocket 类：是一个封装的 TCP 协议的操作类，主要工作在服务器端，用户接收客户端请求。
 
 - Socket 类：也是一个封装了 TCP 协议的操作类，每个 Socket 对象都代表一个客户端。  
 
-ServerSocket 类常用方法：
+**（1）TCP接收端（服务端）**  
+
+步骤：  
+1. 创建 Serversocket 对象，在指定端口，监听客户端连接请求；
+
+2. 收到客户端连接请求后，建立 Socket 连接；
+
+3. 如果连接建立成功，就表明已经建立了数据传输的通道。就可以在该通道通过 IO 进行数据的读取和写入，从 Socket 中根据需要获取输入流或输出流；
+
+4. 根据需要向流中写入数据或从流中读数据；
+
+5. 释放资源。
+
+常用方法：
+- `ServerSocket(int port)`：创建绑定到特定端口的服务器套接字。
+
+- `public Socket accept()`：侦听并接受到此套接字的连接(请求)。此方法在连接传入之前一直阻塞。
+
+注：
+1. ServerSocket 仅仅只处理客户端的连接请求，并且其 accept 方法在接收到连接请求之后，会为本次连接创建新的 Socket 对象。
+
+2. 是服务器端的 Socket 对象和客户端的 Socket 对象之间建立连接并传输数据
+
+常见报错：
+- `BindException: Address already in use`：同一个端口号，只能属于一个进程。
+
+示例：  
 ```java
-// 构造方法
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-// 开辟一个指定的端口监听，一般使用 5000 以上的端口。
-public ServerSocket(int put) throws IOException
+public class Server {
+  public static void main(String[] args) throws IOException {
+    // 创建 ServerSocket 对象，在指定端口监听客户端连接请求
+    ServerSocket serverSocket = new ServerSocket(11111);
 
-// 成员方法
+    // 收到客户端连接请求后，建立 Socket 连接
+    Socket socket = serverSocket.accept();
 
-// 服务器端接收客户端请求，通过 Socket 返回。
-public Socket accept() throws IOException
+    // 在建立好的连接中，通过在服务器端的 Socket 对象中获取流，来进行数据传输
+    InputStream inputStream = socket.getInputStream();
 
-// 关闭服务器端
-public void close() throws IOException
+    // 在输入流中读取客户端发送的数据
+    byte[] buffer = new byte[1024];
+    int len = inputStream.read(buffer);
+
+    // 解析接收到的数据
+    String s = new String(buffer, 0, len);
+    System.out.println(s);
+
+    // 关闭资源, Socket 中的流，不用专门关闭，Socket 会负责关闭它所持有的流
+    socket.close();
+    serverSocket.close();
+  }
+}
 ```
 
-Socket 类常用方法：
+**（1）TCP客户端**  
+
+步骤：  
+1. 建立客户端的 Socket 对象，并明确要连接的服务器；
+
+2. 如果对象建立成功，就表明已经建立了连接。就可以在该通道通过 IO 进行数据的读取和写入。根据需要，从 Socket 对象中获取输入流或输出流；
+
+3. 向流中读取或写入数据；
+
+4. 释放资源
+
+常见方法：  
+- `Socket()`：实现客户端套接字，连接本机 IP + 一个创建该对象时随机分配的端口号。
+
+- `Socket(String host, int port)`：创建一个流套接字，并将其连接到指定主机上的指定端口号。  
+  host：主机名或 IP 地址字符串，或者为 null，表示回送地址（127.0.0.1）。  
+  port：端口号。  
+
+- `getInputStream()`：返回此套接字的输入流。
+
+常见报错：
+- `java.net.ConnectException: Connection refused: connect`：在没有服务器端的时候，直接运行客户端。
+
+示例：  
 ```java
-// 构造方法
+public class Client {
+  public static void main(String[] args) throws IOException {
+    // 建立客户端的 Socket 对象，并明确要连接的服务器。
+    Socket socket = new Socket("192.168.0.100", 11111);
 
-// 指定要连接的主机（IP 地址）和端口
-public Socket(String host, int port) throws UnknownHostException, IOException
+    // 如果要发送数据，那么就从 Socket 对象中获取输出流
+    OutputStream outputStream = socket.getOutputStream();
 
-// 成员方法
+    // 通过输出流，向对端发送数据
+    String s = "hello, tcp";
 
-// 取得指定客户端的输出对象，使用 PrintStream 操作
-public OupputStream getOutputStream() throws IOException
+    // 利用输出流的 write 方法传输数据
+    outputStream.write(s.getBytes());
 
-// 从指定的客户端读取数据，使用 Scanner 操作
-public InputStream getInputStream() throws IOException
+    //关闭资源, Socket中的流，不用专门关闭，socket会负责关闭它所持有的流
+    socket.close();
+  }
+}
 ```
---->
+
+## 反射
+
+反射是 Java 中最为重要的特性，几乎所有的开发框架以及应用技术中都是基于反射技术的应用。
+
+### Class类对象实例化
+
+通过 Object 类中的 getClass() 方法，可以通过对象获取此对象所在类的信息。返回的类型为 java.lang.Class，这是反射操作的源头，即所有的反射操作都需要通过此类开始这个类有 3 种实例化方式。
+- 调用 Object 类 getClass() 方法。如：  
+  ```java
+  Date date = new date;
+  Class<?> cls = date.getClass();
+  ```
+
+- 使用 `类.class` 取得。如：  
+  ```java
+  Class<?> cls = java.util.Date.class;
+  ```
+
+- 调用 Class 类提供的方法：`public static Class<?> forName(String className) throws ClassNotFoundException`。如：  
+  ```java
+  Class<?> cls = Class.forName("java.util.Date");
+  ```
+
+注:
+- Class.forName 方法，参数必须是一个类全类名。
+
+- `类名.class` 触发的类加载过程是不完整的类加载过程（静态代码块中的代码不会执行），而 `Class.forName` 触发的是完整的类加载过程。
+
+- 开发中，多用第三种方式来获取某个类的 Class 对象, 因为这种方式很灵活，该方法可以根据不同全类名，加载全类名。
