@@ -2065,7 +2065,7 @@ public class Client {
 
 ### Class类对象实例化
 
-通过 Object 类中的 getClass() 方法，可以通过对象获取此对象所在类的信息。返回的类型为 java.lang.Class，这是反射操作的源头，即所有的反射操作都需要通过此类开始这个类有 3 种实例化方式。
+通过 Object 类中的 getClass() 方法，可以通过对象获取此对象所在类的信息。返回的类型为 java.lang.Class，这是反射操作的源头，即所有的反射操作都需要通过此类开始。这个类有 3 种实例化方式。
 - 调用 Object 类 getClass() 方法。如：  
   ```java
   Date date = new date;
