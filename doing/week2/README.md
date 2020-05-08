@@ -2658,4 +2658,26 @@ Retained size 是该对象自己的 shallow size 加上仅可以从该对象访�
 
 Retained size 是该对象被 GC 之后所能回收的内存的总和。
 
+shallow size 和 retained size：  
+<div align="center">
+<img src="./img/p12.png"><img src="./img/p13.png">
+</div>
+
+GC触发的时机：
+- 申请 heap space 失败后会触发 GC 回收。
+
+- 系统进入 idle 后一段时间会进行回收。
+
+- 主动调用 GC 进行回收。
+
+### 内存相关问题
+
+Out of Memory case：
+- Heap  OOM 堆溢出。
+
+- Stack Overflow 栈溢出。
+
+内存泄漏（Memory Leak）是指程序中己动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费，导致程序运行速度减慢甚至系统崩溃等严重后果。
+
+注：内存泄露可能导致内存溢出，但不是必然导致内存溢出。
 
