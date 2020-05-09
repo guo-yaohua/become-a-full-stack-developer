@@ -1,18 +1,11 @@
 package com.gyh.test;
 
-interface Print {  // 定义一个接口
-    public void print();
-}
-
 public class TestDemo {
 
     public static void main(String[] args) {
-        new Print() {
-            @Override
-            public void print() {
-                System.out.println("HelloWorld");
-            }
-        }.print();
+        String s = "Hello";
+        s = s.replace("He", "he");
+        System.out.println(s);
     }
 }
 

@@ -943,195 +943,158 @@ HelloWorld
 
 Object 类是所有类的父类，也就是说任何一个类在定义时如果没有明确地继承一个父类，那它就是 Object 类的子类。  
 - 每个类都使用 Object 作为超类。  
-  在设计代码时，如果不确定参数类型，可以使用 Object 类。因此它可以通过向上转型来接收全部类的对象。  
+  在设计代码时，如果不确定参数类型，可以使用 Object 类。因为它可以通过向上转型来接收全部类的对象。  
 
 - 所有对象（包括数组）都有这个类的方法。
 
-Object() 类：
-```java
-// 构造方法
-public Object();  // 因此所有类都会有一个默认的无参构造方法
+构造方法：
+- `public Object()`：因此所有类都会有一个默认的无参构造方法。
 
-// 常见成员方法
-public final Class getClass();
-public String toString(); // 取得对象信息
-public boolean equals(Object obj);  // 对象比较
-public int hashCode();  // 取得对象哈希码
-protected Object clone();
-protected void finalize();  // 了解即可
-```
+常见成员方法：
+- `public final Class getClass()`：返回此 Object 的运行时类。返回的 Class 对象是由所表示类的 static synchronized 方法锁定的对象。  
+  Class 对象代表一个类，表示的就是所有类的共性：
+  - 构造方法。
+  - 成员变量。
+  - 成员方法。
 
-**（1）getClass()**  
+- `public String toString()`：返回该对象的字符串表示。  
+  通常 toString 方法会返回一个「以文本方式表示」此对象的字符串。结果应是一个简明但易于读懂的信息表达式。  
+  建议所有子类都重写此方法。  
+  
+  该字符串由类名（对象是该类的一个实例）、标记符（@）和此对象哈希码的无符号十六进制表示组成。换句话说，该方法返回一个字符串，它的值等于：`getClass().getName() + '@' + Integer.toHexString(hashCode())`。
 
-getClass() 返回此 Object 的运行时类。返回的 Class 对象是由所表示类的 static synchronized 方法锁定的对象。   
+- `public boolean equals(Object obj)`：指示其他某个对象是否与此对象「相等」。  
+  equals 方法用于检查一个对象是否等于另一个对象。在 Object 类中，这个方法将判断两个对象是否具有相同的引用。   
+  格式：`对象.equals(比较对象)`。  
 
-每个类对应对应的字节码文件内容，被加载到方法区之后，就会创建一个 Class 对象（该对象的包含该类，类定义信息）。  
-Class 对象代表一个类，表示的就是所有类的共性：
-- 构造方法
-- 成员变量
-- 成员方法
+  equals 方法在非空对象引用上实现相等关系： 
+  - 自反性：对于任何非空引用值 x，`x.equals(x)` 都应返回 true。 
 
-**（2）toString()**  
+  - 对称性：对于任何非空引用值 x 和 y，当且仅当 y.equals(x) 返回 true 时，`x.equals(y)` 才应返回 true。 
 
-toString() 返回该对象的字符串表示。  
-通常 toString 方法会返回一个「以文本方式表示」此对象的字符串。结果应是一个简明但易于读懂的信息表达式。建议所有子类都重写此方法。  
+  - 传递性：对于任何非空引用值 x、y 和 z，如果 `x.equals(y`) 返回 true，并且 `y.equals(z)` 返回 true，那么 `x.equals(z)` 应返回 true。 
 
-该字符串由类名（对象是该类的一个实例）、标记符（@）和此对象哈希码的无符号十六进制表示组成。换句话说，该方法返回一个字符串，它的值等于：`getClass().getName() + '@' + Integer.toHexString(hashCode())`。
+  - 一致性：对于任何非空引用值 x 和 y，多次调用 x.equals(y) 始终返回 true 或始终返回 false，前提是对象上 equals 比较中所用的信息没有被修改。 
 
-**（3）equals()**  
+  - 对于任何非空引用值 x，`x.equals(null)` 都应返回 false。 
 
-equals 方法用于检查一个对象是否等于另一个对象。在 Object 类中，这个方法将判断两个对象是否具有相同的引用。  
-格式：`对象.equals(比较对象)`。  
+- `public int hashCode()`：取得对象哈希码。  
+  支持此方法是为了提高哈希表（例如 java.util.Hashtable 提供的哈希表）的性能。   
 
-equals 方法在非空对象引用上实现相等关系： 
-- 自反性：对于任何非空引用值 x，x.equals(x) 都应返回 true。 
+  hashCode 的常规协定是： 
+  - 在 Java 应用程序执行期间，在对同一对象多次调用 hashCode 方法时，必须一致地返回相同的整数，前提是将对象进行 equals 比较时所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。 
 
-- 对称性：对于任何非空引用值 x 和 y，当且仅当 y.equals(x) 返回 true 时，x.equals(y) 才应返回 true。 
+  - 如果根据 equals(Object) 方法，两个对象是相等的，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果。 
 
-- 传递性：对于任何非空引用值 x、y 和 z，如果 x.equals(y) 返回 true，并且 y.equals(z) 返回 true，那么 x.equals(z) 应返回 true。 
+  - 如果根据 equals(Object) 方法，两个对象不相等，那么对这两个对象中的任一对象上调用 hashCode 方法不要求一定生成不同的整数结果。但是 coder 应该意识到为不相等的对象生成不同整数结果可以提高哈希表的性能。 
 
-- 一致性：对于任何非空引用值 x 和 y，多次调用 x.equals(y) 始终返回 true 或始终返回 false，前提是对象上 equals 比较中所用的信息没有被修改。 
+  实际上，由 Object 类定义的 hashCode 方法确实会针对不同的对象返回不同的整数。这一般是通过将该对象的内部地址转换成一个整数来实现的，但是 Java 编程语言不需要这种实现技巧。  
 
-- 对于任何非空引用值 x，x.equals(null) 都应返回 false。 
+- `protected Object clone()`：创建并返回此对象的一个副本。「副本」的准确含义可能依赖于对象的类。  
+  对于任何对象 x，表达式：
+  - `x.clone() != x` 为 true。  
+    说明 clone 创建了一个新的对象。
 
-Object 类的 equals 方法实现对象上差别可能性最大的相等关系；即，对于任何非空引用值 x 和 y，当且仅当 x 和 y 引用同一个对象时，此方法才返回 true（x == y 具有值 true）。 
+  - `x.clone().getClass() == x.getClass()` 为 true。  
+    说明 clone 创建的对象和原对象是同一个类的对象。
 
-**（4）hashCode()**  
+  - `x.clone().equals(x)` 为 true。  
+    说明复制对象和原对象的内容（成员变量值）也相同。  
 
-返回该对象的哈希码值。支持此方法是为了提高哈希表（例如 java.util.Hashtable 提供的哈希表）的性能。   
+  注：被 clone() 方法复制的对象，所属的类必须实现一个接口 Cloneable。  
 
-hashCode 的常规协定是： 
-- 在 Java 应用程序执行期间，在对同一对象多次调用 hashCode 方法时，必须一致地返回相同的整数，前提是将对象进行 equals 比较时所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。 
+  Cloneable 接口是个空接口。
+  ```java
+  public interface Cloneable {}
+  ```
+  空接口也被称之为标记接口：做标记（数据类型层面的标记）。对于 clone 方法而言，Cloneable 就是一个标记，因为 clone 只会复制，实现类了 Cloneable 接口的类的对象。  
+  利用 instanceof 运算符判断：`对象  instanceof  Cloneable`。
 
-- 如果根据 equals(Object) 方法，两个对象是相等的，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果。 
+  浅拷贝（Shallow Clone）：被复制对象的所有变量都含有与原来对象相同的值，而所有对其它对象的引用仍然指向原来的对象。换而言之，浅拷贝仅仅复制所考虑的对象，而不复制它所引用的对象。  
 
-- 如果根据 equals(java.lang.Object) 方法，两个对象不相等，那么对这两个对象中的任一对象上调用 hashCode 方法不 要求一定生成不同的整数结果。但是，程序员应该意识到，为不相等的对象生成不同整数结果可以提高哈希表的性能。 
+  深拷贝（Deep Clone）：被复制对象的所有变量都含有与原来对象相同的值，除去那些引用其它对象的变量。那些引用其它对象的变量将指向被复制的新对象，而不再是原有的那些被引用的对象。换而言之，深拷贝把复制的对象所引用的对象都复制了一遍。  
 
-实际上，由 Object 类定义的 hashCode 方法确实会针对不同的对象返回不同的整数。  
-这一般是通过将该对象的内部地址转换成一个整数来实现的，但是 Java 编程语言不需要这种实现技巧。  
+- `protected void finalize()`：当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。  
+  子类重写 finalize 方法以配置系统资源或执行其他清除。  
 
+  finalize 的常规协定是：当 JVM 已确定尚未终止的任何线程无法再通过任何方法访问此对象时，将调用此方法，除非由于准备终止的其他某个对象或类的终结操作执行了某个操作。
 
-**（5）clone()**  
-
-创建并返回此对象的一个副本。「副本」的准确含义可能依赖于对象的类。
-
-对于任何对象 x，表达式：
-- `x.clone() != x` 为 true。  
-  说明 clone 创建了一个新的对象。
-
-- `x.clone().getClass() == x.getClass()` 为 true。  
-  说明 clone 创建的对象和原对象是同一个类的对象。
-
-- `x.clone().equals(x)` 为 true。  
-  说明复制对象和原对象的内容（成员变量值）也相同。  
-
-注：被 clone() 方法复制的对象，所属的类必须实现一个接口 Cloneable。  
-
-Cloneable 接口是个空接口。
-```java
-public interface Cloneable {
-}
-```
-空接口也被称之为标记接口：做标记（数据类型层面的标记）。比如说对于 clone 方法而言，Cloneable 就是一个标记，因为 clone 只会复制，实现类了 Cloneable 接口的类的对象。  
-利用 instanceof 运算符判断：`对象  instanceof  Cloneable`。
-
-浅拷贝（Shallow Clone）：被复制对象的所有变量都含有与原来对象相同的值，而所有对其它对象的引用仍然指向原来的对象。换而言之，浅拷贝仅仅复制所考虑的对象，而不复制它所引用的对象。  
-
-深拷贝（Deep Clone）：被复制对象的所有变量都含有与原来对象相同的值，除去那些引用其它对象的变量。那些引用其它对象的变量将指向被复制的新对象，而不再是原有的那些被引用的对象。换而言之，深拷贝把复制的对象所引用的对象都复制了一遍。  
-
-**（6）finalize()**  
-
-当垃圾回收器确定不存在对该对象的更多引用时，由对象的垃圾回收器调用此方法。子类重写 finalize 方法，以配置系统资源或执行其他清除。  
-
-finalize 的常规协定是：当 JVM 已确定尚未终止的任何线程无法再通过任何方法访问此对象时，将调用此方法，除非由于准备终止的其他某个对象或类的终结操作执行了某个操作。  
-finalize 方法可以采取任何操作，其中包括再次使此对象对其他线程可用；不过，finalize 的主要目的是在不可撤消地丢弃对象之前执行清除操作。
-
-比如：当我们要执行一些 IO 或者是网络通信的功能的时候，JVM 是借助操作系统的内核完成的，所以执行这些功能时，Java 程序需要占用一定的操作系统资源，当程序使用完操作系统资源的时候，即时释放资源。当使用资源的对象变成垃圾，才能安全的释放系统资源。  
-finalize 方法刚刚好就是在对象变成垃圾，并且被垃圾回收器回收的时候会调用这个方法。但是回收时机不确定。
+  finalize 方法可以采取任何操作，其中包括再次使此对象对其他线程可用；不过，finalize 的主要目的是在不可撤消地丢弃对象之前执行清除操作。
+  比如：当我们要执行一些 IO 或者是网络通信的功能的时候，JVM 是借助操作系统的内核完成的，所以执行这些功能时，Java 程序需要占用一定的操作系统资源，当程序使用完操作系统资源的时候，即时释放资源。当使用资源的对象变成垃圾，才能安全的释放系统资源。  
+  finalize 方法刚刚好就是在对象变成垃圾，并且被垃圾回收器回收的时候会调用这个方法。但是回收时机不确定。
 
 
 ### String类
 
 Java 没有内置的字符串类型，而是标准 Java 类库中提供了一个预定义类 String。每个用双引号括起来的字符串都是 String 类的一个实例。  
-```java
-// 构造方法
 
-public String() // 空字符串 ""
+常用构造方法：
+- `public String()`：初始化一个新创建的 String 对象，使其表示一个空字符序列 `""`。
 
-/* 利用字节数组，创建字节数组所表示的字符串
-   字符 -> 数值形式 'a' -> 97，所以可以用多个字节值，表示多个字符 -> 即字符序列
-*/
-public String(byte[] bytes)
+- `public String(byte[] bytes)`：利用字节数组，创建字节数组所表示的字符串。  
+  字符是以数值形式存储（'a' -> 97），所以可以用多个字节值，表示多个字符，即字符序列。
 
-// 利用字节数数组的一部分，创建字符序列, 从 byte 数组的 offset 开始的 length 个字节值
-public String(byte[] bytes,int offset,int length)
+- `public String(byte[] bytes,int offset,int length)`：利用字节数数组的一部分，创建字符序列，从 byte 数组的 offset 开始的 length 个字节值。
 
-// 利用一个字符数组创建字符数组，代表的字符序列
-public String(char[] value)
+- `public String(char[] value)`：利用一个字符数组创建字符串。
 
-// 创建 value 字符数组中，从第 offset 位置开始的 count 个字符所代表的字符串对象
-public String(char[] value,int offset,int count)
+- `public String(char[] value,int offset,int count)`：创建字符数组从第 offset 位置开始的 count 个字符所代表的字符串对象。
 
-public String(String original)
-```
+- `public String(String original)`：初始化一个新创建的 String 对象，使其表示一个与参数相同的字符序列；换句话说，新创建的字符串是该参数字符串的副本。
 
-字符串是常量，它的值在创建之后不能更改。
+注：字符串是常量，它的值在创建之后不能更改。
 
-String 类的的判断功能：  
-```java
-boolean equals(Object obj)  // 比较字符串内容
-boolean equalsIgnoreCase(String str) // 比较字符串内容，但是忽略字符串大小写
+String 类的判断功能：  
+- `boolean equals(Object obj)`：比较字符串内容。
 
-boolean contains(String str) // 判断当前字符串中是否包含，参数字符串
+- `boolean equalsIgnoreCase(String str)`：比较字符串内容，但是忽略字符串大小写。
 
-boolean startsWith(String str) // 当前字符串是否以参数字符串开头
-boolean endsWith(String str)
+- `boolean contains(String str)`：判断当前字符串中是否包含，参数字符串。
 
-boolean isEmpty() // 判断字符串是否为空串
-```
 
-String类的的获取功能：  
-```java
-int  length()   //返回当前字符串中包含的字符个数
+- `boolean startsWith(String str)`：判断字符串是否以参数字符串开头。
 
-char charAt(int index)  // 获取字符串指定位置的字符（字符串中的字符，从左到右，从 0 开始编号）
+- `boolean endsWith(String str)`：判断字符串是否以参数字符串结尾。
 
-int indexOf(int ch) // 在当前字符串中，查找参数字符，如果当前字符串中存在，则返回首次出现的位置，若不存在则返回 -1
+- `boolean isEmpty()`：判断字符串是否为空串
+`
 
-int indexOf(String str) // 在当前字符串中，查找参数字符串首次出现的位置如果找到返回，参数字符串首次出现的首字母的位置，否则返回 -1
+String 类的的获取功能：  
+- `int  length()`：返回当前字符串中包含的字符个数。
 
-int indexOf(int ch, int fromIndex) // 指定从字符串的 fromIndex 位置开始，向后查找指定字符，找到返回其从 formIndex 开始，首次出现的位置，否则返回 -1
+- `char charAt(int index)`：获取字符串指定位置的字符（字符串中的字符，从左到右，从 0 开始编号）。
 
-int indexOf(String str, int fromIndex) // 指定从字符串的 fromIndex 位置开始，向后查找指定字符串，找到返回其从 formIndex 开始，首次出现的位置，否则返回 -1
+- `int indexOf(int ch)`：在当前字符串中，查找参数字符，如果当前字符串中存在，则返回首次出现的位置，若不存在则返回 -1。
 
-String substring(int start)  //生成当前字符串的子串，字串的取值是原字符串的 [start, length()-1]
+- `int indexOf(String str)`：在当前字符串中，查找参数字符串首次出现的位置。找到，则返回参数字符串首次出现的首字母的位置，否则返回 -1。
 
-String substring(int start, int end) //生成当前字符串的子串，字串的取值是原字符串的 [start, end)
-```
+- `int indexOf(int ch, int fromIndex)`：指定从字符串的 fromIndex 位置开始，向后查找指定字符。找到，则返回其从 formIndex 开始首次出现的位置，否则返回 -1。
+
+- `int indexOf(String str, int fromIndex)`：指定从字符串的 fromIndex 位置开始，向后查找指定字符串。找到，则返回其从 formIndex 开始首次出现的位置，否则返回 -1。
+
+- `String substring(int start)`：生成当前字符串的子串，字串的取值是原字符串的 [start, length()-1]。
+
+- `String substring(int start, int end)`：生成当前字符串的子串，字串的取值是原字符串的 [start, end)。
 
 String 类的的转换功能：
-```java
-byte[] getBytes()  // 获取表示一个字符串中，多个字符对应多个字节值
+- `byte[] getBytes()`： 使用平台的默认字符集将此 String 编码为 byte 序列，并将结果存储到一个新的 byte 数组中。
 
-char[] toCharArray() // 获取表示一个字符串中，多个字符对应多个字符
+- `char[] toCharArray()`：将此字符串转换为一个新的字符数组。
 
-static String valueOf(char[] chs) // 把一个字符数组转化成一个字符串
+- `static String valueOf(char[] chs)`：返回 char 数组参数的字符串表示形式。
 
-static String valueOf(int i) // 把一个整数值，转化成其字符串表示形式
+- `static String valueOf(int i)`：返回 int 参数的字符串表示形式。
 
-String toLowerCase() // 把一个字符串的所有字符转化成小写，返回该新的字符串对象
+- `String toLowerCase()`：使用默认语言环境的规则将此 String 中的所有字符都转换为小写。
 
-String toUpperCase() // 把一个字符串的所有字符转化成大写，返回该新的字符串对象
+- `String toUpperCase()`：使用默认语言环境的规则将此 String 中的所有字符都转换为大写。
 
-String concat(String str) // 完成字符串拼接 了解
-```
+- `String concat(String str)`：将指定字符串连接到此字符串的结尾。
 
 String 类的替换功能：  
-```java
-String replace(char old,char new) // 在新的字符串中，用新 （new） 字符，替换旧 （old） 字符
+- `String replace(char oldChar, char newChar)`：返回一个新的字符串，它是通过用 newChar 替换此字符串中出现的所有 oldChar 得到的。
 
-String replace(String old, String new) // 在新的字符串中，用新的字符串（new）, 替换旧（old）字符串
-```
+- `String replace(CharSequence target, CharSequence replacement)`：使用指定的字面值替换序列替换此字符串所有匹配字面值目标序列的子字符串。
 
 String 类去除空字符串：  
 ```
