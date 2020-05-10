@@ -1,11 +1,19 @@
 package com.gyh.test;
 
-public class TestDemo {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-    public static void main(String[] args) {
-        String s = "Hello";
-        s = s.replace("He", "he");
-        System.out.println(s);
+public class TestDemo {
+    public static void main(String[] args) throws ParseException {
+        Date date = new Date();
+        System.out.println("默认：" + date);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        System.out.println("格式处理：" + simpleDateFormat.format(date));
+
+        date = simpleDateFormat.parse("2020/01/10 17:06:00");
+        System.out.println("解析字符串：" + date);
     }
 }
 

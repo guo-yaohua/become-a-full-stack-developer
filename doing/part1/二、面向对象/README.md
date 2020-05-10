@@ -16,9 +16,13 @@
 - [内部类和匿名内部类](#内部类和匿名内部类)  
   - [内部类](#内部类)
   - [匿名内部类](#匿名内部类)
-- [Object类和String类](#Object类和String类)  
+- [常见类](#常见类)  
   - [Object类](#Object类)
   - [String类](#String类)
+  - [StringBuffer类](#StringBuffer类)
+  - [Date类](#Date类)
+  - [DateFormat类](#DateFormat类)
+  - [Math类](#Math类)
 
 
 ## 面向对象
@@ -937,7 +941,7 @@ HelloWorld
 
 特征：匿名内部类对象只能在被创建的时候被访问一次。
 
-## Object类及String类
+## 常见类
 
 ### Object类
 
@@ -1096,28 +1100,270 @@ String 类的替换功能：
 
 - `String replace(CharSequence target, CharSequence replacement)`：使用指定的字面值替换序列替换此字符串所有匹配字面值目标序列的子字符串。
 
+
 String 类去除空字符串：  
-```
-String trim() //在新的字符串中，去掉开头和结尾的空格字符
-```
+- `String trim()`：返回字符串的副本，忽略前导空白和尾部空白。 
 
 String 类的比较功能：
-```
-int compareTo(String str)
-int compareToIgnoreCase(String str)
-```
-- 字符串的大小如何比较：  
-  按照字典序比较字符串的大小。字典序原本的含义实质：英文单词在字典中出现的先后顺序（在字典中，先出现的字符串小，后出现的字符串大）。具体到编程语言，是根据两个字符串字符串从左往右数，第一个对应位置的不同字符，来决定两字符串的大小
+- `int compareTo(String str)`： 按字典顺序比较两个字符串。  
+  返回值：如果参数字符串等于此字符串，则返回值 0；如果此字符串按字典顺序小于字符串参数，则返回一个小于 0 的值；如果此字符串按字典顺序大于字符串参数，则返回一个大于 0 的值。
 
-- compareTo 几乎就是按照字典序，来比较两个字符串大小的。  
-  格式：`字符串对象.compareTo(字符串对象)`。  
-  对于 CompareTo 方法：String 类实现了一个接口：  
-  ```java
-  interface Comparable<String> {
-    int compareTo(String anotherStr);
-  }
-  ```
-  该接口定义了一种比较规则，该规则规定：  
-  1. 对于大于这种比较结果 `> 0` 表示大于关系；  
-  2. 对于小于这种比较结果 `< 0` 表示小于关系；  
-  3. 对于等于这种比较结果 `0` 表示相等关系。
+- `int compareToIgnoreCase(String str)`：按字典顺序比较两个字符串，不考虑大小写。
+
+
+### StringBuffer类
+
+StringBuffer：线程安全的可变字符序列。一个类似于 String 的字符串缓冲区，但不能修改。虽然在任意时间点上它都包含某种特定的字符序列，但**通过某些方法调用可以改变该序列的长度和内容**。  
+
+可将字符串缓冲区安全地用于多个线程。可以在必要时对这些方法进行同步，因此任意特定实例上的所有操作就好像是以串行顺序发生的，该顺序与所涉及的每个线程进行的方法调用顺序一致。 
+
+构造方法：  
+- `public StringBuffer()`：构造一个其中不带字符的字符串缓冲区，其初始容量为 16 个字符。
+
+- `public StringBuffer(int capacity)`：构造一个不带字符，但具有指定初始容量的字符串缓冲区。
+
+- `public StringBuffer(String str)`：构造一个字符串缓冲区，并将其内容初始化为指定的字符串内容。该字符串的初始容量为 16 加上字符串参数的长度。 
+
+示例：
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        // public StringBuffer()
+        StringBuffer stringBuffer = new StringBuffer();
+        System.out.println(stringBuffer.capacity());
+        System.out.println(stringBuffer.length());
+
+        // public StringBuffer(int capacity)
+        stringBuffer = new StringBuffer(20);
+        System.out.println(stringBuffer.capacity());
+        System.out.println(stringBuffer.length());
+
+        // public StringBuffer(String str)
+        stringBuffer = new StringBuffer("HelloWorld");
+        System.out.println(stringBuffer.capacity());
+        System.out.println(stringBuffer.length());
+    }
+}
+
+/* 运行结果：
+16
+0
+20
+0
+26
+10
+*/
+```
+
+添加功能：
+- `public StringBuffer append(String str)`：将指定的字符串追加到此字符序列。
+
+- `public StringBuffer insert(int offset, String str)`：将字符串插入此字符序列中。
+
+示例：  
+```java
+public class TestDemo {
+
+    public static void main(String[] args) {
+
+        StringBuffer stringBuffer = new StringBuffer("start：");
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+
+        // append
+        String s1 = "12345";
+        stringBuffer.append(s1);
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+
+        int i = 6;
+        stringBuffer.append(i);
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+
+        boolean b = true;
+        stringBuffer.append(b);
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+
+        // insert
+        String s2 = "0";
+        stringBuffer.insert(6, s2);
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+
+        // 链式调用
+        stringBuffer.insert(13, '7')
+                .append("ABC")
+                .append(false);
+        System.out.println(stringBuffer.toString());
+        System.out.println("capacity：" + stringBuffer.capacity());
+    }
+}
+
+/* 运行结果：
+start：
+capacity：22
+start：12345
+capacity：22
+start：123456
+capacity：22
+start：123456true
+capacity：22
+start：0123456true
+capacity：22
+start：01234567trueABCfalse
+capacity：46
+*/
+```
+
+注：
+- 不管任何数据类型都可以被添加到字符缓冲区中，如果该类型不是字符串类型会自动转换为字符串类型。
+
+- 虽然 StringBuffer 可以自动扩容，但是在开发中如果能有效的预估字符缓冲区所需的长度，建议使用 `public StringBuffer(int capacity)` ，因为每一次扩容都比较耗时。
+
+删除功能：
+
+- `public StringBuffer deleteCharAt(int index)`：移除此序列指定位置的 char。。
+
+- `public StringBuffer delete(int start, int end)`。
+
+替换功能：
+- `public StringBuffer replace(int start, int end, String str)`：使用给定 String 中的字符替换此序列的子字符串中的字符。
+
+示例：  
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        StringBuffer stringBuffer = new StringBuffer("012345");
+        StringBuffer abcd = stringBuffer.replace(0, 2, "abcd");
+        System.out.println(abcd.toString());
+    }
+}
+
+/* 运行结果：
+abcd2345
+*/
+```
+
+反转功能：
+- `public StringBuffer reverse()`：将此字符序列用其反转形式取代。
+
+截取功能：
+- `public String substring(int start)`：返回一个新的 String，它包含此字符序列当前所包含的字符子序列。
+
+- `public String substring(int start, int end)`。
+
+ 从 JDK 5 开始，为该类（StringBuffer）补充了一个单个线程使用的等价类 StringBuilder。
+- StringBuilder 针对单线程运行环境，它的 api 和 StringBuffer 几乎没有差别。
+
+- StringBuffer 针对多线程运行环境。
+
+
+### Date类
+
+类 Date 表示特定的瞬间，精确到毫秒。 
+
+构造方法：
+- `Date()`：分配 Date 对象并初始化此对象，以表示分配它的时间（精确到毫秒）。  
+
+- `Date(long date)`：分配 Date 对象并初始化此对象，以表示自从标准基准时间（称为「历元（epoch）」，即 1970 年 1 月 1 日 00:00:00 GMT）以来的指定毫秒数。
+
+常见方法：
+- `public long getTime()`：返回自 1970 年 1 月 1 日 00:00:00 GMT 以来此 Date 对象表示的毫秒数。
+
+示例：  
+```java
+import java.util.Date;
+
+public class TestDemo {
+    public static void main(String[] args) {
+        Date date = new Date();
+        System.out.println("当前：" + date);
+
+        long time = date.getTime();
+        System.out.println("此时距离历元：" + time + " 秒");
+
+        date = new Date(date.getTime() + 24 * 60 * 60 * 1000L);   // 一天后
+        System.out.println("一天后：" + date);
+    }
+}
+
+/* 运行结果：
+当前：Sun May 10 21:12:28 CST 2020
+此时距离历元：1589116348785 秒
+一天后：Mon May 11 21:12:28 CST 2020
+*/
+```
+
+
+### DateFormat类
+
+DateFormat 类：
+- 是日期 / 时间格式化子类的抽象类。  
+
+- 它以与语言无关的方式格式化并解析日期或时间。
+
+- 因为是抽象类，所以实际使用的是 SimpleDateFormat 这个实现子类。
+
+构造方法：
+- `SimpleDateFormat()`：用默认的模式和默认语言环境的日期格式符号构造 SimpleDateFormat。
+
+- `SimpleDateFormat(String pattern)`：用给定的模式和默认语言环境的日期格式符号构造 SimpleDateFormat。  
+  - y：年。
+  - M：表示年中的月份。
+  - d：表示月份中的天数。
+  - H：表示一天中的小时数。
+  - m：小时中的分钟。
+  - s：分钟中的秒数。
+
+常用方法：
+- `public Date parse(String source)`：解析字符串的文本，生成 Date。如果发生错误，则返回 null。  
+
+- `public final String format(Date date)`：把一个 Date 对象表示成一个指定格式的表示时间的字符串。
+
+示例：  
+```java
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class TestDemo {
+    public static void main(String[] args) throws ParseException {
+        Date date = new Date();
+        System.out.println("默认：" + date);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        System.out.println("格式处理：" + simpleDateFormat.format(date));
+
+        date = simpleDateFormat.parse("2020/01/10 17:06:00");
+        System.out.println("解析字符串：" + date);
+    }
+}
+
+/* 运行结果：
+默认：Sun May 10 21:48:57 CST 2020
+格式处理：2020/05/10 21:48:57
+解析字符串：Fri Jan 10 17:06:00 CST 2020
+*/
+```
+
+### Math类
+
+Math 类包含用于执行基本数学运算的方法，如初等指数、对数、平方根和三角函数。 
+
+常见方法：
+- `public static int abs(int a)`：求绝对值。
+
+- `public static double ceil(double a)`：向上取整。
+
+- `public static double floor(double a)`：向下取整。 
+
+- `public static int max(int a, int b)`：返回两个 int 值中较大的一个。
+
+- `public static double pow(double a, double b)`：返回第一个参数的第二个参数次幂的值。
+
+- `public static double random()` // 返回带正号的 double 值，该值大于等于 0.0 且小于 1.0 [0.0 1.0) 随机数。
+
+- `public static int round(float a)`：返回最接近参数的 int。
+
+- `public static double sqrt(double a)`：返回正确舍入的 double 值的正平方根。
