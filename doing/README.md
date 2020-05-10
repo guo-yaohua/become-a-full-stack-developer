@@ -15,7 +15,7 @@
 
 **part1 - 一、Java入门**  
 
-- [Java语言概述](./part1/一、Java入门/#Java语言概述)  
+- [Java语言概述](./part1/一、Java入门/REAMDE.md/#Java语言概述)  
   - [JAVA语言的诞生](#JAVA语言的诞生)
   - [JAVA语言的平台版本](#JAVA语言的平台版本)
   - [JAVA语言的特点](#JAVA语言的特点)
