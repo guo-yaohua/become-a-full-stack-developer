@@ -211,7 +211,6 @@ List：有序的 collection（也称为序列）。
 
 - `List<E> subList(int fromIndex, int toIndex)`：返回字列表，从 fromIndex（包括 ）到 toIndex（不包括）。
 
-
 - `ListIterator<E> listIterator()`：返回此列表元素的列表迭代器（按适当顺序）。
 
 -  `ListIterator<E> listIterator(int index)`：返回列表中元素的列表迭代器（按适当顺序），从列表的指定位置开始。 
