@@ -1,23 +1,21 @@
 package com.gyh.test;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 public class TestDemo {
     public static void main(String[] args) {
-        Collection c = new ArrayList();
+        List list = new ArrayList();
+        list.add("hello");
+        list.add("world");
+        list.add("java");
 
-        c.add("Hello");
-        c.add("World");
+        List subList = list.subList(1, 2);
+        System.out.println(subList);
 
-        Iterator it = c.iterator();
-        while (it.hasNext()) {
-            String s = (String) it.next();
-            if ("World".equals(s)) {
-                c.remove(s);
-            }
-        }
+        subList.set(0, "WORLD");
+        System.out.println(subList);
+        System.out.println(list);
     }
 }
 
