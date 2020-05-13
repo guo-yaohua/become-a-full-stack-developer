@@ -400,3 +400,55 @@ LRU 算法中我们就用到了链表！
 - 数组的缺点是大小固定，没法动态的调整大小。如果要存储一些对象，如果数组太大，浪费内存空间；如果数组太小，我们需要重新申请一个更大数组，并将数据拷贝过去，耗时。
 
 - 如果业务对内存的使用非常苛刻，数组更适合。因为结点有指针域，更消耗内存。而且对链表的频繁插入和删除，会导致结点对象的频繁创建和销毁，有可能会导致频繁的 GC 活动。
+
+判断链表中是否有环：
+- 给一个阈值（10ms）,如果在遍历链表的过程中 10ms 还没有结束，就认为有环。
+
+- 迷雾森林。  
+  Collection visited = new ArrayList();
+  1. 遍历链表，获取每一个结点。判断结点是否在 visited 集合中存在。  
+      - 存在：返回 true。
+      - 不存在：将该结点添加到visited中，然后遍历下一个结点。
+
+  2. 遍历结束后，返回 false。  
+
+  示例：  
+  ```java
+  public static boolean hasCircle(Node head) {
+      Collection visited = new HashSet(); // 创建 set 集合
+      Node x = head;
+      while (x != null) {
+          if (visited.contains(x)) return true;
+          visited.add(x);
+          x = x.next;
+      }
+      // 遍历结束
+      return false;
+  }
+  ```
+
+- 跑道（快慢指针）。
+  1. 创建了快指针和慢指针，快指针每次走两步，慢指针每次走一步
+  
+  2. 遍历链表，快指针每移动两步，慢指针移动一步。
+      - 如果快指针到到终点：返回 false。
+      - 如果快指针和慢指针相遇：返回 true。
+  
+  示例：  
+  ```java
+  public static boolean hasCircle(Node head) {
+      // 创建快慢指针
+      Node fast = head;
+      Node slow = head;
+      
+      // 遍历链表
+      do {
+          // 快指针是否到达终点
+          if (fast == null || fast.next == null) return false;
+          fast = fast.next.next;
+          slow = slow.next;
+      } while (fast != slow);
+      // fast == slow
+      return true;
+  }
+  ```
