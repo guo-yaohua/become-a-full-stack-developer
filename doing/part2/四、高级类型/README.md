@@ -368,6 +368,8 @@ ListIterator 接口常见 API：
 
 思想：用空间换取时间。
 
+### 空间换取时间
+
 缓存就是一种用空间换取时间的技术。内存大小是有限的，所以缓存不能无限大。那么当缓存满的时候，再向缓存中添加数据，就需要采取一些策略。
 
 缓存淘汰策略：
@@ -387,25 +389,15 @@ LRU 算法中我们就用到了链表！
 
   - 缓存满了，删除尾节点, 在头结点添加。
 
-数组 VS 链表：
-<div align="center">
-<img src="./img/p7.png">
-</div>
 
-数组和链表的插入、删除和随机访问操作的时间复杂度刚好相反。
+### 链表问题
 
-- 数组使用的是连续的内存空间，可以利用 CPU 的高速缓存预读数据。  
-  链表的内存空间不是连续的，不能有效预读数据。当然如果数组过大，系统没有足够的连续内存空间，会抛出 OOM。
-
-- 数组的缺点是大小固定，没法动态的调整大小。如果要存储一些对象，如果数组太大，浪费内存空间；如果数组太小，我们需要重新申请一个更大数组，并将数据拷贝过去，耗时。
-
-- 如果业务对内存的使用非常苛刻，数组更适合。因为结点有指针域，更消耗内存。而且对链表的频繁插入和删除，会导致结点对象的频繁创建和销毁，有可能会导致频繁的 GC 活动。
-
+（1）
 判断链表中是否有环：
-- 给一个阈值（10ms）,如果在遍历链表的过程中 10ms 还没有结束，就认为有环。
+- 给一个阈值（10ms），如果在遍历链表的过程中 10ms 还没有结束，就认为有环。
 
 - 迷雾森林。  
-  Collection visited = new ArrayList();
+  `Collection visited = new ArrayList();`
   1. 遍历链表，获取每一个结点。判断结点是否在 visited 集合中存在。  
       - 存在：返回 true。
       - 不存在：将该结点添加到visited中，然后遍历下一个结点。
@@ -452,3 +444,396 @@ LRU 算法中我们就用到了链表！
       return true;
   }
   ```
+
+**（2）反转单链表**  
+
+示例：
+```java
+public class TestDemo {
+    public static Node reverse(Node head) {
+        if (head.next == null) return head;
+        // 如果链表不止一个结点，反转head.next
+        Node reversed = reverse(head.next);
+        // 反转head结点
+        head.next.next = head;
+        head.next = null;
+        return reversed;
+    }
+    public static void print(Node head) {
+        Node x = head;
+        while (x != null) {
+            System.out.print(x.value);
+            if (x.next != null) System.out.print(" --> ");
+            x = x.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Node head = new Node(3);
+        head = new Node(2, head);
+        head = new Node(1, head);
+        print(head);
+        head = reverse(head);
+        print(head);
+    }
+}
+```
+
+### 数组VS链表
+
+<div align="center">
+<img src="./img/p7.png">
+</div>
+
+数组和链表的插入、删除和随机访问操作的时间复杂度刚好相反。
+
+- 数组使用的是连续的内存空间，可以利用 CPU 的高速缓存预读数据。  
+  链表的内存空间不是连续的，不能有效预读数据。当然如果数组过大，系统没有足够的连续内存空间，会抛出 OOM。
+
+- 数组的缺点是大小固定，没法动态的调整大小。如果要存储一些对象，如果数组太大，浪费内存空间；如果数组太小，我们需要重新申请一个更大数组，并将数据拷贝过去，耗时。
+
+- 如果业务对内存的使用非常苛刻，数组更适合。因为结点有指针域，更消耗内存。而且对链表的频繁插入和删除，会导致结点对象的频繁创建和销毁，有可能会导致频繁的 GC 活动。
+
+
+## List
+
+### ArraysList
+
+特性：
+- 底层数据结构是数组，增删慢，查找快。
+
+- 不同步，线程不安全，效率高。
+
+- 存储 null 元素。
+
+构造方法：
+- `ArrayList()`：默认初始大小为 10。
+
+- `ArrayList(int initialCapacity)`：可以指定数组的初始大小。
+
+- `ArrayList(Collection c)`： 构造一个包含指定 collection 的元素的列表，这些元素是按照该 collection 的迭代器返回它们的顺序排列的。
+
+API：
+- `void ensureCapacity(int minCapacity)`：如有必要，增加此 ArrayList 实例的容量，以确保它至少能够容纳最小容量参数所指定的元素数。  
+  避免频繁扩容。
+
+- `void trimToSize()`：将此 ArrayList 实例的容量调整为列表的当前大小。  
+  慎用，确保元素不会在添加的情况下用。
+
+### Vector
+
+特性：
+- 底层是数组，增删慢，查找快。
+
+- 同步，线程安全，效率比较低。
+
+- 存储 null 元素。
+
+API：
+- `void addElement(E obj)` --> `void add(E e)`。
+
+- `void copyInto(Object[] anArray)` --> `Object[] toArray()`。
+
+- `E elementAt(int index)` --> `E get(int index)`。
+
+- `void insertElementAt(E obj, int index) ` --> `void add(int index, E e)`。
+
+- `void removeAllElements()` --> `void clear()`。
+
+- `boolean removeElement(Object obj)` --> `boolean remove(Object obj)`。
+
+- `void removeElementAt(int index)` --> `E remove(int index)`。
+
+- `void setElementAt(E obj, int index)` --> `E set(int index)`。
+
+- `Enumeration<E> elements()` --> `Iterator iterator()`。
+
+- `int capacity()`。
+
+- `void setSize(int newSize)`。
+
+- `E firstElement()`。
+
+- `E lastElement()`。
+
+- `int indexOf(Object o, int index)`。
+
+- `int lastIndexOf(Object o, int index)`。
+
+- `Enumeration<E> elements()`。
+
+Enumeration --> Iterator：
+- `boolean hasMoreElements()` --> `boolean hasNext()`。
+
+- `E nextElement()` --> `E next()`。
+### LinkedList
+
+Deque 接口概述：双端队列，可以在两端插入和删除。
+
+`LinkedList implements List, Deque`  
+LinkedList 特性：
+- 底层数据结构是链表，增删快，查找慢。
+
+- 不同步, 线程不安全, 效率高。
+
+- 允许 null 元素。
+
+- 实现了 Deque 这个接口，可以当作栈，队列和双端队列来使用。
+
+构造方法：
+- `LinkedList()`。
+
+- `LinkedList(Collection c)`。
+
+API:
+- `Iterator<E> descendingIterator()`： 返回以逆向顺序在此双端队列的元素上进行迭代的迭代器。。
+
+- `boolean removeFirstOccurrence(Object o)`：从此列表中移除第一次出现的指定元素（从头部到尾部遍历列表时）。。
+
+- `boolean removeLastOccurrence(Object o)`：从此列表中移除最后一次出现的指定元素（从头部到尾部遍历列表时）。。
+
+在两端的操作：
+- `boolean offerFirst`：在此列表的开头插入指定的元素。。
+
+- `boolean pollFirst`：获取并移除此列表的头（第一个元素）。
+
+- `boolean peekFirst`：获取但不移除此列表的第一个元素；如果此列表为空，则返回 null。。
+
+栈的 API：
+- `void push(E e)`。
+
+- `E pop()`。
+
+- `E peek()`。
+
+注：Java 中提供了 Stack 类，但是我们应该优先使用 Deque , 而不应该使用 Stack。
+- Stack 同步的，效率相对来说比较低。
+
+- Stack 继承了 Vector, 所以 Stack 拥有 Vector 中所有的方法，使用起来不安全。
+
+### List常见问题
+
+**（1）去重**  
+
+输入：[a, b, c, a, a, b, c]  
+输出：[a, b, c]
+
+思路 1：
+1. 新键一个 `List result = new ArrayList();`；
+
+2. 遍历原来的 list, 判断元素是否在 result 中存在：
+   - 存在：不添加。
+   - 不存在：添加。
+
+3. 遍历结束后, 返回 result。
+
+
+思路 2：
+1. 逆序遍历 list；
+
+2. 获取元素, 截取从 0 到 nextIndex 的子列表，判断元素是否在子列表中存在：
+   - 存在：删除元素。
+   - 不存在：继续遍历。
+
+3. 遍历结束后，完成去重。
+
+示例：  
+```java
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+public class TestDemo {
+    // 思路 1
+    public static List disctinct1(List list) {
+        List result = new ArrayList();
+        for(Iterator it = list.iterator(); it.hasNext(); ) {
+            Object obj = it.next();
+            if (!result.contains(obj)) result.add(obj);
+        }
+        return result;
+    }
+
+    // 思路 2
+    public static void disctinct2(List list) {
+        for(ListIterator it = list.listIterator(list.size()); it.hasPrevious(); ) {
+            Object element = it.previous();
+            List subList = list.subList(0, it.nextIndex());
+            if (subList.contains(element)) it.remove();
+        }
+    }
+
+    public static void main(String[] args) {
+        // [a, b, c, a, a, b, c]
+        List list = new ArrayList();
+        list.add('a');
+        list.add('b');
+        list.add('c');
+        list.add('a');
+        list.add('a');
+        list.add('b');
+        list.add('c');
+
+        System.out.println(disctinct1(list));
+
+        disctinct2(list);
+        System.out.println(list);
+    }
+}
+
+/* 运行结果：
+[a, b, c]
+[a, b, c]
+*/
+```
+
+**（2）用ArrayList实现栈数据结构**  
+
+```java
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+
+
+public class MyStack {
+    private ArrayList list; //组合
+    private String str;
+
+    public MyStack(ArrayList list) {
+        this.list = list;
+    }
+
+    public void push(Object obj) {
+        list.add(obj);
+    }
+
+    public Object pop() {
+        if (isEmpty()) throw new EmptyStackException();
+        return list.remove(list.size() - 1);
+    }
+
+    public Object peek() {
+        if (isEmpty()) throw new EmptyStackException();
+        return list.get(list.size() - 1);
+    }
+
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+}
+```
+
+注：
+-  如果一个类持有某个类的成员，那么就能够「拥有」这个类的所有公共方法。  
+  但是我们可以对这些方法进行限制。
+
+-  组合还可以「加强」另一个的方法。
+
+- 可以组合多个对象。
+
+「加强」一个方法：
+- 继承。
+
+- 组合。
+
+设计原则：优先使用组合，而不是继承。  
+如果两个类之间有「is a」的关系，可以使用继承。
+
+
+## JDK5的新特性
+
+### 静态导入
+
+导包：
+- 必须导入到类这一级别。
+
+- 作用：导入的类就好像定义在当前这个包下面。
+
+静态导入：
+- 必须导入到方法这一级别，并且必须是静态方法。
+
+- 作用：导入的静态方法就好像定义在当前这个类中一样。
+
+推荐：不要使用静态导入，可读性差
+
+static 的用法有：
+- 静态代码块：对类进行初始化，类加载的时候执行，并且只执行一次。
+
+- 静态变量：该变量是类所有，被该类的所有成员共享。
+
+- 静态方法。
+
+- 静态内部类。
+
+- 静态导入：导入静态方法。
+
+示例：  
+```java
+import static java.lang.Math.*;
+
+public class StaticImportDemo1 {
+    public static void main(String[] args) {
+
+        System.out.println(sqrt(1.0));  // 不需要使用前缀 Math.
+        System.out.println(abs(-100));
+        System.out.println(max(2, 3));
+    }
+}
+```
+
+
+### 泛型
+
+泛型类：
+- 泛型定义在类上面。
+
+- 作用域：整个类。
+
+- 格式：`public class 类名<泛型类型1,…>`。
+
+泛型的命名规则：必须满足标识符的规则。  
+业界规范：一般用大写字母表示。
+- T：type。
+
+- E：element。
+
+- K：key。
+
+- V：value。
+
+泛型方法：
+- 把泛型定义在方法上面。
+
+- 作用域：方法签名上或者方法体内。
+
+- 格式：`public <泛型类型> 返回类型 方法名(泛型类型...)`。
+
+注：
+- 因为返回值类型也可以是泛型，泛型必须先定义才能使用，所以泛型要定义在返回值类型的前面
+
+- 有泛型方法的类不一定是泛型类吗。
+
+泛型的好处：
+- 提高了程序的安全性。
+
+- 将运行期遇到的问题转移到了编译期。
+
+- 省去了类型强转的麻烦。
+
+设计原则：及早失败原则。
+
+掌握要求：
+- 可以利用泛型操作集合。
+
+- 能够看懂别人些的泛型代码。
+
+泛型通配符：提供类似数组的功能，但是不要引入数组中可能出现的问题。
+- 泛型通配符<?>  
+  任意类型，如果没有明确，那么就是 Object 以及任意的 Java 类了。
+
+- ? extends E
+  向下限定，E 及其子类。
+
+- ? super E
+  向上限定，E 及其父类。
