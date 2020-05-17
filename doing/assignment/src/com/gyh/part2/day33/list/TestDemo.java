@@ -1,18 +1,25 @@
 package com.gyh.part2.day33.list;
 
 public class TestDemo {
-    @SuppressWarnings("unchecked")
+
     public static void main(String[] args) {
-        MyLinkedList list = new MyLinkedList();
-        list.add("hello");
-        list.add("world");
-        list.listPrint();
+        try {
+            recordScore(-1);
+        } catch (MyRuntimeException e) {
+            e.printStackTrace();
+        }
+    }
 
-        System.out.println(list.contains("world"));
+    public static void recordScore(int score) {
+        if (score < 0 || score > 100) {
+            throw new MyRuntimeException("MyRuntimeException 分数异常：" + score);
+        }
+    }
+}
 
-        list.remove(0);
-        list.listPrint();
-
-        System.out.println(list.size());
+// 自定义的运行时时异常
+class MyRuntimeException extends RuntimeException {
+    public MyRuntimeException(String msg) {
+        super(msg);
     }
 }

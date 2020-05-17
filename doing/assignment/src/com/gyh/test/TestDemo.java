@@ -1,18 +1,25 @@
 package com.gyh.test;
 
 public class TestDemo {
-    public static int add(int... arr) {
-        int sum = 0;
-        for(int i : arr) sum += i;
-        return sum;
+    public static void main(String[] args) {
+        int i = testFinally();
+        System.out.println("i = " + i); //i = 30
+
     }
 
-    public static void main(String[] args) {
-        int a = 1;
-        int b = 2;
-        int c = 3;
-        int sum = add(a, b, c);
-        System.out.println(sum);
+    public static int testFinally() {
+        int i = 10;
+        try {
+            i = 20;
+            i = i / 0;
+        } catch (Exception e) {
+            i = 30;
+            return i;
+        } finally {
+            i = 40;
+        }
+        i = 50;
+        return i;
     }
 }
 

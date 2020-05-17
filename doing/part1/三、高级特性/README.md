@@ -3,18 +3,14 @@
 ## 目录
 
 - [Java异常](#Java异常)  
-  - [异常概述](#异常概述)
   - [异常分类](#异常分类)
   - [JVM默认的异常处理](#JVM默认的异常处理)
-  - [Java的异常处理机制](#Java的异常处理机制)
+  - [异常的捕获](#异常的捕获)
   - [异常的抛出](#异常的抛出)
-  - [finally](#funally)
+  - [异常处理策略](#异常处理策略)
   - [自定义异常](#自定义异常)
 
 - [File类](#File类)  
-  - [File类概述](#File类概述)
-  - [File类的构造方法](#File类的构造方法)
-  - [File类的成员方法](#File类的成员方法)
 
 - [字节流与字符流](#字节流与字符流)  
   - [字节流](#字节流)
@@ -63,49 +59,81 @@
 
 ## Java异常
 
-### 异常概述
-
-简单来说异常就是用来表示 Java 程序运行过程中的错误（信息）。  
+简单来说，异常就是用来表示 Java 程序运行过程中的错误信息。  
 
 Java 异常机制的由来：  
 - C 语言时代的错误处理。
 
 - Java 的基本理念。  
-  尽量把一切错误摒弃在 JVM 之外，最好在程序之前发现程序错误（编译器）。有一部分错误是编译器可以在程序运行前帮我们发现的，但是还有一些错误，是 Java 程序不运行，编译器发现不了。
+  尽量把一切错误摒弃在 JVM 之外，最好在程序之前发现程序错误（编译器）。有一部分错误是编译器可以在程序运行前帮我们发现的，但是还有一些错误是 Java 程序不运行，编译器发现不了的。
 
 - 错误恢复机制（Java 异常处理机制）。  
   Java 语言退而求其次，可以让 Java 程序运行的时候出错，但是同时，Java 语言本身提供了一种通用的错误处理机制 —— 异常处理机制。  
   - 异常处理机制：异常的发现，和异常的处理（一致性的错误报告模型）。
-  - 简单来说就是，一旦发生错误，就把该错误信息层层向上报告。如果上层知道怎么处理这个错误，上层可以捕获该错误信息并处理。如果上层不知道该怎么处理，可以将错误继续向上报告。
+
+  - 一旦发生错误，就把该错误信息层层向上报告。如果上层知道怎么处理这个错误，上层可以捕获该错误信息并处理。如果上层不知道该怎么处理，可以将错误继续向上报告。
 
 ### 异常分类
 
 根据 Java 程序在运行过程中出现的错误的严重程度，异常可分为：  
-- Exception：在程序中可能能够处理的错误。
+- Error：系统级别的错误，是 Java 运行环境内部错误或者硬件的问题。  
+  它是 JVM 抛出的，不能指望程序来处理。
 
-- Error：程序层面无法处理的错误。
+- Exception：是程序需要捕捉、处理的异常。  
+  它是因为程序设计的不完善而出现的，必须由程序来处理。
 
 Java 中的异常层次结构：  
 <div align="center">
 <img src="./img/p1.png">
 </div>
 
-对于 Exception，根据错误处理方式的不同分为：  
-- 编译时异常（Checkable Exception）  
-  可预见的，语法层面强制在代码编写时处理。  
-  如：  
-  - 试图在文件尾部后面读取数据。  
-  - 试图打开一个不存在的文件。
-  - 试图根据给定的字符串查找 class 对象，而这个字符串表示的类并不存在。
-
-- 运行时异常（Runtime Exception）  
-  不可预见的，不要求在编写代码时必须处理。  
+在设计 Java 程序时，需要关注 Exception 层次结构。对于 Exception，根据错误处理方式的不同分为两个分支：  
+- 运行时异常（Runtime Exception）：由于程序错误导致的异常。  
+  不可预见的，无需显示处理，也可以和编译时异常一样处理。  
   如：  
   - 错误的类型转换。
+
   - 数组访问越界。
+
   - 访问 null 指针。
 
-“如果出现 RuntimeException 异常，那么一定是你的问题” 是一条相当有道理的规则。
+- 其它异常：程序本身没有问题，但是由于像 IO 错误这类问题导致的异常。  
+  可预见的，Java 程序必须显示处理，否则程序就会发生错误无法通过编译。  
+  如：  
+  - 试图在文件尾部后面读取数据。  
+
+  - 试图打开一个不存在的文件。
+
+  - 试图根据给定的字符串查找 class 对象，而这个字符串表示的类并不存在。
+
+“*如果出现 RuntimeException 异常，那么一定是你的问题。*” 是一条相当有道理的规则。
+
+
+Java 语言规范将派生于 Error 类或 RuntimeException 类的所有异常称为非受检异常（unchecked exception），所有其它的异常称为受检异常（checked exception）。
+
+**（1）受检异常**  
+
+对于受检异常来说，如果⼀个⽅法在声明的过程中证明了其要有受检异常抛出：
+```java
+public void test() throw new Exception{ }
+```
+
+那么当我们在程序中调⽤它时，⼀定要对该异常进⾏处理（捕获或者向上抛出），否则是⽆法编译通过的。这是⼀种强制规范。
+
+这种异常在 IO 操作中⽐较多，⽐如 FileNotFoundException。  
+当我们使⽤ IO 流处理⼀个⽂件的时候，有⼀种特殊情况，就是⽂件不存在。所以，在⽂件处理的接口定义时它会显⽰抛出 FileNotFoundException，⽬的就是告诉这个⽅法的调⽤者，我这个⽅法不保证⼀定可以成功，是有可能找不到对应的⽂件的，你要明确的对这种情况做特殊处理。
+
+所以说，当我们希望我们的⽅法调⽤者明确地处理⼀些特殊情况的时候，就应该使⽤受检异常。
+
+**（2）⾮受检异常**  
+
+对于⾮受检异常来说，⼀般是运⾏时异常，继承⾃ RuntimeException。在编写代码的时不需要显⽰的捕获，但是如果不捕获，在运⾏期如果发⽣异常就会中断程序的执⾏。
+
+这种异常⼀般可以理解为是代码原因导致的。⽐如发⽣空指针、数组越界等。所以，只要代码写的没问题，这些异常都是可以避免的，也就不需要我们显式地进⾏处理。
+
+试想⼀下，如果要对所有可能发⽣空指针的地⽅做异常处理的话，那相当于对所有代码都需要做这件事。
+
+
 
 ### JVM默认的异常处理
 
@@ -122,9 +150,15 @@ Java 中的异常层次结构：
 
 3. 访问收集到的错误信息，将错误信息输出到控制台窗口中。
 
-### Java的异常处理机制
+### 异常的捕获
 
-Java 针对异常处理提供了 3 个核心关键字：try、catch、finally，利用这 3 个关键字就可以组成以下异常处理格式。
+Java 针对异常处理提供了 3 个核心关键字：try、catch 和 finally，利用这 3 个关键字就可以组成异常处理格式。
+- try ⽤来指定⼀块预防所有异常的程序。  
+
+- catch ⼦句紧跟在 try 块后⾯，⽤来指定想要捕获的异常的类型。
+
+- finally 确保⼀段代码不管发⽣什么异常状况都要被执⾏。
+
 ```java
 try {
   // 可能出现异常的语句
@@ -137,57 +171,154 @@ try {
 }
 ```
 
+**（1）try**  
+
 如果 try 中代码运行时发生了错误，JVM 在发生错误的代码处收集错误信息。try 块中错误代码之后的代码就不会再运行。JVM 会跳转到相应的错误处理器中，执行由开发者自己写的错误处理代码。错误处理器中的代码一旦执行完毕，紧接着程序继续正常执行，执行的是整个 try 代码块之后的代码。  
+
+**（2）catch**  
+
+JDK7 开始引入了一种比较灵活的方式，通过 `|` 运算符，让一个 catch 分支同时处理多种类型的异常。  
+示例：
+```java
+try {
+
+} catch(异常类型 1 | 异常类型 2 | 异常类型 3 ...  e) {
+  // 处理异常的代码
+}
+```
+
+通常所使用的获取异常信息的方法，都定义在 Throwable 类中。 
+- `getMessage()`：获取异常信息，返回字符串。
+
+- `toString()`：获取异常类名和异常信息，返回字符串。
+
+- `printStackTrace()`：获取异常类名和异常信息，以及异常出现在程序中的位置，并打印到控制台
+
+- `printStackTrace(PrintStream s) `：该方法将异常内容保存在日志文件中，以便查阅。 
+
+示例：  
+```java
+public class TestDemo {
+    public static void main(String[] args) {
+        try {
+            int i = 1;
+            int result = i / 0;
+        } catch (Exception e) {
+
+            // 在异常对象上，调用相应方法获取异常信息
+            // getMessage() 获取异常信息 描述字符串，返回字符串。
+            String message = e.getMessage();
+            System.out.println("异常信息的描述字符串是：" + message);
+
+            // toString()
+            String toStirng = e.toString();
+            System.out.println("toString(): " + toStirng);
+
+            // printStackTrace() 没有返回值
+            e.printStackTrace();
+        }
+    }
+}
+
+/* 运行结果：
+异常信息的描述字符串是：/ by zero
+toString(): java.lang.ArithmeticException: / by zero
+java.lang.ArithmeticException: / by zero
+	at com.gyh.test.TestDemo.main(TestDemo.java:7)
+*/
+```
 
 注：
 - 在多 catch 分支的情况下，如果不同的 catch 分支处理的异常类型有父子关系，则处理子类的异常分支写在前，父类的异常分支写在后。  
 
 - 一次匹配，只会执行多个 catch 分支中的一个。
 
+**（3）finally**  
 
-### 获取异常信息
+finally 的特点：被 finally 控制的语句体一定会执行。  
 
-通常所使用的获取异常信息的方法，都是定义在 Throwable 类中的。  
-```java
-getMessage()  // 获取异常信息，返回字符串。
+特殊情况：在执行到 finally 之前 JVM 退出了（比如 `System.exit(0)`）。  
 
-toString()  // 获取异常类名和异常信息，返回字符串。
+finally 的作用：用于释放资源，在 IO 流操作和数据库操作中会见到。
 
-printStackTrace() // 获取异常类名和异常信息，以及异常出现在程序中的位置，并打印到控制台
+finally 相关的问题：
+- final，finally 和 finalize 的区别。  
+  
+  1. final 修饰类、变量（成员变量和局部变量）和成员方法。  
+      - 修饰类之后，该类不能被继承。
 
-printStackTrace(PrintStream s)  // 该方法将异常内容保存在日志文件中，以便查阅。 
-```
+      - 修饰变量之后，该变量变成自定义常量。
 
-### Java的异常处理机制
+      - 修饰方法之后，该方法部类被子类覆盖。
+  
+  2. finally 修饰代码块。  
+  finally 代码块的执行特征是：  
+  对于 try-catch-finnally 代码块而言，finally 代码块中的代码，不管是否发生异常，finally 代码块中的代码，最后都会执行。  
+  即使在 finally 代码块之前，有 return 语句，finally 代码块，仍然会执行。  
+  特殊情况：在执行到 finally 之前 JVM 退出了（比如System.exit(0)）。
+     
+  3. finalize() 是 Object 类中的一个方法。  
+  该方法在对象变成垃圾，并且被垃圾回收期调用之前，JVM 会在该对象上调用 finalize() 方法一次且仅一次。
 
-所有的 RuntimeException 类及其子类的实例被称为运行时异常，其他的异常就是编译时异常。
-- 运行时异常：无需显示处理，也可以和编译时异常一样处理。
+- 如果 catch 里面有 return 语句，请问 finally 的代码还会执行吗？如果会，请问是在 return 前还是 return 后。  
+  
+  即使在 finally 代码块之前有 return 语句，finally 代码块仍然会执行。是在 return 「中间」执行。示例：  
+    ```java
+    public class TestDemo {
+      public static void main(String[] args) {
+          int i = testFinally();
+          System.out.println("i = " + i); //i = 30
 
-- 编译时异常：Java 程序必须显示处理，否则程序就会发生错误无法通过编译。
+      }
+
+      public static int testFinally() {
+          int i = 10;
+          try {
+              i = 20;
+              i = i / 0;
+          } catch (Exception e) {
+              i = 30;
+              return i; // 返回值来自此处
+          } finally {
+              i = 40;
+          }
+          i = 50；
+          return i;
+      }
+  }
+
+  /* 运行结果：
+  i = 30
+  */
+  ```
 
 ### 异常的抛出
+
+一个方法必须声明所有可能抛出的受检异常，而非首检异常要么不可控制（Error），要么就应该避免发生（RuntimeException）。  
+
+注：如果异常被捕获就不用抛出。
 
 在 Java 中，与异常抛出有关的主要有两个关键字：throws 和 throw。  
 
 **（1）throws**  
 
-throws 在方法定义时使用，声明该方法可能抛出的异常。对于编译时异常，可以在语法层面个强制方法调用者处理该异常。  
+throws 在方法定义时使用，声明该方法可能抛出的异常。对于编译时异常，可以在语法层面强制方法调用者处理该异常。  
 
 基本语法：`修饰符 返回值(形参列表) throws 异常列表 {}`
  
 注：
 - 异常列表之间用逗号分割，列表中出现的异常不要出现包含关系。
 
-- 方法覆盖时的子类异常列表必须与父类兼容。  
-  - 当子类方法声明的异常类型和父类声明的异常类型完全相同的时候，可以发生方法覆盖。  
+- 方法覆盖时，子类异常列表必须与父类兼容。  
+  - 当子类方法声明的异常类型和父类声明的异常类型完全相同的时候，才可以发生方法覆盖。  
 
-  - 子类中声明的异常类型,都是父类中声明异常列表中的异常的子类类型（只针对编译时异常）。  
+  - 子类中声明的异常类型，都是父类中声明异常列表中的异常的子类类型（只针对编译时异常）。  
 
-  - 如果说父类没有异常列表，对于编译时异常而言，子类也不能有异常列表（子类也没有才能发生方法覆盖）。
+  - 如果父类没有异常列表，子类也不能有异常列表（子类也没有才能发生方法覆盖）。
 
-  - 如果说父类有异常列表，子类没有异常列表，不管是编译时异常，还是运行时异常，都可以发生方法覆盖。
+  - 如果父类有异常列表，子类没有异常列表，可以发生方法覆盖。
 
-- 从实际开发来讲，主方法上不建议使用 throws，因为如果程序出现了错误，也希望其可以正常结束调用。
+- 主方法上不建议使用 throws，因为如果程序出现了错误，也希望其可以正常结束调用。
 
 **（2）throw**  
 
@@ -197,6 +328,43 @@ throws 在方法定义时使用，声明该方法可能抛出的异常。对于�
 - 主动在程序中抛出异常。
 
 - 每次只能抛出确定的某个异常对象。
+
+示例：  
+```java
+public class TestDemo {
+
+    public static void main(String[] args) {
+        try {
+            testThrow(-1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+        定义方法，在该方法体中，主动抛出异常对象。
+        有如下场景：
+            1. 该方法的合法参数范围是 i > 0；
+            2. 如果说方法实际运行时，接收到的实际参数值 <=0 , 此时我们认为参数传递的错误，传递了非法参数。
+     */
+    public static void testThrow(int i) throws Exception {
+
+        if (i <= 0) {
+            // 如果参数值非法，直接抛出异常, 并利用其构造方法，自定义异常描述字符串内容
+            throw new Exception("我抛出了编译时异常 " + i);
+        }
+
+        // 正常处理逻辑
+        System.out.println("after throw");
+    }
+}
+
+/* 运行结果：
+java.lang.Exception: 我抛出了编译时异常 -1
+	at com.gyh.part2.day33.list.TestDemo.testThrow(TestDemo.java:23)
+	at com.gyh.part2.day33.list.TestDemo.main(TestDemo.java:7)
+*/
+```
 
 注：
 - 若要抛出编译时异常，则必须和 throws 配合起来使用。
@@ -223,9 +391,13 @@ throw
 
 - throw 则是抛出了异常，执行 throw 则一定抛出了某种异常。
 
-总结一下，目前为止，我们所学习过的异常的处理策略主要有两种：
-- 捕获并处理
-- 向上抛出
+
+### 异常处理策略
+
+目前为止，我们所学习过的异常的处理策略主要有两种：
+- 捕获并处理。
+
+- 向上抛出。
 
 选择处理策略的原则：
 - 如果该功能内部可以将问题处理，用 try。
@@ -234,52 +406,63 @@ throw
 
 注：异常一旦被捕获，并且没有再次被抛出，那么上层是感知不到该异常的！！！！
 
-### finally
-
-finally 的特点：被 finally 控制的语句体一定会执行。  
-
-特殊情况：在执行到 finally 之前 JVM 退出了（比如 `System.exit(0)`）。  
-
-finally 的作用：用于释放资源，在 IO 流操作和数据库操作中会见到。
-
-finally 相关的面试题：
-- final，finally 和 finalize 的区别。  
-  1. final 修饰类、变量（成员变量和局部变量）和成员方法。  
-      - 修饰类之后，该类不能被继承。
-      - 修饰变量之后，该变量变成自定义常量。
-      - 修饰方法之后，该方法部类被子类覆盖。
-  2. finally 修饰代码块。  
-  finally 代码块的执行特征是：  
-  对于 try-catch-finnally 代码块而言，finally 代码块中的代码，不管是否发生异常，finally 代码块中的代码，最后都会执行。  
-  即使在 finally 代码块之前，有 return 语句，finally 代码块，仍然会执行。  
-  特殊情况：在执行到 finally 之前 JVM 退出了（比如System.exit(0)）。
-     
-  3. finalize() 是 Object 类中的一个方法。  
-  该方法在对象变成垃圾，并且被垃圾回收期调用之前，JVM 会在该对象上调用 finalize() 方法一次且仅一次。
-
-- 如果 catch 里面有 return 语句，请问 finally 的代码还会执行吗？如果会，请问是在 return 前还是 return 后。  
-  即使在 finally 代码块之前有 return 语句，finally 代码块仍然会执行。
 
 ### 自定义异常  
 
+Java 本身已经提供了大量的异常，但这些异常在日常生活的工作中往往并不够使用，这时就需要 coder 自己去定义一个异常类。  
+
 自定义异常分两种：  
-- 继承自 Exception。
+- 继承自 Exception（强制性异常处理）。
 
-- 继承自 RuntimeException。
+- 继承自 RuntimeException（选择性异常处理）。
 
+自定义异常的意义：仅仅在于异常的处理。
+
+示例：  
+```java
+public class TestDemo {
+
+    public static void main(String[] args) {
+        try {
+            recordScore(-1);
+        } catch (MyRuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void recordScore(int score) {
+        if (score < 0 || score > 100) {
+            throw new MyRuntimeException("MyRuntimeException 分数异常：" + score);
+        }
+    }
+}
+
+// 自定义的运行时时异常
+class MyRuntimeException extends RuntimeException {
+    public MyRuntimeException(String msg) {
+        super(msg);
+    }
+}
+
+/* 运行结果：
+com.gyh.part2.day33.list.MyRuntimeException: MyRuntimeException 分数异常：-1
+	at com.gyh.part2.day33.list.TestDemo.recordScore(TestDemo.java:15)
+	at com.gyh.part2.day33.list.TestDemo.main(TestDemo.java:7)
+*/
+```
 
 ## File类
 
-### File类概述
-
 操作系统中，所有需要永久保存的数据，都是以文件的形式存在。
 
-File 类概述：文件和目录路径名的抽象表达形式。
+File 类：文件和目录路径名的抽象表达形式。
 
 路径：  
-- 绝对路径名是完整的路径名，不需要任何其他信息就可以定位它所表示的文件或目录。如 windows 下：`E:\first\a.txt`。  
+- 绝对路径名是完整的路径名，不需要任何其他信息就可以定位它所表示的文件或目录。  
+  如 Windows 下：`E:\first\a.txt`。  
 
-- 相反，相对路径名必须使用取自其他路径名的信息进行解释（相对路径本身表示信息不完整）。如 `dir\a.txt`。
+- 相反，相对路径名必须使用取自其他路径名的信息进行解释（相对路径本身表示信息不完整）。  
+  如 `dir\a.txt`。
 
 - 默认情况下，java.io 包中的类总是根据当前用户目录来解析相对路径名。  
   此目录由系统属性 user.dir 指定，通常是 Java 虚拟机的调用目录。
@@ -291,127 +474,77 @@ File 类概述：文件和目录路径名的抽象表达形式。
   `/:` 表示根目录。
 
 - 对于 Microsoft Windows 平台，包含盘符的路径名前缀由驱动器号和一个 `:` 组成。如果路径名是绝对路径名，还可能后跟 `\\`，而相对路径没有盘符前缀。  
-  绝对路径：`E:\first\dir\a.txt`  
-  相对路径：`dir\a.txt`  
+  绝对路径：`E:\first\dir\a.txt`。  
+  相对路径：`dir\a.txt`。  
 
-- 在 java.io.File 类里面提供了一个路径分隔符常量：`public static String separator;` 利用此常量可以在不同的操作系统中自动转换为适合该操作系统的路径分隔符。所以在实际开发中，如果要定义 File 类对象往往会使用如下形式的操作代码。  
+常见属性：  
+- `static String pathSeparator`：与系统有关的路径分隔符，为了方便，它被表示为一个字符串。  
+  利用此常量可以在不同的操作系统中自动转换为适合该操作系统的路径分隔符。所以在实际开发中，如果要定义 File 类对象往往会使用如下形式的操作代码：  
   ```java
   File file = new File("d:" + File.separator + "test.txt");  // 设置文件路径
   ```
 
-### File类的构造方法
+常见构造方法：
+- `File (String pathname)`：通过将给定路径名字符串转换为抽象路径名来创建一个新 File 实例。
 
-```java
-// 通过将给定路径名字符串转换为抽象路径名来创建一个新 File 实例。
-File (String pathname)
+- `File (String parent, Sting child)`：根据 parent 路径名字符串和 child 路径名字符串创建一个新 File 实例。
 
-// 根据 parent 路径名字符串和 child 路径名字符串创建一个新 File 实例。
-File (String parent, Sting child)
-
-// 根据 parent 抽象路径名和 child 路径名字符串创建一个新 File 实例。
-File (File parent, String child)
-```
-
-### File类的成员方法
-
-**（1）创建功能**  
-```java
-// 当且仅当不存在具有此抽象路径名指定名称的文件时，不可分地创建一个新的空文件。
-public boolean createNewFile() 
-
-// 创建此抽象路径名指定的目录。
-public boolean mkdir()
-
-// 创建此抽象路径名指定的目录，包括所有必需但不存在的父目录。
-public boolean mkdirs()
-```
-
-**（2）删除功能**  
-```java
-// 删除此抽象路径名表示的文件或目录，如果此路径名表示一个目录，则该目录必须为空才能删除。
-public boolean delete()
-```
-
-**（3）重命名功能**  
-```java
-// 重新命名此抽象路径名表示的文件。
-public boolean renameTo(File dest)
-```
-当目标 File 对象所表示抽象路径如果和原文件的路径在同一目录下，该方法实现的效果仅仅只是重命名。  
-当目标 File 对象所表示抽象路径如果和原文件的路径不在同一目录下，该方法实现的效果：文件移动 + 重命名。  
-
-**（4）判断功能**  
-```java
-// 判断此抽象路径名表示的文件是否是一个标准文件。
-public boolean isFile()
-
-// 判断此抽象路径名表示的文件是否是一个目录。
-public boolean isDirectory()
-
-// 判断该 File 对象所表示的文件或目录是否物理存在。
-public boolean exists()
-
-// 判断该 File 对象所表示的文件目录是否有读取权。
-public boolean canRead()
-
-public boolean canWrite()
-
-// 判断此抽象路径名指定的文件是否是一个隐藏文件。
-public boolean isHidden()
-```
-
-**（5）基本获取功能**  
-```java
-// 返回此抽象路径名的绝对路径名形式。
-public File getAbsoluteFile()
-
-// 将此抽象路径名转换为一个路径名字符串。
-public String getPath()
-
-// 返回由此抽象路径名表示的文件或目录的名称。
-public String getName()
-
-// 返回由此抽象路径名表示的文件的长度。
-public long length()
-
-// 返回此抽象路径名表示的文件最后一次被修改的时间。
-public long lastModified()
-```
-
-**（6）高级获取功能**  
-```java
-// 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的文件和目录。
-public String[] list()
-
-// 返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。
-public File[] listFiles()
-```
-`public String[] list()` 
-- 返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的文件和目录（其实返回的就是当前目录下的所有目录和文件的名字）。  
-
-- 如果此抽象路径名不表示一个目录，那么此方法将返回 null。
-
-`public File[] listFiles()` 
-- 仅返回当前目录下的子文件或子目录的名称。  
-
-- 返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。
-
-- 如果此抽象路径名不表示一个目录，那么此方法将返回 null。
+- `File (File parent, String child)`：根据 parent 抽象路径名和 child 路径名字符串创建一个新 File 实例。
 
 
-**（7）自定义获取功能**  
-```java
-// 返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
-File[] listFiles(FileFilter filter)
+创建功能：
+- `public boolean createNewFile()`：当且仅当不存在具有此抽象路径名指定名称的文件时，不可分地创建一个新的空文件。
+ 
+- `public boolean mkdir()`：创建此抽象路径名指定的目录。
 
-// 返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
-File[] listFiles(FilenameFilter filter)
-```
+- `public boolean mkdirs()`：创建此抽象路径名指定的目录，包括所有必需但不存在的父目录。
 
-### File实战
+删除功能：
+- `public boolean delete()`：删除此抽象路径名表示的文件或目录，如果此路径名表示一个目录，则该目录必须为空才能删除。
 
-**（1）递归地列出一个目录下所有文件**  
+重命名功能：
+- `public boolean renameTo(File dest)`：重新命名此抽象路径名表示的文件。  
+  当目标 File 对象所表示抽象路径如果和原文件的路径在同一目录下，该方法实现的效果仅仅只是重命名。  
+  当目标 File 对象所表示抽象路径如果和原文件的路径不在同一目录下，该方法实现的效果：文件移动 + 重命名。  
 
+判断功能：
+- `public boolean isFile()`：判断此抽象路径名表示的文件是否是一个标准文件。
+
+- `public boolean isDirectory()`：判断此抽象路径名表示的文件是否是一个目录。
+
+- `public boolean exists()`：判断该 File 对象所表示的文件或目录是否物理存在。
+
+- `public boolean canRead()`：判断该 File 对象所表示的文件目录是否有读取权。
+
+- `public boolean canWrite()`：判断该 File 对象所表示的文件目录是否有写入权。
+
+- `public boolean isHidden()`：判断此抽象路径名指定的文件是否是一个隐藏文件。
+
+基本获取功能：
+- `public File getAbsoluteFile()`：返回此抽象路径名的绝对路径名形式。
+
+- `public String getPath()`：将此抽象路径名转换为一个路径名字符串。
+
+- `public String getName()`：返回由此抽象路径名表示的文件或目录的名称。
+
+- `public long length()`：返回由此抽象路径名表示的文件的长度。
+
+- `public long lastModified()`：返回此抽象路径名表示的文件最后一次被修改的时间。
+
+高级获取功能：
+- `public String[] list()`：返回一个字符串数组，这些字符串指定此抽象路径名表示的目录中的文件和目录（其实返回的就是当前目录下的所有目录和文件的名字）。   
+  如果此抽象路径名不表示一个目录，那么此方法将返回 null。
+
+- `public File[] listFiles()`：仅返回当前目录下的子文件或子目录的名称。  
+  返回一个抽象路径名数组，这些路径名表示此抽象路径名表示的目录中的文件。如果此抽象路径名不表示一个目录，那么此方法将返回 null。
+
+自定义获取功能：
+- `File[] listFiles(FileFilter filter)`：返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
+
+- `File[] listFiles(FilenameFilter filter)`：返回抽象路径名数组，这些路径名表示此抽象路径名表示的目录中满足指定过滤器的文件和目录。
+
+
+示例（递归地列出一个目录下所有文件）：
 ```java
 public static void listAllFiles(File dir) {
     if (dir == null || !dir.exists()) {
@@ -428,12 +561,11 @@ public static void listAllFiles(File dir) {
 ```
 
 
-
 ## 字节流与字符流
 
-使用 java.io.File 类虽然可以操作文件，但是却不能操作文件的内容。如果要进行文件的内容操作，就必须依靠I / O（Input / Output） 流来完成。  
+使用 java.io.File 类虽然可以操作文件，但是却不能操作文件的内容。如果要进行文件的内容操作，就必须依靠 I/O（Input/Output）流来完成。  
 
-Java 语言主要通过输入流和输出流，完成 I / O 的功能，从而实现和外设的数据交互。而且针对此操作提供以下两类支持。  
+Java 语言主要通过输入流和输出流，完成 I / O 的功能，从而实现和外设的数据交互。而且针对此操作提供以下两类支持：  
 - 字节流（JDK 1.0 开始提供）：InputStream（输入字节流）、OutputStream（输出字节流）。  
 
 - 字符流（JDK 1.1 开始提供）：Reader（输入字符流）、Writer（输出字符流）。
