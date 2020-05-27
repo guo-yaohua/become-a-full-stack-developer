@@ -1,6 +1,14 @@
 # 五、数据结构
 
 ## 目录
+- [Java数据结构](#java数据结构) 
+
+- [线性表](#线性表)
+  
+- [栈](#栈)
+
+- [队列](#队列)
+
 
 ## Java数据结构
 
@@ -12,13 +20,15 @@
 - 结构：在任何问题中，数据元素都不是孤立存在的，它们之间都存在着某种关系，这种数据元素相互之间的关系称为结构。
 
 元素之间，通常有以下四种基本结构：
-- 集合。
+- 集合：结构中的数据元素之间除了同属于一个集合的关系之外，别无其他关系。  
+  这里的集合和数学中集合的概念是一致的。
 
-- 线性结构。
+- 线性结构：结构中的数据元素之间存在一对一的关系。
 
-- 树形结构。
+- 树形结构：结构中的数据元素之间存在一对多的关系。
 
-- 图或网状结构。
+- 图或网状结构：结构中的数据元素之间，存在多对多的关系。
+
 
 前面分类中定义的关系，描述的是数据元素间的逻辑关系，因此又称为逻辑结构。  
 
@@ -33,1481 +43,27 @@
 
 ## 线性表
 
-### 逻辑结构
-
 线性表：n 个数据元素的有序序列。
-- 线性表中元素的个数是有限的。
+- 个数有限。
 
-- 线性表中元素是有序的。
+- 元素有序。
 
-「有序」：
-- 指如果以 ai 表示数据元素，则线性表可以记为 {a1, … , ai-1, ai, ai+1, … , an}。  
-  表中, ai-1 在 ai 之前，同时 ai+1 在 ai 之后，我们称 ai-1 是 ai 的直接前驱，ai+1 是 ai 的直接后继。
+有序：线性表中每个数据元素都有一个确定的位序。
+- 如果以 ai 表示数据元素，则线性表可以记为 {a1, … , ai-1, ai, ai+1, … , an}。  
+  表中 ai-1 在 ai 之前，同时 ai+1 在 ai 之后，我们称 ai-1 是 ai 的「直接前驱」，ai+1 是 ai 的「直接后继」。
 
 - 除表头和表尾元素外，其它元素都有唯一前驱和唯一后继，其唯一前驱或唯一后继确定了该元素在线性表中的位置。
 
-- 表头元素有唯一后继，无前驱，表尾元素有唯一前驱，无后继。
+- 表头元素有唯一后继，无前驱；表尾元素有唯一前驱，无后继。
 
-- 因此，线性表中每个数据元素都有一个确定的位序，这个确定的位序我们称之为索引。
 
 线性表的实现有两种：
-- 顺序映像（ArrayList）；
+- 顺序映像（ArrayList）。
 
 - 非顺序映像（LinkedList）。
 
-### 顺序印象实现
-
-结构：
-```
-.
-|- exception
-|  |- ArrayOverflowException.java
-|
-|- list
-|  |- MyArrayList.java
-|  |
-|  |- MyIterator.java
-|  |
-|  |- MyList.java
-```
-
-ArrayOverflowException 异常：
-```java
-public class ArrayOverflowException extends RuntimeException {
-    public ArrayOverflowException() {
-    }
-
-    public ArrayOverflowException(String message) {
-        super(message);
-    }
-}
-```
-
-MyList：
-```java
-public interface MyList<E> extends Iterable<E> {
-    boolean add(E e);
-
-    void add(int index, E e);
-
-    void clear();
-
-    boolean contains(Object obj);
-
-    E get(int index);
-
-    int indexOf(Object obj);
-
-    boolean isEmpty();
-
-    MyIterator iterator();
-
-    MyIterator iterator(int index);
-
-    int lastIndexOf(Object obj);
-
-    E remove(int index);
-
-    boolean remove(Object obj);
-
-    E set(int index, E e);
-
-    int size();
-}
-```
-
-MyInterator：
-```java
-import java.util.Iterator;
-
-public interface MyIterator<E> extends Iterator<E> {
-    boolean hasNext();
-
-    boolean hasPrevious();
-
-    E next();
-
-    E previous();
-
-    int nextIndex();
-
-    int previousIndex();
-
-    void add(E e);
-
-    void remove();
-
-    void set(E e);
-}
-```
-
-MyArrayList：  
-```java
-import ArrayOverflowException;
-
-import java.util.*;
-
-public class MyArrayList<E> implements MyList<E> {
-    private final static int DEFAULT_CAPACITY = 10;
-    private final static int MAX_CAPACITY = Integer.MAX_VALUE - 8;
-
-    // 属性
-    private Object[] elements;
-    private int size;
-    private int modCount; // 统计集合结果被修改的次数，主要是用来处理并发修改异常的
-
-    // 构造方法
-    public MyArrayList() {
-        elements = new Object[DEFAULT_CAPACITY];
-    }
-
-    public MyArrayList(int initialCapacity) {
-        if (initialCapacity <= 0 || initialCapacity > MAX_CAPACITY) {
-            throw new IllegalArgumentException("initialCapacity=" + initialCapacity);
-        }
-        elements = new Object[initialCapacity];
-    }
-
-    // 方法
-
-    /**
-     * 在线性表最后添加元素
-     *
-     * @param e 待添加的元素
-     * @return 如果添加成功返回true
-     */
-    @Override
-    public boolean add(E e) {
-        add(size, e);
-        return true;
-    }
-
-    /**
-     * 在线性表中指定的索引位置添加元素
-     *
-     * @param index 索引
-     * @param e     待添加的元素
-     */
-    @Override
-    public void add(int index, E e) {
-        checkIndexForAdd(index);
-        // 判断是否需要扩容
-        if (size == elements.length) {
-            // 计算newCapacity
-            int minCapacity = size + 1;
-            int newCapacity = calculateCapacity(minCapacity);
-            // 扩容
-            grow(newCapacity);
-        }
-        // 添加元素
-        for (int i = size; i > index; i--) {
-            elements[i] = elements[i - 1];
-        }
-        elements[index] = e;
-        size++;
-        modCount++;
-    }
-
-    private void grow(int newCapacity) {
-        Object[] newArr = new Object[newCapacity];
-        // 复制元素
-        for (int i = 0; i < size; i++) {
-            newArr[i] = elements[i];
-        }
-        // elements指向新数组
-        elements = newArr; // Caution!
-    }
-
-    private int calculateCapacity(int minCapacity) {
-        if (minCapacity > MAX_CAPACITY || minCapacity < 0) {
-            throw new ArrayOverflowException();
-        }
-        // 一定能够容纳下minCapacity个元素
-        int newCapacity = elements.length + (elements.length >> 1);
-        if (newCapacity > MAX_CAPACITY || newCapacity < 0) {
-            newCapacity = MAX_CAPACITY;
-        }
-        // 返回minCapacity和newCapacity的最大值
-        return Math.max(minCapacity, newCapacity);
-    }
-
-    private void checkIndexForAdd(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    /**
-     * 清空所有元素
-     */
-    @Override
-    public void clear() {
-        for (int i = 0; i < size; i++) {
-            elements[i] = null;
-        }
-        size = 0;
-        modCount++;
-    }
-
-    /**
-     * 判断集合中是否存在与指定对象相等的元素
-     *
-     * @param obj 指定对象
-     * @return 如果集合中有与指定对象相等的元素, 返回true, 否则返回false
-     */
-    @Override
-    public boolean contains(Object obj) {
-        return indexOf(obj) != -1;
-    }
-
-    /**
-     * 获取指定索引位置的元素
-     *
-     * @param index 索引
-     * @return 指定索引位置的元素
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E get(int index) {
-        checkIndex(index);
-        return (E) elements[index];
-    }
-
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    /**
-     * 获取集合中第一个与指定对象相等元素的索引
-     *
-     * @param obj 指定对象
-     * @return 第一个与指定对象相等元素的索引, 如果不存在这样的元素, 返回-1
-     */
-    @Override
-    public int indexOf(Object obj) {
-        if (obj == null) {
-            for (int i = 0; i < size; i++) {
-                if (elements[i] == null) return i;
-            }
-        } else {
-            for (int i = 0; i < size; i++) {
-                if (obj.equals(elements[i])) return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 判断集合是否为空集合
-     *
-     * @return 如果集合是空集合返回true, 否则返回false
-     */
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-
-    /**
-     * 获取集合中最后一个与指定对象相等元素的索引
-     *
-     * @param obj 指定对象
-     * @return 最后一个与指定对象相等元素的索引, 如果不存在这样的元素, 返回-1
-     */
-    @Override
-    public int lastIndexOf(Object obj) {
-        if (obj == null) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (elements[i] == null) return i;
-            }
-        } else {
-            for (int i = size - 1; i >= 0; i--) {
-                if (obj.equals(elements[i])) return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 删除指定索引位置的元素
-     *
-     * @param index 索引
-     * @return 被删除的元素
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E remove(int index) {
-        checkIndex(index);
-        E removeValue = (E) elements[index];
-        for (int i = index; i < size - 1; i++) {
-            elements[i] = elements[i + 1];
-        }
-        // 将最后一个元素置为null, 避免内存泄漏
-        elements[size - 1] = null;
-        size--;
-        modCount++;
-        return removeValue;
-    }
-
-    /**
-     * 删除第一个与指定对象相等的元素
-     *
-     * @param obj 指定对象
-     * @return 如果删除成功返回true, 否则返回false
-     */
-    @Override
-    public boolean remove(Object obj) {
-        int index = indexOf(obj);
-        if (index == -1) return false;
-        remove(index);
-        return true;
-    }
-
-    /**
-     * 替换指定索引位置的元素
-     *
-     * @param index 索引
-     * @param e     新值
-     * @return 该索引位置原来的值
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E set(int index, E e) {
-        checkIndex(index);
-        E oldValue = (E) elements[index];
-        elements[index] = e;
-        // 我们只是替换元素的值，集合的结构没有发生改变, 不需要modCount++
-        return oldValue;
-    }
-
-    /**
-     * 获取线性表中元素的个数
-     *
-     * @return 元素的个数
-     */
-    @Override
-    public int size() {
-        return size;
-    }
-
-
-    /**
-     * 获取迭代器, 默认下一个元素的索引为0
-     *
-     * @return 迭代器
-     */
-    @Override
-    public MyIterator<E> iterator() {
-        return new Itr();
-    }
-
-    /**
-     * 获取迭代器, 默认下一个元素的索引为index
-     *
-     * @param index 下一个元素的索引
-     * @return 迭代器
-     */
-    @Override
-    public MyIterator<E> iterator(int index) {
-        checkIndexForAdd(index);
-        return new Itr(index);
-    }
-
-    private class Itr implements MyIterator<E> {
-        // 属性
-        int cursor; // 光标后面元素的索引
-        int expModCount = modCount;
-        int lastRet = -1; //最近返回元素的索引, -1表示最近没有返回元素,或者是最近返回的元素失效了。
-
-        // 构造方法
-        Itr() {
-        }
-
-        Itr(int index) {
-            cursor = index;
-        }
-
-        /**
-         * 判断光标后面是否还有元素
-         *
-         * @return 如果光标后面还有元素返回true, 否则返回false
-         */
-        @Override
-        public boolean hasNext() {
-            // return cursor < size;
-            return cursor != size;
-        }
-
-        /**
-         * 判断光标前面是否还有元素
-         *
-         * @return 如果光标前面还有元素返回true, 否则返回false
-         */
-        @Override
-        public boolean hasPrevious() {
-            // return cursor > 0;
-            return cursor != 0;
-        }
-
-        /**
-         * 将光标往后移动一个位置，并把被光标越过的元素返回
-         *
-         * @return 被光标越过的元素
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public E next() {
-            // 判断迭代器是否有效
-            checkConModException();
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            // 移动光标
-            /*E retValue = (E)elements[cursor];
-            lastRet = cursor;
-            cursor++;
-            return retValue;*/
-
-            lastRet = cursor;
-            return (E) elements[cursor++];
-        }
-
-        private void checkConModException() {
-            if (expModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        /**
-         * 将光标往前移动一个位置，并把被光标越过的元素返回
-         *
-         * @return 被光标越过的元素
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public E previous() {
-            // 判断迭代器是否有效
-            checkConModException();
-            if (!hasPrevious()) {
-                throw new NoSuchElementException();
-            }
-            // 移动光标
-            /*E retValue = (E) elements[cursor - 1];
-            lastRet = cursor - 1;
-            cursor--;
-            return retValue;*/
-            lastRet = --cursor;
-            return (E) elements[cursor];
-        }
-
-        /**
-         * 光标后面元素的索引
-         *
-         * @return 光标后面元素的索引
-         */
-        @Override
-        public int nextIndex() {
-            return cursor;
-        }
-
-        /**
-         * 光标前面元素的索引
-         *
-         * @return 光标前面元素的索引
-         */
-        @Override
-        public int previousIndex() {
-            return cursor - 1;
-        }
-
-        /**
-         * 在光标后面添加元素
-         * @param e 待添加的元素
-         */
-        @Override
-        public void add(E e) {
-            // 判断迭代器是否有效
-            checkConModException();
-            MyArrayList.this.add(cursor, e);
-            expModCount = modCount;
-            lastRet = -1;
-            cursor++;
-        }
-
-        /**
-         * 删除最近返回的元素
-         */
-        @Override
-        public void remove() {
-            checkConModException();
-            if (lastRet == -1) {
-                throw new IllegalStateException();
-            }
-            // 删除最近返回的元素
-            MyArrayList.this.remove(lastRet);
-            // 更改迭代器的属性
-            expModCount = modCount;
-            cursor = lastRet; // Caution!
-            lastRet = -1;
-        }
-
-        /**
-         * 替换最近返回的元素
-         * @param e 新值
-         */
-        @Override
-        public void set(E e) {
-            checkConModException();
-            if (lastRet == -1) {
-                throw new IllegalStateException();
-            }
-            elements[lastRet] = e;
-            lastRet = -1;
-        }
-    }
-
-    @Override
-    public String toString() {
-        //[a, b, c]
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < size; i++) {
-            // if (i != 0) sb.append(", ");
-            sb.append(elements[i]).append(", ");
-            // if (i != size - 1) sb.append(", ");
-        }
-        if (size != 0) sb.delete(sb.length() - 2, sb.length());
-        return sb.append("]").toString();
-    }
-
-    public static void main(String[] args) {
-        /*MyArrayList<String> list = new MyArrayList<>();
-        // System.out.println(list);
-        list.add("hello");
-        list.add("world");
-        list.add("java");*/
-        /*System.out.println(list);
-        System.out.println(list.size());*/
-
-        // 自动扩容
-        /*for (int i = 0; i < 30; i++) {
-            list.add("" + i);
-        }
-        System.out.println(list);
-        System.out.println(list.size());*/
-
-        // void add(int index, E e)
-        // list.add(0, null);
-        // list.add(1, null);
-        // list.add(list.size(), null);
-        // list.add(-1, null);
-        // list.add(list.size() + 1, null);
-        // System.out.println(list);
-
-        // void clear(), boolean isEmpty(), int size()
-        /*System.out.println(list);
-        System.out.println(list.size());
-        System.out.println(list.isEmpty());
-        list.clear();
-        System.out.println(list);
-        System.out.println(list.size());
-        System.out.println(list.isEmpty());*/
-
-        // boolean contains(Object obj)
-        /*System.out.println(list.contains("hello"));
-        System.out.println(list.contains("helloKitty"));
-        System.out.println(list.contains(null));
-        list.add(null);
-        System.out.println(list.contains(null));*/
-
-        // int indexOf(Object obj)
-        /*list.add("hello");
-        System.out.println(list.indexOf("hello")); // 0
-        System.out.println(list.indexOf(null));  // -1
-        list.add(null);
-        list.add(1, null);
-        System.out.println(list.indexOf(null)); // 1*/
-
-        // int lastIndexOf(Object obj)
-        /*list.add("hello");
-        System.out.println(list.lastIndexOf("hello")); // 3
-        System.out.println(list.lastIndexOf(null)); // -1
-        list.add(null);
-        list.add(1, null);
-        System.out.println(list.lastIndexOf(null)); // 5*/
-
-        // E get(int index)
-        /*String s = list.get(1);
-        System.out.println(s);*/
-        // System.out.println(list.get(-1));
-        // System.out.println(list.get(list.size()));
-
-        // E remove(int index)
-        // System.out.println(list.remove(1));
-        // System.out.println(list.remove(-1));
-        // System.out.println(list.remove(list.size()));
-        // System.out.println(list);
-
-        // boolean remove(Object obj)
-        // list.add("hello");
-        // System.out.println(list.remove("hello"));
-        // System.out.println(list.remove(null));
-        /*list.add(null);
-        list.add(0, null);
-        System.out.println(list);
-        System.out.println(list.remove(null));
-        System.out.println(list);*/
-
-        // E set(int index, E e)
-        // System.out.println(list.set(1, "WORLD"));
-        // System.out.println(list.set(-1, "WORLD"));
-        /*System.out.println(list.set(list.size(), "WORLD"));
-        System.out.println(list);*/
-
-        /*****************************************************
-         *                   Iterator
-         *****************************************************/
-        /*MyArrayList<String> list = new MyArrayList<>();
-        list.add("hello");
-        list.add("world");
-        list.add("java");*/
-
-        // boolean hasNext(), boolean hasPrevious()
-        // MyIterator<String> it = list.iterator();
-        // MyIterator<String> it = list.iterator(list.size());
-        // MyIterator<String> it = list.iterator(1);
-        // System.out.println(it.hasPrevious());
-        // System.out.println(it.hasNext());
-
-        // E next()
-        /*MyIterator<String> it = list.iterator();
-        System.out.println(it.next());
-        System.out.println(it.next());
-        System.out.println(it.next());*/
-        // System.out.println(it.next()); NoSuchElementException
-
-        // E previous()
-        /*MyIterator<String> it = list.iterator(list.size());
-        System.out.println(it.previous());
-        System.out.println(it.previous());
-        System.out.println(it.previous());*/
-        // System.out.println(it.previous()); NoSuchElementException
-
-        // int nextIndex(), int previousIndex()
-        /*MyIterator<String> it = list.iterator();
-        System.out.println(it.previousIndex()); //-1
-        System.out.println(it.nextIndex()); // 0
-        it.next();
-        System.out.println(it.previousIndex()); // 0
-        System.out.println(it.nextIndex());*/ // 1
-
-        /*MyIterator<String> it = list.iterator(list.size());
-        System.out.println(it.previousIndex()); // 2
-        System.out.println(it.nextIndex()); // 3
-        it.previous();
-        System.out.println(it.previousIndex()); //1
-        System.out.println(it.nextIndex()); // 2*/
-
-        // void add(E e)
-        /*MyIterator<String> it = list.iterator();
-        it.next();
-        it.add("wuhan");
-        it.add("beijing");
-        System.out.println(list);*/
-
-        /*for(MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("hello".equals(s)) {
-                int index = it.nextIndex();
-                list.add(index, "wuhan");
-            }
-        }
-        System.out.println(list);*/
-
-        // void remove()
-        /*MyIterator<String> it = list.iterator();
-        // it.remove(); // IllegalStateException
-        it.next();
-        it.remove();
-        System.out.println(list);
-        // it.remove(); IllegalStateException*/
-
-        /*MyIterator<String> it = list.iterator(list.size());
-        // it.remove();
-        it.previous();
-        it.remove();
-        System.out.println(list);
-        // it.remove();*/
-
-        // ConcurrentModificationException
-        /*for(MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("hello".equals(s)) {
-                int index = it.previousIndex();
-                list.remove(index);
-            }
-        }
-        System.out.println(list);*/
-
-
-        // void set(E e)
-        /*MyIterator<String> it = list.iterator();
-        // it.set("HELLO");
-        it.next();
-        it.set("HELLO");
-        System.out.println(list);
-        // it.set("hello");
-        System.out.println(it.nextIndex());*/
-
-        /*for(MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("hello".equals(s)) {
-                int index = it.previousIndex();
-                list.set(index, "HELLO");
-            }
-        }
-        System.out.println(list);*/
-
-        /*for(MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("java".equals(s)) {
-                int index = it.previousIndex();
-                list.remove(index);
-            }
-        }
-        System.out.println(list);*/
-
-        ArrayList<String> list = new ArrayList<>();
-        list.add("hello");
-        list.add("world");
-        list.add("java");
-
-        for(ListIterator<String> it = list.listIterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("java".equals(s)) {
-                int index = it.previousIndex();
-                list.remove(index);
-            }
-        }
-        System.out.println(list);
-    }
-}
-```
-
-### 非顺序印象实现
-
-结构：
-```
-.
-|- list
-|  |- MyArrayList.java
-|  |
-|  |- MyIterator.java
-|  |
-|  |- MyList.java
-```
-
-MyList：
-```java
-public interface MyList<E> extends Iterable<E> {
-    boolean add(E e);
-
-    void add(int index, E e);
-
-    void clear();
-
-    boolean contains(Object obj);
-
-    E get(int index);
-
-    int indexOf(Object obj);
-
-    boolean isEmpty();
-
-    MyIterator iterator();
-
-    MyIterator iterator(int index);
-
-    int lastIndexOf(Object obj);
-
-    E remove(int index);
-
-    boolean remove(Object obj);
-
-    E set(int index, E e);
-
-    int size();
-}
-```
-
-MyInterator：
-```java
-import java.util.Iterator;
-
-public interface MyIterator<E> extends Iterator<E> {
-    boolean hasNext();
-
-    boolean hasPrevious();
-
-    E next();
-
-    E previous();
-
-    int nextIndex();
-
-    int previousIndex();
-
-    void add(E e);
-
-    void remove();
-
-    void set(E e);
-}
-```
-
-MyLinkedList
-```java
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
-
-public class MyLinkedList<E> implements MyList<E> {
-    //属性
-    private Node head;
-    private Node tail;
-    private int size;
-    private int modCount;
-
-    private static class Node {
-        Node prev;
-        Object value;
-        Node next;
-
-        public Node(Object value) {
-            this.value = value;
-        }
-
-        public Node(Node prev, Object value, Node next) {
-            this.prev = prev;
-            this.value = value;
-            this.next = next;
-        }
-    }
-
-    //构造方法
-    public MyLinkedList() {
-        head = new Node(null);
-        tail = new Node(head, null, null);
-        head.next = tail;
-    }
-
-    /**
-     * 在线性表最后添加元素
-     *
-     * @param e 待添加的元素
-     * @return 如果添加成功，返回true
-     */
-    @Override
-    public boolean add(E e) {
-        add(size, e);
-        return true;
-    }
-
-    /**
-     * 在线性表的指定位置添加元素
-     *
-     * @param index 索引位置
-     * @param e     待添加的元素
-     */
-    @Override
-    public void add(int index, E e) {
-        checkIndexForAdd(index);
-        if (index == size) { //Caution!
-            Node nodeToAdd = new Node(tail.prev, e, tail);
-            tail.prev.next = nodeToAdd;
-            tail.prev = nodeToAdd;
-        } else {
-            Node node = getNode(index);
-            Node nodeToAdd = new Node(node.prev, e, node);
-            node.prev.next = nodeToAdd;
-            node.prev = nodeToAdd;
-        }
-        size++;
-        modCount++;
-    }
-
-    /*
-    A --> B --> C   size=3
-    A --> B --> C --> D size=4
-     */
-    private Node getNode(int index) {
-        if (2 * index < size) {
-            Node x = head.next;
-            for (int i = 0; i < index; i++) {
-                x = x.next;
-            }
-            return x;
-        } else {
-            Node x = tail.prev;
-            for (int i = size - 1; i > index; i--) {
-                x = x.prev;
-            }
-            return x;
-        }
-    }
-
-    private void checkIndexForAdd(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    /**
-     * 清空所有的元素
-     */
-    @Override
-    public void clear() {
-        head.next = tail;
-        tail.prev = head;
-        size = 0;
-        modCount++;
-    }
-
-    /**
-     * 判断线性表中是否有和指定对象相等的元素
-     *
-     * @param obj 指定对象
-     * @return 如果存在这样的元素返回true, 否则返回false
-     */
-    @Override
-    public boolean contains(Object obj) {
-        return indexOf(obj) != -1;
-    }
-
-    /**
-     * 获取指定索引位置的元素
-     *
-     * @param index 索引
-     * @return 指定索引位置的元素
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E get(int index) {
-        checkIndex(index);
-        return (E) getNode(index).value;
-    }
-
-    private void checkIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    /**
-     * 获取线性表中第一个和指定对象相等元素的索引
-     *
-     * @param obj 指定对象
-     * @return 第一个和指定对象相等元素的索引，如果不存在这样的元素返回-1
-     */
-    @Override
-    public int indexOf(Object obj) {
-        if (obj == null) {
-            Node x = head.next;
-            for (int i = 0; i < size; i++) {
-                if (x.value == null) return i;
-                x = x.next;
-            }
-        } else {
-            Node x = head.next;
-            for (int i = 0; i < size; i++) {
-                if (obj.equals(x.value)) return i;
-                x = x.next;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 判断线性表是否为空
-     *
-     * @return 如果线性表为空返回true, 否则返回false
-     */
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    /**
-     * 获取最后一个与指定对象相等元素的索引
-     *
-     * @param obj 指定对象
-     * @return 最后一个与指定对象相等元素的索引，如果不存在这样的元素返回-1
-     */
-    @Override
-    public int lastIndexOf(Object obj) {
-        if (obj == null) {
-            Node x = tail.prev;
-            for (int i = size - 1; i >= 0; i--) {
-                if (x.value == null) return i;
-                x = x.prev;
-            }
-        } else {
-            Node x = tail.prev;
-            for (int i = size - 1; i >= 0; i--) {
-                if (obj.equals(x.value)) return i;
-                x = x.prev;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 删除指定索引位置的元素，并把被删除的元素返回
-     *
-     * @param index 索引
-     * @return 被删除的元素
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E remove(int index) {
-        checkIndex(index);
-        Node node = getNode(index);
-        node.prev.next = node.next;
-        node.next.prev = node.prev;
-        size--;
-        modCount++;
-        return (E) node.value;
-    }
-
-    /**
-     * 删除第一个与指定对象相等的元素
-     *
-     * @param obj 指定对象
-     * @return 如果删除成功返回true, 否则返回false
-     */
-    @Override
-    public boolean remove(Object obj) {
-        if (obj == null) {
-            Node x = head.next;
-            for (int i = 0; i < size; i++) {
-                if (x.value == null) {
-                    // 删除x结点
-                    x.prev.next = x.next;
-                    x.next.prev = x.prev;
-                    size--;
-                    modCount++;
-                    return true;
-                }
-                x = x.next;
-            }
-        } else {
-            Node x = head.next;
-            for (int i = 0; i < size; i++) {
-                if (obj.equals(x.value)) {
-                    // 删除x结点
-                    x.prev.next = x.next;
-                    x.next.prev = x.prev;
-                    size--;
-                    modCount++;
-                    return true;
-                }
-                x = x.next;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 替换指定索引位置的元素
-     *
-     * @param index 索引
-     * @param e     新值
-     * @return 旧值
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public E set(int index, E e) {
-        checkIndex(index);
-        Node node = getNode(index);
-        E retValue = (E) node.value;
-        node.value = e;
-        return retValue;
-    }
-
-    /**
-     * 获取线性表中元素的个数
-     *
-     * @return 元素的个数
-     */
-    @Override
-    public int size() {
-        return size;
-    }
-
-    /**
-     * 获取迭代器,光标后面元素的索引为0
-     *
-     * @return 迭代器
-     */
-    @Override
-    public MyIterator<E> iterator() {
-        return new Itr();
-    }
-
-    /**
-     * 获取迭代器,光标后面元素的索引为 index
-     *
-     * @param index 光标后面元素的索引
-     * @return 迭代器
-     */
-    @Override
-    public MyIterator<E> iterator(int index) {
-        checkIndexForAdd(index);
-        return new Itr(index);
-    }
-
-    private class Itr implements MyIterator<E> {
-        // 属性
-        int cursor; //光标后面元素的索引
-        Node node; //光标后面的结点
-        int expModCount = modCount;
-        Node lastRet = null;
-
-        // 构造方法
-        Itr() {
-            node = head.next;
-        }
-
-        Itr(int index) {
-            cursor = index;
-            if (index == size) node = tail;
-            else node = getNode(index);
-        }
-
-        /**
-         * 判断光标后面是否还有元素
-         *
-         * @return 如果光标后面有元素返回true, 否则返回false
-         */
-        @Override
-        public boolean hasNext() {
-            return cursor != size;
-        }
-
-        /**
-         * 判断光标前面是否还有元素
-         *
-         * @return 如果光标前面有元素返回true, 否则返回false
-         */
-        @Override
-        public boolean hasPrevious() {
-            return cursor != 0;
-        }
-
-        /**
-         * 将光标往后移动一个位置, 并把被光标越过的元素返回
-         *
-         * @return 被光标越过的元素
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public E next() {
-            checkConModException();
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            E retValue = (E) node.value;
-            cursor++;
-            lastRet = node;
-            node = node.next;
-            return retValue;
-        }
-
-        private void checkConModException() {
-            if (expModCount != modCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        /**
-         * 将光标往前移动一个位置，并把被光标越过的元素返回
-         *
-         * @return 被光标越过的元素
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public E previous() {
-            checkConModException();
-            if (!hasPrevious()) {
-                throw new NoSuchElementException();
-            }
-            cursor--;
-            node = node.prev;
-            lastRet = node;
-            return (E) node.value;
-        }
-
-        /**
-         * 获取光标后面元素的索引
-         *
-         * @return 光标后面元素的索引
-         */
-        @Override
-        public int nextIndex() {
-            return cursor;
-        }
-
-        /**
-         * 获取光标前面元素的索引
-         *
-         * @return
-         */
-        @Override
-        public int previousIndex() {
-            return cursor - 1;
-        }
-
-        /**
-         * 在光标后面添加元素
-         * @param e 待添加的元素
-         */
-        @Override
-        public void add(E e) {
-            Node nodeToAdd = new Node(node.prev, e, node);
-            node.prev.next = nodeToAdd;
-            node.prev = nodeToAdd;
-            size++;
-            cursor++;
-            lastRet = null;
-            expModCount = ++modCount; //Caution!
-        }
-
-        /**
-         * 删除最近返回的元素
-         */
-        @Override
-        public void remove() {
-            checkConModException();
-            if (lastRet == null) {
-                throw new IllegalStateException();
-            }
-            lastRet.prev.next = lastRet.next;
-            lastRet.next.prev = lastRet.prev;
-            size--;
-            expModCount = ++modCount;
-            if (lastRet == node) node = node.next; // 逆向遍历
-            else cursor--; // 正向遍历
-            lastRet = null;
-        }
-
-        /**
-         * 替换最近返回的元素
-         * @param e 替换后的值
-         */
-        @Override
-        public void set(E e) {
-            checkConModException();
-            if (lastRet == null) {
-                throw new IllegalStateException();
-            }
-            lastRet.value = e;
-            lastRet = null;
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[");
-        Node x = head.next;
-        while (x != tail) {
-            sb.append(x.value).append(", ");
-            x = x.next;
-        }
-        if (size != 0) sb.delete(sb.length() - 2, sb.length());
-        return sb.append("]").toString();
-    }
-
-    public static void main(String[] args) {
-        // MyLinkedList<String> list = new MyLinkedList<>();
-        // System.out.println(list);
-        // list.add("hello");
-        // list.add("world");
-        // list.add("java");
-        // System.out.println(list);
-
-        // void add(int index, E e)
-        // list.add(0, "A");
-        // list.add(1, "A");
-        // list.add(list.size(), "A");
-        // list.add(list.size() + 1, "A");
-        // list.add(-1, "A");
-        // System.out.println(list);
-
-        // void clear(), int size(), boolean isEmpty()
-        /*System.out.println(list);
-        System.out.println(list.size());
-        System.out.println(list.isEmpty());
-        list.clear();
-        System.out.println(list);
-        System.out.println(list.size());
-        System.out.println(list.isEmpty());*/
-
-        // boolean contains(Object obj)
-        /*System.out.println(list.contains("java")); //true
-        System.out.println(list.contains("wuhan")); //false
-        System.out.println(list.contains(null));//false
-        list.add(null);
-        System.out.println(list.contains(null));//true*/
-
-        // int indexOf(Object obj)
-        /*list.add("hello");
-        System.out.println(list);
-        System.out.println(list.indexOf("hello"));
-        System.out.println(list.indexOf(null));
-        list.add(0, null);
-        list.add(null);
-        System.out.println(list);
-        System.out.println(list.indexOf(null));*/
-
-        // int lastIndexOf(Object obj)
-        /*list.add("hello");
-        System.out.println(list);
-        System.out.println(list.lastIndexOf("hello"));
-        System.out.println(list.lastIndexOf(null));
-        list.add(0, null);
-        list.add(null);
-        System.out.println(list);
-        System.out.println(list.lastIndexOf(null));*/
-
-        // E get(int index)
-        // System.out.println(list.get(1));
-        // System.out.println(list.get(-1));
-        // System.out.println(list.get(list.size()));
-
-        // E remove(index)
-        // System.out.println(list.remove(1));
-        // System.out.println(list.remove(-1));
-        // System.out.println(list.remove(list.size()));
-        // System.out.println(list);
-
-        // boolean remove(Object)
-        /*list.add("hello");
-        System.out.println(list.remove("hello"));
-        System.out.println(list);
-        System.out.println(list.remove(null));
-        System.out.println(list);
-        list.add(0, null);
-        list.add(null);
-        System.out.println(list);
-        System.out.println(list.remove(null));
-        System.out.println(list);*/
-
-        // E set(int index, E e)
-        // System.out.println(list.set(2, "JAVA"));
-        // System.out.println(list.set(-1, "JAVA"));
-        // System.out.println(list.set(list.size(), "JAVA"));
-        // System.out.println(list);
-
-        /*****************************************************
-         *                 Iterator
-         *****************************************************/
-        MyLinkedList<String> list = new MyLinkedList<>();
-        list.add("hello");
-        list.add("world");
-        list.add("java");
-
-        // boolean hasPrevious(), boolean hasNext()
-        // MyIterator<String> it = list.iterator();
-        // MyIterator<String> it = list.iterator(list.size());
-        // MyIterator<String> it = list.iterator(1);
-        // System.out.println(it.hasPrevious());
-        // System.out.println(it.hasNext());
-
-        // E previous(), E next()
-        /*MyIterator<String> it = list.iterator();
-        System.out.println(it.next());
-        System.out.println(it.next());
-        System.out.println(it.next());
-        System.out.println(it.next());*/
-
-        /*MyIterator<String> it = list.iterator(list.size());
-        System.out.println(it.previous());
-        System.out.println(it.previous());
-        System.out.println(it.previous());
-        System.out.println(it.previous());*/
-
-        /*MyIterator<String> it = list.iterator();
-        System.out.println(it.previousIndex());
-        System.out.println(it.nextIndex());
-        it.next();
-        System.out.println(it.previousIndex());
-        System.out.println(it.nextIndex());
-        it.next();
-        System.out.println(it.previousIndex());
-        System.out.println(it.nextIndex());
-        it.next();
-        System.out.println(it.previousIndex());
-        System.out.println(it.nextIndex());*/
-
-        // void add(E e)
-        /*MyIterator<String> it = list.iterator(1);
-        it.add("A");
-        it.add("B");
-        it.add("C");
-        System.out.println(list);
-        System.out.println(it.next());*/
-
-        // 在"hello"后面添加元素
-        /*for (MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("hello".equals(s)) {
-                int index = it.nextIndex();
-                list.add(index, "A");
-            }
-        }
-        System.out.println(list);*/
-
-        // void remove()
-        /*MyIterator<String> it = list.iterator();
-        // it.remove();
-        it.next();
-        it.remove();
-        System.out.println(list);*/
-        // MyIterator<String> it = list.iterator(list.size());
-        // it.previous();
-        // it.add("HELLO");
-        // it.remove();
-        // System.out.println(list);
-        // it.remove();
-
-        // 删除"hello"
-        /*for(MyIterator<String> it = list.iterator(); it.hasNext(); ) {
-            String s = it.next();
-            if ("hello".equals(s)) {
-                int index = it.previousIndex();
-                list.remove(index);
-            }
-        }
-        System.out.println(list);*/
-
-        /*MyIterator<String> it = list.iterator();
-        // it.set("HELLO");
-        it.next();
-        it.set("HELLO");
-        // it.set("HeLLo");
-        System.out.println(list);*/
-
-        /*MyIterator<String> it = list.iterator(list.size());
-        it.previous();
-        it.set("JAVA");
-        System.out.println(list);*/
-    }
-}
-```
 
 ## 栈
-
-### 栈的结构
 
 栈是一种「操作受限」的线性表，体现在只能在一端插入删除数据，符合 FILO 的特性。
 
@@ -1515,7 +71,7 @@ public class MyLinkedList<E> implements MyList<E> {
 <img src="./img/p1.png">
 </div>
 
-栈的 API:
+栈的常用 API:
 - 入栈（push）：在栈顶添加元素，O（1）。
 
 - 出栈（pop）：从栈顶删除元素，O（1）。
@@ -1524,90 +80,463 @@ public class MyLinkedList<E> implements MyList<E> {
 
 - 判空（isEmpty）：判断栈是否为空, 方便遍历，O（1）。
 
-实现：
-- 顺序映像。
+应用场景：
+- 函数调用栈。
 
-- 非顺序映像。
+- 括号匹配问题。
 
-### 顺序印象实现
+- 编译器利用栈实现表达式求值。
 
-### 非顺序印象实现
+- 浏览器的前进后退功能。
 
-MyStack：
+- 利用栈实现 DFS。
+
+## 队列
+
+队列也是一种「操作受限」的线性表，体现在一端（front）插入数据在另一端（fail）删除数据，特性是 FIFO。  
+<div align="center">
+<img src="./img/p2.png">
+</div>
+
+队列的常用 API：  
+- 入队（enqueue）：在队尾添加元素，O（1）。
+
+- 出队 （dequeue）：从队头删除元素，O（1）。
+
+- 判空 （isEmpty）：判断队列是否为空，方便遍历，O（1）。
+
+- 长度（size）。
+
+- 查看队头元素（peek）：访问队头元素但不出队，O（1）。
+
+普通队列的应用场景是很有限的，一般在工程中用到的是阻塞队列。
+
+阻塞队列：常用于生产者-消费者模型中。
+- 当队列满的时候，入队列就阻塞。
+
+- 当队列空的时候，出队列就阻塞。
+
+应用场景：
+- 缓存。
+
+- 利用队列实现 BFS。
+
+## 树
+
+### 树的概念
+
+与线性表表示的一一对应的线性关系不同，树表示的是数据元素之间更为复杂的非线性关系。
+- 直观来看，树是以分支关系定义的层次结构。树在客观世界中广泛存在，如人类社会的族谱和各种社会组织机构都可以用树的形象来表示。 
+ 
+- 简单来说，树表示的是一对多的关系。
+
+
+定义：
+
+树（Tree）是 n（n >= 0）个结点的有限集合，没有结点的树称为空树，在任意一颗非空树中：
+- 有且仅有一个特定的称为根（root）的结点。
+
+- 当 n > 1 的时，其余结点可分为 m（m > 0）个互不相交的有限集 T1，T2，..., Tm，其中每一个集合 Ti 本身又是一棵树，并且称之为根的子树。
+
+注：树的定义是一个递归定义，即在树的定义中又用到树的概念。
+
+术语：
+- 一个结点的子树的根，称为该结点的孩子，相应的该结点称为子树的根的父亲。
+
+- 没有孩子的结点称为树叶，又叫叶子结点。
+
+- 具有相同父亲的结点互为兄弟。
+
+- 用类似的方法可以定义祖父和孙子的关系。
+
+- 从结点 n1 到 nk 的路径定义为节点 n1 n2 … nk 的一个序列，使得对于 1 <= i < k，节点 ni 是 ni+1 的父亲。  
+  - 这条路径的长是为该路径上边的条数，即 k-1。  
+  
+  - 从每一个结点到它自己有一条长为 0 的路径。
+  
+  注：在一棵树中从根到每个结点恰好存在一条路径。
+
+- 如果存在从 n1 到 n2 的一条路径：  
+  - 那么 n1 是 n2 的一位祖先，n2 是 n1 的一个后裔。  
+  
+  - 如果 n1 != n2，那么 n1 是 n2 的真祖先, 而 n2 是 n1 的真后裔。
+
+- 结点的层级从根开始定义，根为第一层，根的孩子为第二层。
+
+- 对任意结点 ni，ni 的深度为从根到 ni 的唯一路径的长。因此，根的深度为 0。
+
+- ni 的高是从 ni 到一片树叶的最长路径的长。因此，所有树叶的高都为 0。
+
+- 一颗树的高等于它根的高，深度等于它最深的树叶的深度，该深度总是等于这棵树的高。
+
+树的应用很多。用法之一是包括 UNIX 和 DOS 在内的许多常用操作系统中的目录结构。  
+- Unix、Linux：树。
+
+- Windows：森林。
+
+UNIX 文件系统中一个典型的目录：  
+<div align="center">
+<img src="./img/p3.png">
+</div>
+
+### 二叉树
+
+二叉树是一棵树，它的特点是每个结点至多有两颗子树。并且子树有左右之分，其次序不能颠倒（有序）。  
+
+二叉树有以下 5 种基本形态：  
+<div align="center">
+<img src="./img/p4.png">
+</div>
+
+特殊的二叉树：完全二叉树、满二叉树和完美二叉树。  
+<div align="center">
+<img src="./img/p5.png">
+</div>
+
+二叉树具有以下重要性质：
+- 二叉树在第 i 层至多有 2i-1 个节点。 
+
+- 层次为 k 的二叉树至多有 2k-1 个节点。
+
+- 对任何一颗二叉树 T，如果其叶子节点数为 n0 , 度为 2 的节点数为 n2，则 n0 = n2 + 1。
+ 
+- 具有n个节点的完全二叉树，树的高度为 ⌊log2(n)⌋。
+
+- 如果对一颗有 n 个结点的完全二叉树的结点按层序从 1 开始编号，则对任意一结点有：  
+  - 如果编号 i 为 1，则该结点是二叉树的根。
+  
+  - 如果编号 i > 1，则其双亲结点编号为 parent(i) = i/2。
+
+  - 若 2i > n，则该结点没有左孩子，否则其左孩子的编号为 2i；  
+    若 2i + 1 > n，则该结点没有右孩子，否则其右孩子的编号为 2i + 1。
+
+### 二叉树的存储结构
+
+**（1）顺序映像**
+      
+二叉树的顺序映像还是用数组来存储数据元素：将一棵树按照完全二叉树进行编号，编号为 i 的元素存储到数组索引为 i 的地方。
+
+<div align="center">
+<img src="./img/p6.png">
+</div>
+
+缺点：当树比较稀疏的时候，将极大的浪费内存空间。在最坏的情况下，一棵只有 k 个结点的单支树，却需要一个长度为 2k 的数组来存储。
+
+注：一般情况，只会用顺序映像存储完全二叉树。
+
+**（2）非顺序映像**  
+
+二叉树的非顺序映像是以链表的形式来存储数据元素以及数据元素之间的关系。
 ```java
-import java.util.EmptyStackException;
-
-/*
-栈的非顺序映像
-API:
-    void push(E e)
-    E pop()
-    E peek()
-    boolean isEmpty()
- */
-public class MyStack<E> {
-    // 属性
-    private Node top;
-
-    private static class Node {
-        Object value;
-        Node next;
-
-        public Node (Object value) {
-            this.value = value;
-        }
-
-        public Node(Object value, Node next) {
-            this.value = value;
-            this.next = next;
-        }
-    }
-
-    /**
-     * 入栈, 在栈顶添加元素
-     *
-     * @param e 待添加的元素
-     */
-    public void push(E e) {
-        top = new Node(e, top);
-    }
-
-    /**
-     * 出栈, 删除栈顶元素
-     *
-     * @return 被删除的元素
-     */
-    @SuppressWarnings("unchecked")
-    public E pop() {
-        if (isEmpty()) {
-            throw new EmptyStackException();
-        }
-        E removeValue = (E) top.value;
-        top = top.next;
-        return removeValue;
-    }
-
-    /**
-     * 查看栈顶元素
-     *
-     * @return 栈顶元素
-     */
-    @SuppressWarnings("unchecked")
-    public E peek() {
-        if (isEmpty()) {
-            throw new EmptyStackException();
-        }
-        return (E) top.value;
-    }
-
-    /**
-     * 判断栈是否为空
-     *
-     * @return 如果栈为空返回true, 否则返回false
-     */
-    public boolean isEmpty() {
-        return top == null;
-    }
-
+class TreeNode {
+    TreeNode leftChild;
+    Object element;
+    TreeNode rightChild;
 }
 ```
+
+<div align="center">
+<img src="./img/p7.png">
+</div>
+
+注：链表的形式非常灵活，因此一般都采用非顺序映像来实现二叉树。
+
+### 二叉树的遍历
+
+**（1）深度优先遍历**  
+
+二叉树由 3 部分组成：根，左子树和右子树，因此如果能遍历这三个部分，便是遍历了整个二叉树。  
+
+以 L, D, R 分别表示左子树，根结点和右子树，则可能有 DLR, LDR, LRD, DRL, RDL, RLD 六种遍历方案。  
+
+若限定先左后右，则只有 DLR, LDR, LRD 这 3 种情况，分别称之为先（根）序遍历、中（根）序遍历和后（根）序遍历。三者的区别主要在于访问根结点的先后顺序。  
+
+<div align="center">
+<img src="./img/p8.png">
+</div>
+
+**（2）广度优先遍历**  
+
+广度优先遍历又叫层级遍历。简单来说，就是从上到下，从左到右依次遍历。
+
+<div align="center">
+<img src="./img/p9.png">
+</div>
+
+
+## 二叉搜索树BST
+
+二叉搜索树又叫二叉排序树，它要求树中的结点可以按照规则进行比较：  
+- 左子树中所有结点的 key 比根结点的 key 小，并且左子树也是二叉搜索树。
+
+- 右子树中所有结点的 key 比根结点的 key 大，并且右子树也是二叉搜索树。
+
+BST 能存储key相同的对象吗？为什么？如果不能，可以改进吗？
+
+#1：可以在结点添加一个count属性。
+
+#2:  拉链法, 在结点添加一个next指针域。
+
+#3  左子树 <= (右子树 >=)
+
+
+
+
+## Map
+
+### 符号表Map
+
+我们使用符号表这个词来描述一张抽象的表格，我们会将信息（值）存储在其中，然后按照指定的键来搜索并获取这些信息。  
+- 符号表有时也被称为字典。  
+  键就是单词，值就是单词对应的定义，发音和词源。  
+
+- 符号表有时又叫做索引。  
+  键就是术语，值就是书中该术语出现的所有页码。  
+
+符号表应用：  
+</div aign="center">
+<img src="./img/p10.png">
+</div>
+
+### 无序符号表HashMap
+
+常用 API：
+- `void put(K key, V value)`。
+
+- `V get(K key)`。
+
+- `void delete(K key)`。
+
+- `void clear()`。
+
+- `boolean contains(K key)`。
+
+- `boolean isEmpty()`。
+
+- `int size() `。
+
+- `Set<K> keys()`。  
+
+### 有序符号表TreeMap
+
+- `void put(K key, V value)`。
+
+- `V get(K key)`。
+
+- `void delete(K key)`。
+
+- `void clear()`。
+
+- `boolean contains(K key)`。
+
+- `boolean isEmpty()`。
+
+- `int size() `。
+
+- `Set<K> keys()`。
+
+## 红黑树
+
+### 2-3-4树
+
+2-3-4 树：
+- 在普通的二叉查找树上进行了扩展，它允许有多个键（1 ~ 3 个）。
+
+- 动态地添加和删除元素时，能保持树的完美平衡。  
+  完美平衡：根到每个叶子结点的路径都是一样长。
+
+<div align="center">
+<img src="./img/p11.png">
+</div>
+
+每个结点可以拥有 1、2 或者 3 个键：
+- 2-node：1 个键，两个孩子。
+
+- 3-node：2 个键，三个孩子。
+
+- 4-node：3 个键，四个孩子。
+
+<div align="center">
+<img src="./img/p12.png">
+</div>
+
+查找：
+1. 和当前结点的所有的键进行比较；
+
+2. 如果当前结点中没有，就找到对应的区间；
+
+3. 依据链接找到下一个结点（递归）。
+
+<div align="center">
+<img src="./img/p13.png">
+</div>
+
+插入：
+1. 查找键应该插入的位置（树底）；  
+    <div align="center">
+    <img src="./img/p14.png">
+    </div>
+
+2. 2-node：转换成 3-node，  
+   3-node：转换成 4-node；  
+    <div align="center">
+    <img src="./img/p15.png">
+    <img src="./img/p16.png">
+    </div>   
+
+3. 4-node：分裂 4 结点，为新插入的结点腾出空间；  
+    <div align="center">
+    <img src="./img/p17.png">
+    </div>
+
+4. 如果父节点也是 4-node：
+    - Bottom-up 自底向上。
+    
+    - Top-down 自顶向下。
+
+Top-down：确保当前结点不是 4-node，预留空间给新元素。
+- 沿着查找路径向下分裂 4-node。
+
+- 在底部插入元素。
+
+Case 1：根结点是 4-node。
+<div align="center">
+<img src="./img/p18.png">
+</div>
+
+Case 2：父节点是 2-node。
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+Case 3：父节点是 3-node。
+<div align="center">
+<img src="./img/p20.png">
+</div>
+
+不变式：当前结点不是 4-node。
+
+结果：
+- 4-node 的父亲不是 4-node。
+
+- 到达的叶子结点要么是 2-node，要么是 3-node。
+
+注：这些变换都是局部变换，不会影响到无关的其他结点。
+<div align="center">
+<img src="./img/p21.png">
+</div>
+
+示例：  
+<div align="center">
+<img src="./img/p22.png">
+<img src="./img/p23.png">
+</div>
+
+性能分析：性能取决于树的高度。
+- 最坏情况: log2(N)（全部是 2-node）。
+
+- 最好情况: log4(N) = ½ log2(N)（全部是 4-node）。
+
+- 100 万个结点高度在 [10, 20]。
+
+- 10 亿个结点高度在 [15, 30]。
+
+- 2-3-4 树保证了树的高度为 O(lgN) !
+
+### 红黑树
+
+2-3-4 树直接实现可以实现，但是代码复杂度太高：
+- 为 2-node，3-node，4-node 编写不同的结点类。
+- 
+- 不同的结点类之间需要相互转换。
+
+- 不好统一不同的 case。
+
+
+Red-black trees：
+- 用 BST 来表现 2-3-4 树。
+
+- 用「内部的」红色边来表示 3-node 和 4-node。
+
+<div align="center">
+<img src="./img/p24.png">
+</div>
+
+> 算法导论中关于红黑树的定义：一棵红黑树是满足下面红黑性质的二叉搜索树。
+> - 每个结点或者是红色的，或者是黑色的。
+> 
+> - 根结点是黑色的。
+> 
+> - 叶结点（Nil）是黑色的。
+> 
+> - 如果一个结点是红色的，则它的两个子结点都是黑色的（4-node 只有一种编码方式）。
+> 
+> - 对每个结点，从该结点到其所有后代叶结点的简单路径上，均包含相同数目的黑色结点。（黑高平衡， 2-3-4 树是一个完美平衡的树）。
+
+2-3-4 树能够被表示成 BST，它们之间有一种对应关系。但是它们这种对应不是 1-1 的。
+
+<div align="center">
+<img src="./img/p25.png">
+</div>
+
+Left-leaning red-black trees：
+- 用 BST 来表现 2-3-4 树。
+
+- 用「内部的」红色边来表示 3-node 和 4-node。
+
+- 3-node 的红色边是左倾的。
+
+<div align="center">
+<img src="./img/p26.png">
+</div>
+
+2-3-4 树能够被表示成 BST，它们之间有一种对应关系，它们这种对应是 1-1 的！  
+
+<div align="center">
+<img src="./img/p27.png">
+</div>
+
+### 红黑树的实现
+
+[具体的实现代码](./RedBlackTree.md)。
+
+树的局部变换 —— 旋转。  
+在 LLRB 中，需要通过左旋和右旋操作来保证 LLRB 的性质：  
+- 左旋：  
+  <div align="center">
+  <img src="./img/p28.png">
+  </div>
+
+- 右旋：  
+  <div align="center">
+  <img src="./img/p29.png">
+  </div>
+
+分裂 4-node，可以通过一个简单的颜色反转来实现。  
+<div align="center">
+<img src="./img/p30.png">
+</div>
+注：这也是一个局部变换。
+- 保持了黑高的平衡。
+
+- 将红色链接传递给了父结点。
+
+- 相当于在父结点中插入一个新的结点。
+
+- 在父结点中插入新结点的情形和在底部插入新结点的情形是一模一样的。
+
+插入的情形：  
+<div align="center">
+<img src="./img/p31.png">
+</div>
+
+更正非法的 3-node 和 4-node 有三种情况，统一成两个步骤：
+- 左旋任意的红色右链接。  
+  <div align="center">
+  <img src="./img/p32.png">
+  </div>
+
+- 如果有两条连续的左倾红色链接，右旋上面的红色链接。  
+  <div align="center">
+  <img src="./img/p33.png">
+  </div>

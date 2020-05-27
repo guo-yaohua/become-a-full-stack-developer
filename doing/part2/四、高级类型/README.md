@@ -1,7 +1,28 @@
 # 四、高级类型
 
 ## 目录
-
+- [四、高级类型](#四高级类型)
+  - [目录](#目录)
+  - [集合类](#集合类)
+    - [Collection](#collection)
+    - [Iterator接口](#iterator接口)
+    - [List](#list)
+  - [数组和链表](#数组和链表)
+    - [数组](#数组)
+    - [链表](#链表)
+    - [空间换取时间](#空间换取时间)
+    - [链表问题](#链表问题)
+    - [数组VS链表](#数组vs链表)
+  - [List](#list-1)
+    - [ArraysList](#arrayslist)
+    - [Vector](#vector)
+    - [LinkedList](#linkedlist)
+    - [List常见问题](#list常见问题)
+  - [JDK5的新特性](#jdk5的新特性)
+    - [静态导入](#静态导入)
+    - [泛型](#泛型)
+    - [可变长参数](#可变长参数)
+    - [增强for循环](#增强for循环)
 
 
 ## 集合类
@@ -919,115 +940,4 @@ for(元素数据类型 变量 : 数组或者 Collection 集合) {
 注：数组和实现了 Iterable 接口的对象才可以使用 for each 循环。
 
 
-## 模拟实现List
 
-### 模拟ArrayList
-
-
-
-### MyLinkedList
-
-MyLinkedList：
-```java
-public class MyLinkedList<E> implements MyList<E> {
-    //属性
-    private Node head;
-    private Node tail;
-    private int size;
-    private int modCount;
-
-    private static class Node {
-        Node prev;  // 前驱
-        Object value;
-        Node next;  // 后继
-
-        public Node(Object value) {
-            this.value = value;
-        }
-
-        public Node(Node prev, Object value, Node next) {
-            this.prev = prev;
-            this.value = value;
-            this.next = next;
-        }
-    }
-    //构造方法
-    public MyLinkedList() {
-        Node head = new Node(null);
-        Node tail = new Node(head, null, null);
-        head.next = tail;
-    }
-
-    //方法
-    @Override
-    public boolean add(E e) {
-        return false;
-    }
-
-    @Override
-    public void add(int index, E e) {
-
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public boolean contains(Object obj) {
-        return false;
-    }
-
-    @Override
-    public E get(int index) {
-        return null;
-    }
-
-    @Override
-    public int indexOf(Object obj) {
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public MyIterator iterator() {
-        return null;
-    }
-
-    @Override
-    public MyIterator iterator(int index) {
-        return null;
-    }
-
-    @Override
-    public int lastIndexOf(Object obj) {
-        return 0;
-    }
-
-    @Override
-    public E remove(int index) {
-        return null;
-    }
-
-    @Override
-    public boolean remove(Object obj) {
-        return false;
-    }
-
-    @Override
-    public E set(int index, E e) {
-        return null;
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
-}
-
-```
