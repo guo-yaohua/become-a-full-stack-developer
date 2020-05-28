@@ -2,7 +2,9 @@
 
 代码：
 ```java
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /*
 API:
@@ -14,18 +16,18 @@ API:
     // boolean contains(K key)
     // boolean isEmpty()
     // int size()
-    Set<K> keys()
+    // Set<K> keys()
 有序符号表：
     // K min()
     // K max()
     // K floor(K key)
     // K ceiling(K key)
-    int rank(K key)
-    K select(int k)
+    // int rank(K key)
+    // K select(int k)
     // void deleteMin()
     // void deleteMax()
-    int size(K low, K high)
-    Set<K> keys(K low, K high)
+    // int size(K low, K high)
+    // Set<K> keys(K low, K high)
  */
 public class RedBlackTree<K extends Comparable<? super K>, V> {
     // 常量
@@ -38,7 +40,7 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         K key;
         V value;
         boolean color;
-        int size;   // 这棵树包含的结点的个数
+        int size; //这棵树包含结点的个数
         TreeNode left;
         TreeNode right;
 
@@ -75,7 +77,7 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
      * 判断红黑树中是否包含指定的键
      *
      * @param key 键
-     * @return 如果包含返回 true，否则返回 false
+     * @return 如果包含返回true，否则返回false
      */
     public boolean contains(K key) {
         return get(key) != null;
@@ -93,8 +95,7 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
     private TreeNode put(TreeNode x, K key, V value) {
         // 在底端插入
         if (x == null) return new TreeNode(key, value, RED, 1);
-        
-        // 自顶向下分解 4-node
+        // 自顶向下分解4-node
         // if (isRed(x.left) && isRed(x.right)) flipColors(x);
         // 查找过程
         int cmp = key.compareTo(x.key);
@@ -169,6 +170,15 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
      */
     public void clear() {
         root = null;
+    }
+
+    /**
+     * 获取键的集合
+     * @return 键的集合
+     */
+    public Set<K> keys() {
+        if (isEmpty()) return new LinkedHashSet<>();
+        return keys(min(), max());
     }
     /***********************************************************
      *                Ordered table methods
@@ -351,6 +361,54 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         return select(x.right, k - rank - 1);
     }
 
+    /**
+     * 获取大于等于low,小于等于high键值对的个数
+     * @param low 下界
+     * @param high 上界
+     * @return 大于等于low,小于等于high键值对的个数
+     */
+    public int size(K low, K high) {
+        if (low == null || high == null) {
+            throw new IllegalArgumentException("Low or high cannot be null.");
+        }
+        if (low.compareTo(high) > 0) {
+            throw new IllegalArgumentException("Low cannot greater than high.");
+        }
+        int k1 = rank(low); // 小于low的元素个数
+        int k2 = rank(high); // 小于high的元素个数
+        if (contains(high)) return k2 - k1 + 1;
+        return k2 - k1;
+    }
+
+    /**
+     * 获取小于等于low,大于等于high键的集合
+     * @param low 下界
+     * @param high 上界
+     * @return 小于等于low,大于等于high键的集合
+     */
+    public Set<K> keys(K low, K high) {
+        if (low == null || high == null) {
+            throw new IllegalArgumentException("Low or high cannot be null.");
+        }
+        if (low.compareTo(high) > 0) {
+            throw new IllegalArgumentException("Low cannot greater than high.");
+        }
+        Set<K> set = new LinkedHashSet<>();
+        keys(root, low, high, set);
+        return set;
+    }
+
+    private void keys(TreeNode x, K low, K high, Set<K> set) {
+        if (x == null) return ;
+        int cmplo = x.key.compareTo(low);
+        int cmphi = x.key.compareTo(high);
+        // 遍历左子树(剪枝)
+        if (cmplo > 0) keys(x.left, low, high, set);
+        // 遍历根结点
+        if (cmplo >= 0 && cmphi <= 0) set.add(x.key);
+        // 遍历右子树(剪枝)
+        if (cmphi < 0) keys(x.right, low, high, set);
+    }
 
     /***********************************************************
      *                Helper methods
@@ -365,8 +423,6 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         else return x.size;
     }
 
-
-    // 左旋
     private TreeNode rotateLeft(TreeNode h) {
         TreeNode x = h.right;
         h.right = x.left;
@@ -374,13 +430,12 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         // 修改颜色
         x.color = h.color;
         h.color = RED;
-        // 修改 size
+        // 修改size
         x.size = h.size;
         h.size = size(h.left) + size(h.right) + 1;
         return x;
     }
 
-    // 右旋
     private TreeNode rotateRight(TreeNode h) {
         TreeNode x = h.left;
         h.left = x.right;
@@ -388,13 +443,12 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         // 修改颜色
         x.color = h.color;
         h.color = RED;
-        // 修改 size
+        // 修改size
         x.size = h.size;
         h.size = size(h.left) + size(h.right) + 1;
         return x;
     }
 
-    // 更改颜色（分裂 4-node 时调用）
     private void flipColors(TreeNode x) {
         x.color = !x.color;
         x.left.color = !x.left.color;
@@ -556,9 +610,24 @@ public class RedBlackTree<K extends Comparable<? super K>, V> {
         System.out.println(tree.rank('F'));
         System.out.println(tree.rank('Z'));*/
 
-        System.out.println(tree.select(1)); // B
+        /*System.out.println(tree.select(1)); // B
         System.out.println(tree.select(9)); // X
-        System.out.println(tree.select(4)); // E
+        System.out.println(tree.select(4)); // E*/
+
+        // int size(K low, K high)
+        /*System.out.println(tree.size('C', 'N'));
+        System.out.println(tree.size('A', 'X'));*/
+
+        // Set<K> keys(K low, K high)
+        // System.out.println(tree.keys('C', 'N'));
+
+        // Set<K> keys()
+        // System.out.println(tree.keys());
+        /*tree.clear();
+        System.out.println(tree.keys());*/
     }
 }
+
+
+
 ```
