@@ -69,7 +69,7 @@ mysql -u root -p
 
 在命令行中：
 ```
-mysqldump -u $user -p $ db_name > file
+mysqldump -u $user -p $db_name > file
 ```
 
 **（2）恢复**  
@@ -79,7 +79,7 @@ mysqldump -u $user -p $ db_name > file
   mysql -u $user -p $db_name < file
   ```
 
-  方式二，登录 mysql 服务, 进入数据库执行 `source file`。  
+  方式二，命令行登录 mysql 服务, 先进入数据库，然后执行 `source file`。  
   注：后面不要加分号
 
 
@@ -508,7 +508,7 @@ DQL：Data Query Language。
 
 以下示例以 <a href="./file/heros.sql" download="heros.sql"> heros 表 </a> 为例。 
 
-**（1）计算表达式和函数的值**  
+#### 1. 计算表达式和函数的值
 
 虽然 SELECT 语句通常用于从表中检索数据，但我们也可以用它计算表达式和函数的值。  
 示例：
@@ -526,7 +526,7 @@ SELECT TRIM(' ab cd ');
 SELECT CONCAT('ab','cd');
 ```
 
-**（2）查询表中的字段**  
+#### 2. 查询表中的字段
 
 查询单个字段的值。  
 ```sql
@@ -552,7 +552,7 @@ select * from heros;
 注：在生产环境中，尽量不要使用 `*` 通配符。因为查询不必要的数据会降低查询和应用程序的
 效率！
 
-**（3）使用 WHERE 子句过滤记录**  
+#### 3. 使用 WHERE 子句过滤记录
 
 WHERE 子句后面接逻辑表达式。如果逻辑表达式的结果为真，这条记录就会添加到结果集中，否则就
 不会添加到结果集。  
@@ -568,7 +568,7 @@ select * from heros where 1;
 select * from heros where name='花木兰';
 ```
 
-**（4）给字段起别名**  
+#### 4. 给字段起别名
 
 AS 可以给字段起别名。  
 示例：
@@ -583,7 +583,7 @@ SELECT name, hp_max hp, mp_max mp FROM heros;
 
 - AS 关键字不仅仅可以给字段起别名，还可以给表起别名。
 
-**（5）去除重复行**  
+#### 5. 去除重复行
 
 DISTINCT 可以对查询结果去重。  
 示例：
@@ -603,7 +603,7 @@ select distinct role_main, role_assist from heros;
 
 - DISTINCT 是对所有查询字段的组合进行去重，也就是说每个字段都相同，才认为两条记录是相同。
 
-**（6）排序**  
+#### 6. 排序
 
 `ORDER BY` 可以对结果集进行排序。`ASC` 表示升序，`DESC` 表示降序，默认情况为升序。  
 示例：
@@ -631,12 +631,12 @@ SELECT name, hp_max FROM heros ORDER BY hp_max ASC, mp_max DESC;
 SELECT name, hp_max FROM heros ORDER BY (hp_max + mp_max) DESC;
 ```
 
-**（7）限制结果集 **  
+#### 7. 限制结果集 
 
 `LIMIT` 可以限制结果集的数量。它有两种使用方式：`LIMIT offset, nums` 和 `LIMIT nums OFFSET offset`。  
 示例：
 ```sql
-# 查询最大生命值最高的 5 名英雄。
+# 查询最大生命值最高的 5 名英雄
 select name, hp_max from heros order by hp_max desc limit 0, 5;
 
 # 推荐使用 LIMIT nums OFFSET offset 方式，可以清楚查看偏移量
@@ -654,7 +654,7 @@ limit rows offset rows * (page - 1)
 
 注：不同的 DBMS 用来限制结果集的关键字是不一样的。比如 Microsoft SQL Server 和 Access  使用的是 TOP 关键字。
 
-**（8）计算字段**  
+#### 8. 计算字段
 
 计算字段并不实际存在于数据库表中，它是由表中的其它字段计算而来的。一般我们会给计算字段起一
 个的别名。  
@@ -665,7 +665,7 @@ SELECT name, hp_max + mp_max FROM heros;
 SELECT name, hp_max + mp_max AS total_max FROM heros;
 ```
 
-**（9）聚合函数**  
+#### 9. 聚合函数
 
 聚合函数是对某个字段的值进行统计的，而不是对某条记录进行统计。如果想计算某个学生各科成绩的
 总分，那么应该使用计算字段。  
@@ -729,7 +729,7 @@ select count(hp_max) from heros;
 SELECT COUNT(DISTINCT hp_max) FROM heros;
 ```
 
-**（10）分组**  
+#### 10. 分组
 
 `GROUP BY` 可以对记录进行分组。 
 
@@ -777,11 +777,9 @@ HAVING num > 5
 ORDER BY num DESC;
 ```
 
-**（11）SELECT的顺序**  
+#### 11. SELECT的顺序
 
-SELECT 是 RDBMS 中执行最多的操作。我们不仅仅要理解 SELECT 的语法，还要理解它底层执行的原
-理。  
-有两个关于 SELECT 的顺序，我们需要记住：
+SELECT 是 RDBMS 中执行最多的操作。我们不仅仅要理解 SELECT 的语法，还要理解它底层执行的原理。有两个关于 SELECT 的顺序，需要记住：
 - 语法中关键字的顺序：  
   ```sql
   SELECT ... 
@@ -806,4 +804,211 @@ GROUP BY player.team_id # 顺序 3
 HAVING num > 2 # 顺序 4
 ORDER BY num DESC # 顺序 6
 LIMIT 2; # 顺序 7
+```
+
+### 约束
+
+当我们创建数据表的时候，我们需要对它的字段进行一些约束，目的在于保证数据的准确性和一致性。  
+
+常见的约束有以下几种：主键约束、外键约束、唯一性约束、非空约束、DEFAULT 约束以及 CHECK 约束。
+
+#### 1. PRIMARY KEY
+
+主键的作用是唯一标识一条记录。所以它不能重复，也不能为空，我们可以认为它是唯一性约束和非空
+约束的组合。一张数据表的主键最多只能有一个（推荐每张表都设置一个主键）。主键可以是一个字段，
+也可以由多个字段符合组成。
+示例：  
+- 一个字段：
+  ```sql
+  # 方式一
+  create table t_student (
+      id int primary key,
+      name varchar(20)
+  );
+
+  # 方式二
+  create table t_student (
+      id int,
+      name varchar(20),
+      primary key(id)
+  );
+
+  # 查看表的主键
+  show index from t_student;
+  show keys from t_student;
+  ```
+
+- 多个字段：
+  ```sql
+  create table t_score(
+      sid int,
+      cid int,
+      score int,
+      primary key(sid, cid)
+  );
+  ```
+
+- 创建表之后，再指定主键（不推荐）：
+  ```sql
+  create table t_score(
+      sid int,
+      cid int,
+      score int
+  );
+
+  alter table t_score add primary key(sid, cid);
+  ```
+
+auto_increment 关键字往往和 primary key 一起使用。  
+作用：被修饰的字段会自动增长。  
+示例：
+```sql
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20)
+);
+
+create table t_student (
+    id int unique auto_increment,
+    name varchar(20)
+);
+```
+注：
+- auto_increment 只能作用于被 primary key 或者是 unique 修饰的字段。
+
+- auto_increment 作用字段的类型必须是数值类型。
+
+- 一张数据表只能有一个自增长字段。
+
+#### 2. FOREIGN KEY
+
+外键约束的作用是确保表与表之间参照完整性。一张表的外键往往对应另一张表的主键。外键可以是重
+复的，也可以为空。
+
+示例：  
+```sql
+create table t_class (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    teacher varchar(20) not null
+);
+
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    cid int,
+    foreign key(cid) references t_class(id)
+);
+
+
+# 我们还可以给外键添加一个名字
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    cid int,
+    constraint fk_cid foreign key(cid) references t_class(id)
+);
+
+# 当然我们还可以在创建表之后，再添加外键（不推荐）
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    cid int
+);
+alter table t_student add constraint fk_cid foreign key(cid) references t_class(id);
+```
+
+添加外键之后，对两张表都会有一些约束。具体体现在：
+- t_student 表不能随意的添加和修改。
+
+- t_class 表不能随意的删除和修改。
+
+级联删除：
+```sql
+# 删除 t_class 表中的记录，那么 t_student 中引用相应记录的行也会一起被删除。
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    cid int,
+    constraint fk_cid foreign key(cid) references t_class(id) on delete cascade
+);
+```
+
+级联置空：
+```sql
+# 删除 t_class 表中的记录，那么 t_student 中引用相应记录的行的外键会被置为 null 。
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+    cid int,
+    constraint fk_cid foreign key(cid) references t_class(id) on delete set null
+);
+```
+
+外键虽然可以保证表与表之间的参照完整性，但是它的缺点也很明显：  
+- 影响数据库的性能。
+
+- 在高并发场景中容易引起死锁。
+
+- 当数据量很大的时候，为了保证查询的性能，我们需要进行分库分表。一旦分库分表，我们就不能
+保证参照的完整性了。
+
+正是因为这些原因，所以《阿里巴巴开发手册》中规定：不要在数据库中设置外键，一切的参照完整都
+应该在业务层中完成。  
+当然，这并不是说，外键就一无是处。如果参照完整性都在业务层中完成，也会导致一些问题：  
+- 业务层与数据耦合了。
+- 增加了业务层的逻辑。
+- 不能够在数据库的层面保证表之间的参照完整性。  
+
+所以，我们应该正确地看待外键。在以下场景中，我们是可以使用外键的。
+- 并发度不高
+- 数据量不大，不需要分库分表。
+- 正确性 > 性能
+
+#### 3. UNIQUE
+
+唯一性约束保证了字段的值是唯一的。即使我们有了主键，我们还是可以对其它字段设置唯一性约束。
+
+示例：
+```sql
+create table t_unique(
+    a int unique
+);
+```
+
+注：null 与 null 是不相同的，所以唯一性约束的字段，可以有多个 null 值。
+
+#### 4. NOT NULL
+
+非空性约束保证了字段的值不为 null ，必须有个具体的值。
+
+示例：
+```sql
+create table t_student (
+    id int primary key auto_increment,
+    name varchar(20) not null,
+);
+```
+
+#### 5. DEFAULT
+
+DEFAULT 表示字段的默认值。如果插入数据的时候，没有给该字段取值，就会设置为默认值。
+
+示例：
+```sql
+create table t_default(
+    a int default 100
+);
+```
+
+#### 6. CHECK
+
+CHECK 表示自定义约束。MySQL 没有实现这个功能，但是其它商用型数据库，比如 Oracle 是有这个
+功能的。
+
+示例：  
+```sql
+create table t_check(
+    height float(3, 2) check(height between 0.00 and 3.00)
+);
 ```
