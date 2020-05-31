@@ -2,11 +2,28 @@
 
 ## 目录
 
-## ## 数据库基础
+- [数据库基础](#数据库基础)
 
-数据库定义：  
+- [MySQL](#mysql)
+  - [MySQL安装与配置](#mysql安装与配置)
+  - [登录 MySQL Server](#登录-mysql-server)
+  - [数据库的备份和恢复](#数据库的备份和恢复)
+
+- [SQL](#sql)
+  - [DDL管理数据库](#ddl管理数据库)
+  - [数据类型](#数据类型)
+  - [DDL管理表](#ddl管理表)
+  - [DML数据操纵语言](#dml数据操纵语言)
+  - [常用运算符](#常用运算符)
+  - [DQL数据查询语言](#dql数据查询语言)
+  - [约束](#约束)
+  - [数据库范式设计](#数据库范式设计)
+
+
+## 数据库基础
+
+维基百科数据库定义：  
 > A database is an organized collection of data, stored and accessed electronically.  
-
 
 分类：
 - 关系型数据库。  
@@ -37,14 +54,15 @@
 - 表的一行称之为一条记录（数据）。
 
 - 表中一条记录对应一个 Java 对象的数据。  
-  - 对象与行对应，属性与列对应。
+  - 对象与行对应。  
+  - 属性与列对应。
 
 
 ## MySQL
 
 ### MySQL安装与配置
 
-具体步骤查看 PDF 文件：<a href="./file/MySQL安装与配置.pdf" download="MySQL安装与配置"> MySQL 安装与配置 </a>
+具体步骤查看 PDF 文件：<a href="./file/MySQL安装与配置.pdf" download="MySQL安装与配置"> MySQL 安装与配置 </a>。
 
 ### 登录 MySQL Server
 
@@ -52,7 +70,8 @@
 ```
 mysql -h 主机名 -u 用户名 –p
 ```
-- `-h`：该参数用于指定客户端的主机名（host），即哪台机器要登录 MySQL Server，如果是当前机器该参数可以省略。
+- `-h`：该参数用于指定客户端的主机名（host），即哪台机器要登录 MySQL Server。  
+  如果是当前机器该参数可以省略。
 
 - `-u`：用户名（user）。
 
@@ -65,22 +84,27 @@ mysql -u root -p
 
 ### 数据库的备份和恢复
 
-**（1）备份**  
+#### 1. 备份  
 
 在命令行中：
 ```
 mysqldump -u $user -p $db_name > file
 ```
 
-**（2）恢复**  
+#### 2. 恢复
 
-方式一，在命令行中：  
-  ```
-  mysql -u $user -p $db_name < file
-  ```
+**（1）方式一**   
 
-  方式二，命令行登录 mysql 服务, 先进入数据库，然后执行 `source file`。  
-  注：后面不要加分号
+在命令行中：  
+```
+mysql -u $user -p $db_name < file
+```
+
+**（2）方式二**  
+
+命令行登录 mysql 服务, 先进入数据库，然后执行 `source file`。  
+
+注：后面不要加分号
 
 
 
@@ -104,15 +128,19 @@ SQL 语言的优点：
 
 SQL 不区分大小写。  
 注：  
-- 虽然 SQL 不区分大小写，但是表名、列名和值可能区分！（这依赖具体的 DBMS 及其配置）。
-SQL 不区分大小写（关键字不区分大小写）！！！
+- 虽然 SQL 不区分大小写，但是表名、列名和值**可能**区分！（这依赖具体的 DBMS 及其配置）。  
 
-- 建议：关键字大写；表名、列名和值最好是以它定义时为准。
+- SQL 不区分大小写主要是指关键字不区分大小写。
+
+建议：  
+- 关键字大写。
+  
+- 表名、列名和值最好是以它定义时为准。
 
 > 标准 SQL 是由 ANSI 标准委员会管理的，从而称为 ANSI SQL。许多 DBMS 厂商通过增加语句或指令，对 SQL 进行了扩展，目的是提供一些特定的操作，或者是简化某些操作。虽然这种扩展很有必要，但同时也给 SQL 代码的移植带来了麻烦。   
 > 即使 DBMS 有自己的扩展，但它们都支持 ANSI SQL。
 
-组成：
+SQL 组成：
 - DDL：数据定义语言。
 
 - DML：数据操作语言（增、删、改）。
@@ -132,7 +160,7 @@ SQL 不区分大小写（关键字不区分大小写）！！！
 
 - 常用关键字：CREATE、ALTER 和 DROP。
 
-**（1）创建数据库**  
+#### 1. 创建数据库
 
 ```sql
 CREATE DATABASE [IF NOT EXISTS] db_name [create_specification [ create_specification] ...];
@@ -143,8 +171,7 @@ create_specification：
 
 - `COLLATE collation_name`：指定数据库字符集的比较方式。  
   
-  比较规则有时也称为排序规则，用于在字符串比较大小时规定其顺序的。  
-  同一种字符集可以有多种比较规则。
+  比较规则有时也称为排序规则，用于在字符串比较大小时规定其顺序的。同一种字符集可以有多种比较规则。
 
   比较规则名称以对应的字符集名称开头，中间部分表示主要用于哪种语言，常见后缀有以下几种：
   - `_bin`：以二进制方式比较。即 A < a。
@@ -153,45 +180,39 @@ create_specification：
   
   默认 `_ci`。
 
-示例：
+  示例：
+  ```sql
+  # 创建一个名称为 mydb1 的数据库。
+  create database mydb1;
+
+  # 创建一个使用 gbk 字符集的 mydb2 数据库。
+  create database if not exists mydb2 character set gbk;
+
+  # 创建一个使用 gbk 字符集，并带校对规则（gbk_bin）的 mydb3 数据库。
+  create database mydb3 character set gbk collate gbk_bin;
+  ```
+
+#### 2. 查看、删除数据库
+
+显示数据库：
 ```sql
-# 创建一个名称为 mydb1 的数据库。
-create database mydb1;
-
-# 创建一个使用 gbk 字符集的 mydb2 数据库。
-create database if not exists mydb2 character set gbk;
-
-# 创建一个使用 gbk 字符集，并带校对规则（gbk_bin）的 mydb3 数据库。
-create database mydb3 character set gbk collate gbk_bin;
+SHOW DATABASES;
 ```
 
-**（2）查看、删除数据库**  
-
-显示数据库语句：`SHOW DATABASES`。  
-示例：
+显示数据库创建语句：
 ```sql
-# 查看所有数据库
-show databases;
-```
-
-显示数据库创建语句：`SHOW CREATE DATABASE db_name`。  
-示例：
-```sql
-# 查询数据库的创建语句 
-show create database mydb1;
+SHOW CREATE DATABASE db_name;
 ```
  
-数据库删除语句：`DROP DATABASE [IF EXISTS] db_name`。  
-示例：
+数据库删除语句：
 ```sql
-# 删除数据库 mydb3
-drop database if exists mydb3;
+DROP DATABASE [IF EXISTS] db_name;
 ```
 
-**（3）修改数据库**  
+#### 3. 修改数据库
 
 ```sql
-ALTER  DATABASE db_name [alter_specification [, alter_specification] ...] 
+ALTER  DATABASE db_name [alter_specification [, alter_specification] ...];
 ```
 
 alter_specification：    
@@ -209,17 +230,25 @@ alter database mydb2 character set utf8;
 
 注：这里以 MySQL 为例，不同的 DBMS 都支持数值类型、字符串类型以及日期类型，但他们的实现可能不一样。
 
-**（1）整数类型**  
+#### 1. 整数类型
 
-<div align="center">
-<img src="./img/p3.png">
-</div>
+| 数据类型 | 占用字节 | 说明 |
+| :- | :- | :- |
+| TINYINT | 1 | 很小的整数 |
+| SMALLINT | 2 | 小的整数 |
+| MEDIUMINT | 3 | 中等大小的整数 |
+| INT | 4 | 普通大小的整数 |
+| BIGINT | 8 | 大整数 |
 
-**（2）浮点数类型和定点数类型**  
 
-<div align="center">
-<img src="./img/p4.png">
-</div>
+#### 2. 浮点数类型和定点数类型
+
+| 数据类型 | 占用字节 | 说明 |
+| :- | :- | :- |
+| FLOAT(M, D) | 4 | 单精度浮点数 |
+| DOUBLE(M, D) | 8 | 双精度浮点数 |
+| DECIMAL(M, D) | M + 2 | 定点数 |
+
 
 - M 称为精度，表示总共的位数; 
 
@@ -227,36 +256,54 @@ alter database mydb2 character set utf8;
 
 - DECIMAL 类型不同于 FLOAT & DOUBLE，DECIMAL 实际是以字符串存放的，它的存储空间并不固定，而是由精度 M 决定的。
 
-**（3）日期与时间类型**  
+#### 3. 日期与时间类型
 
-<div align="center">
-<img src="./img/p5.png">
-</div>
+| 数据类型 | 日期格式 | 占用字节 |
+| :- | :- | :- |
+| YEAR | YYYY | 1 |
+| TIME | HH:MM:SS | 3 |
+| DATE | YYYY-MM-DD | 3 |
+| DATETIME | YYYY-MM-DD HH:MM:SS | 8 |
+| TIMESTAMP | YYYY-MM-DD HH:MM:SS | 4 |
 
 DATETIME 和 TIMESTAMP 虽然显示的格式是一样的，但是它们有很大的区别：
-- DATETIME 的系统默认值是 NULL, 而 TIMESTAMP 的系统默认值是当前时间 NOW();
+- DATETIME 的系统默认值是 NULL, 而 TIMESTAMP 的系统默认值是当前时间 `NOW()`;
 
 - DATETIME 存储的时间与时区无关，而 TIMESTAMP 与时区有关。
 
-**（4）字符串类型**  
+#### 4. 字符串类型
 
-<div align="center">
-<img src="./img/p6.png">
-</div>
+| 数据类型 | 占用字节 | 说明 |
+| :- | :- | :- |
+| CHAR(M) | M , 1 <= M <= 255 | 固定长度字符串 |
+| VARCHAR(M) | L + 1, L <= M, 1 <= M <= 255 | 变长字符串 |
+| TINYTEXT | L + 1, L < 2 ^ 8 | 非常小的文本字符串 |
+| TEXT | L + 2, L < 2 ^ 16 | 小的文本字符串 |
+| MEDIUMTEXT | L + 3, L < 2 ^ 24 | 中等大小的文本字符串 |
+| LONGTEXT | L + 4, L < 2 ^ 32 | 大的文本字符串 |
+| ENUM | 1 或者 2 个字节，取决于枚举的数目，最大 65535 个 | 枚举类型 |
+| SET | 1, 2, 3, 4 或 8 个字节 | 集合类型 |
 
 ENUM 类型总有一个默认值，当 ENUM 列声明为 NULL，则默认值为 NULL。如果 ENUM 列被声明为 NOT NULL，则其默认值为列表的第一个元素。
 
-**（5）二进制类型**  
+#### 5. 二进制类型
 
-<div align="center">
-<img src="./img/p7.png">
-</div>
+| 数据类型 | 占用字节 | 说明 |
+| :- | :- | :- |
+| BIT(M) | [(M + 7) / 8] | 位字节类型 |
+| BINARY(M) | M | 固定长度的二进制数据 |
+| VARBINARY(M) | L + 1 | 可变长度的二进制数据 |
+| TINYBLOB(M) | L + 1, L < 2 ^ 8 | 非常小的 BLOB |
+| BLOB(M) | L + 2, L < 2 ^ 16 | 小的 BLOB |
+| MEDIUMBLOB(M) | L + 3, L < 2 ^ 24 | 中等大小的 BLOB |
+| LONGBLOB(M) | L + 4, L < 2 ^ 32 | 非常大的 BLOB |
+
 
 字符串类型存储的字符串（字符），二进制类型存储的是二进制数据（字节）。
 
 ### DDL管理表
 
-**（1）创建表**  
+#### 1. 创建表
 
 ```sql
 CREATE TABLE table_name
@@ -264,7 +311,7 @@ CREATE TABLE table_name
 	field1  datatype,
 	field2  datatype,
 	field3  datatype
-)[CHARACTER SET 字符集 COLLATE 校对规则]
+)[CHARACTER SET 字符集 COLLATE 校对规则];
 ```
 - field：指定列名。
 
@@ -288,33 +335,38 @@ create table t_user (
 );
 ```
 
-**（2）查询表**  
+#### 2. 查询表
 
-简单描述表结构：`DESC 表名` 或者 `DESCRIBE 表名`。  
-示例：
+简单描述表结构：
 ```sql
-DESC t_user;
+DESC 表名;
+
+# 或者
+DESCRIBE 表名;
 ```
 
 
-查看数据库中所有的表：`SHOW TABLES;`。
-
-
-查看生成表的 DDL 语句：`SHOW CREATE TABLE 表名`。  
-示例：
+查看数据库中所有的表：
 ```sql
-# 查看表的定义语句
-show create table t_user;
+SHOW TABLES;
 ```
 
-**（3）修改表**  
+
+查看生成表的 DDL 语句：
+```sql
+SHOW CREATE TABLE 表名;
+```
+
+#### 3. 修改表
 
 使用 `ALTER TABLE` 语句追加、修改或删除列的语法。  
 
-追加：
+**（1）追加列**  
+
 ```sql
-ALTER TABLE table_name ADD (column datatype [DEFAULT expr] [,ADD column datatype]...);
+ALTER TABLE table_name ADD (column datatype [DEFAULT expr] [, ADD column datatype]...);
 ```
+
 示例：
 ```sql
 # 添加 gender 列
@@ -330,9 +382,10 @@ alter table t_user add column no int first;
 alter table t_user add column a int, add column b int;
 ```
 
-修改：
+**（2）修改列**  
+
 ```sql
-ALTER TABLE table_name change col_name new_col_name datatype [DEFAULT expr] [,change col_name new_col_name datatype [DEFAULT ...] ]...;
+ALTER TABLE table_name change col_name new_col_name datatype [DEFAULT expr] [, change col_name new_col_name datatype [DEFAULT ...] ]...;
 ```
 示例：
 ```sql
@@ -340,7 +393,8 @@ ALTER TABLE table_name change col_name new_col_name datatype [DEFAULT expr] [,ch
 alter table t_user change column balance salary int;
 ```
 
-修改定义：
+**（3）修改 列定义**  
+
 ```sql
 ALTER TABLE table_name MODIFY column datatype [DEFAULT expr] [,MODIFY column datatype]...;
 ```
@@ -350,56 +404,62 @@ ALTER TABLE table_name MODIFY column datatype [DEFAULT expr] [,MODIFY column dat
 alter table t_user modify column salary decimal(10,2);
 ```
 
-删除：
+**（4）删除列**  
+
 ```sql
 ALTER TABLE table_name DROP column col_name;
 ```
+
 示例：
 ```sql
 # 删除 a 列
 alter table t_user drop column a;
 ```
 
-注：
-- 修改表的名称：`RENAME TABLE 表名 TO 新表名`。  
-  
-  RENAME TABLE 语句的另一个用法是移动该表到另一个数据库。格式：`RENAME TABLE 旧数据库名.旧表名 TO 新数据库名.新表名`。  
-
-- 修改表的字符集：`alter table student character set utf8;`。
-
-多个修改的操作可以同时在同一 `ALTER TABLE` 语句后。  
+注：多个修改的操作可以同时在同一 `ALTER TABLE` 语句后。  
 示例：
 ```sql
 # 删除 b 列, 把 gender 的类型改成 bit(1), 在 name 的后面添加 c 列
 alter table t_user drop column b, modify column gender bit(1), add column c int after name;
 ```
 
+**（5）修改表名**  
 
-**（4）删除表**  
-
-格式：`DROP TALBE 表名`。  
-示例：
 ```sql
-# 删除表 
-drop table t_user;
+RENAME TABLE 表名 TO 新表名
+```  
+  
+RENAME TABLE 语句的另一个用法是移动该表到另一个数据库：
+```sql
+RENAME TABLE 旧数据库名.旧表名 TO 新数据库名.新表名
+```  
+
+**（6）修改表的字符集**  
+
+```sql
+alter table student character set utf8;
 ```
 
+#### 4. 删除表
 
+```sql
+DROP TALBE 表名
+```
 
 
 ### DML数据操纵语言
 
 DML：Data Manipulation Language。  
-作用：用于向数据库表中插入、删除、修改数据。  
+作用：用于向数据库表中插入、删除和修改数据。  
 常用关键字：INSERT、UPDATE 和 DELETE。
 
-**（1）INSERT**  
+#### 1. INSERT
 
 使用 INSERT 语句向表中插入数据：  
 ```sql
-INSERT INTO	table [(column [, column...])]
-VALUES (value [, value...]);
+INSERT INTO	table [(column [, column...])] VALUES (value [, value...]);
 ```
+
 - 插入的数据应与字段的数据类型相同。
 
 - 数据的大小应在列的规定范围内。例如：不能将一个长度为 80 的字符串加入到长度为 40 的列中。
@@ -409,32 +469,42 @@ VALUES (value [, value...]);
 示例：
 ```sql
 create table t_user (
-	id int,
+    id int,
     name varchar(20),
     age int,
     gender enum('male', 'female')
 );
+
+# 插入所有数据类型可以省略 column 
 insert into t_user values (1, 'thomas_he', 18, 'male');
+
+# 数据的插入顺序和定义表时的顺序无关
 insert into t_user (name, id) values ('茜茜', 2);
-insert into t_user (id, name, age) values (3, '张三', 30), (4, '李四', 40);
+
+# 可以同时插入多条数据
+insert into t_user (id, name, age) 
+values (3, '张三', 30),
+    (4, '李四', 40);
 
 create table user (
-	id int,
+    id int,
     name varchar(20),
     age int,
     gender enum('male', 'female')
 );
+
+# 可以直接插入表
 insert into user (select * from t_user);
 ```
 
 
-**（2）UPDATE**  
+#### 2. UPDATE
 
 使用 UPDATE 语句修改表中数据：  
 ```sql
 UPDATE 	tbl_name    
 SET col_name1=expr1 [, col_name2=expr2 ...]    
-[WHERE where_definition]
+[WHERE where_definition];
 ```
 
 - UPDATE 语法可以用新值更新原有表行中的各列。
@@ -455,7 +525,7 @@ set age=16, gender='female'
 where name='茜茜';
 ```
 
-**（3）DELETE**  
+#### 3. DELETE
 
 使用 DELETE 语句删除表中数据：  
 ```sql
@@ -463,11 +533,10 @@ delete from table_name       
 [WHERE where_definition]
 ```
 
-- 如果不使用 WHERE 子句，将删除表中所有数据。
-
 - DELETE 语句不能删除某一列的值，删除的单位是行。
 
-- 使用 DELETE 语句仅删除记录，不删除表本身。如要删除表，使用 DROP TABLE 语句。
+- 使用 DELETE 语句仅删除记录，不删除表本身。即，删除全部记录后表依然存在，为一个空表。  
+  如要删除表，使用 DROP TABLE 语句。
 
 示例：
 ```sql
@@ -481,23 +550,58 @@ delete from t_user;
 
 ### 常用运算符
 
-算术运算符：`+`、`-`、`*`、`/`、`%`。  
+#### 1. 算术运算符
 
-比较运算符：
-<div align="center">
-<img src="./img/p8.png">
-</div>
+| 运算符 | 作用 |
+| :- | :- |
+| + | 基本运算，下同 |
+| - | |
+| * | |
+| / | |
+| % | |
 
-逻辑运算符：`NOT(!)`、`AND(&&)`、`OR(||)`。  
+#### 2. 比较运算符
 
-位操作运算符：`&`、`|`、`~`、`^`、`<<`、`>>`。
+| 运算符 | 作用 |
+| :- | :- |
+| = | 相等 |
+| <=> | 安全的等于 |
+| <>(!=) | 不等于 |
+| <= / >= | 小于等于 / 大于等于 |
+| < / > | 小于 / 大于 |
+| IS NULL | 是否为 NULL |
+| IS NOT NULL | 是否不为 NULL |
+| BETWEEN AND | 是否在闭区间内 |
+| IN | 是否在列表内 |
+| NOT IN | 是否不在列表内 |
+| LIKE | 通配符匹配 |
 
 like 与通配符搭配使用, 进行模糊查询。
 - `%`：匹配任何数目的字符，甚至包括零个字符。
 
 - `_`: 匹配一个字符。
 
-注：不同的 DBMS，通配符可能不一样, 比如 SQL Server 是 `*` 匹配所有字符, `?` 匹配一个字符。
+注：不同的 DBMS，通配符可能不一样, 比如 SQL Server 是 `*` 匹配所有字符，`?` 匹配一个字符。
+
+
+#### 3. 逻辑运算符
+
+| 运算符 | 作用 |
+| :- | :- |
+| NOT(!) | 非 |
+| AND(&&) | 与 |
+| OR(\|\|) | 或 |  
+
+#### 4. 位操作运算符
+
+| 运算符 | 作用 |
+| :- | :- |
+| & | 位与 |
+| \| | 位或 |
+| ~ | 位非 | 
+| ^ | 位异或 | 
+| << | 位左移 |
+| >> | 位右移 |
 
 
 ### DQL数据查询语言
@@ -513,22 +617,23 @@ DQL：Data Query Language。
 虽然 SELECT 语句通常用于从表中检索数据，但我们也可以用它计算表达式和函数的值。  
 示例：
 ```sql
-# 计算表达式3*2的值 
+# 计算表达式 3 * 2 的值 
 SELECT 3*2;
 
 # 查看当前的时间 
 SELECT NOW();
 
-# 修剪字符串' ab cd '左右两边的空白
+# 修剪字符串 ' ab cd ' 左右两边的空白
 SELECT TRIM(' ab cd ');
 
-# 拼接字符串 'ab'和'cd'
-SELECT CONCAT('ab','cd');
+# 拼接字符串 'ab' 和 'cd'
+SELECT CONCAT('ab', 'cd');
 ```
 
 #### 2. 查询表中的字段
 
 查询单个字段的值。  
+示例：
 ```sql
 # 查询 heros 表中所有英雄的名字
 select name from heros;
@@ -538,6 +643,7 @@ select role_assist from heros;
 ```
 
 查询多个字段的值，多个字段之间用 `,` 分隔。  
+示例：  
 ```sql
 # 查询 heros 表中所有英雄的名字，最大生命值，最大法力值以及主要角色定位。
 select name, hp_max, mp_max, role_main from heros;
@@ -554,7 +660,7 @@ select * from heros;
 
 #### 3. 使用 WHERE 子句过滤记录
 
-WHERE 子句后面接逻辑表达式。如果逻辑表达式的结果为真，这条记录就会添加到结果集中，否则就
+`WHERE` 子句后面接逻辑表达式。如果逻辑表达式的结果为真，这条记录就会添加到结果集中，否则就
 不会添加到结果集。  
 示例：
 ```sql
@@ -570,7 +676,7 @@ select * from heros where name='花木兰';
 
 #### 4. 给字段起别名
 
-AS 可以给字段起别名。  
+`AS` 可以给字段起别名。  
 示例：
 ```sql
 SELECT name, hp_max AS hp, mp_max AS mp FROM heros;
@@ -585,7 +691,7 @@ SELECT name, hp_max hp, mp_max mp FROM heros;
 
 #### 5. 去除重复行
 
-DISTINCT 可以对查询结果去重。  
+`DISTINCT` 可以对查询结果去重。  
 示例：
 ```sql
 # 查询主要角色定位有哪些
@@ -646,7 +752,7 @@ select name, hp_max from heros order by hp_max desc limit 5 offset 0;
 select name, hp_max from heros order by hp_max desc limit 5;
 ```
 
-使用 LIMIT 可以很方便地实现分页查询：
+使用 `LIMIT` 可以很方便地实现分页查询：
 ```sql
 limit rows offset rows * (page - 1)
 ```
@@ -667,13 +773,11 @@ SELECT name, hp_max + mp_max AS total_max FROM heros;
 
 #### 9. 聚合函数
 
-聚合函数是对某个字段的值进行统计的，而不是对某条记录进行统计。如果想计算某个学生各科成绩的
-总分，那么应该使用计算字段。  
+聚合函数是对某个字段的值进行统计的，而不是对某条记录进行统计。如果想计算某个学生各科成绩的总分，那么应该使用计算字段。  
 
-聚合函数往往是搭配分组使用的。如果没有分组，那么聚合函数统计的是整个结果集的数据；如果分组
-了，那么聚合函数统计的是结果集中每个组的数据。  
+聚合函数往往是搭配分组使用的。如果没有分组，那么聚合函数统计的是整个结果集的数据；如果分组了，那么聚合函数统计的是结果集中每个组的数据。  
 
-SQL 中一共有 5 个聚合函数。分别为 COUNT()，SUM()，AVG()，MAX()，MIN()。  
+SQL 中一共有 5 个聚合函数。分别为 `COUNT()`，`SUM()`，`AVG()`，`MAX()`，`MIN()`。  
 
 `COUNT(*)` 可以统计记录数。可以统计 null 行。  
 示例：
@@ -779,7 +883,7 @@ ORDER BY num DESC;
 
 #### 11. SELECT的顺序
 
-SELECT 是 RDBMS 中执行最多的操作。我们不仅仅要理解 SELECT 的语法，还要理解它底层执行的原理。有两个关于 SELECT 的顺序，需要记住：
+SELECT 是 RDBMS 中执行最多的操作。我们不仅仅要理解 SELECT 的语法，还要理解它底层执行的原理。  
 - 语法中关键字的顺序：  
   ```sql
   SELECT ... 
@@ -792,8 +896,9 @@ SELECT 是 RDBMS 中执行最多的操作。我们不仅仅要理解 SELECT 的�
   ```
 
 - 语句的执行顺序。不同的 RDBMS，它们 SELECT 语句的执行顺序基本是相同的。  
-  FROM --> WHERE --> GROUP BY --> HAVING --> SELECT --> DISTINCT --> ORDER BY -->
-LIMIT
+  ```
+  FROM --> WHERE --> GROUP BY --> HAVING --> SELECT --> DISTINCT --> ORDER BY --> LIMIT
+  ```
 
 示例：
 ```sql
@@ -816,7 +921,7 @@ LIMIT 2; # 顺序 7
 
 主键的作用是唯一标识一条记录。所以它不能重复，也不能为空，我们可以认为它是唯一性约束和非空
 约束的组合。一张数据表的主键最多只能有一个（推荐每张表都设置一个主键）。主键可以是一个字段，
-也可以由多个字段符合组成。
+也可以由多个字段符合组成。  
 示例：  
 - 一个字段：
   ```sql
@@ -859,7 +964,7 @@ LIMIT 2; # 顺序 7
   alter table t_score add primary key(sid, cid);
   ```
 
-auto_increment 关键字往往和 primary key 一起使用。  
+`auto_increment` 关键字往往和 primary key 一起使用。  
 作用：被修饰的字段会自动增长。  
 示例：
 ```sql
@@ -874,17 +979,15 @@ create table t_student (
 );
 ```
 注：
-- auto_increment 只能作用于被 primary key 或者是 unique 修饰的字段。
+- `auto_increment` 只能作用于被 primary key 或者是 unique 修饰的字段。
 
-- auto_increment 作用字段的类型必须是数值类型。
+- `auto_increment` 作用字段的类型必须是数值类型。
 
 - 一张数据表只能有一个自增长字段。
 
 #### 2. FOREIGN KEY
 
-外键约束的作用是确保表与表之间参照完整性。一张表的外键往往对应另一张表的主键。外键可以是重
-复的，也可以为空。
-
+外键约束的作用是确保表与表之间参照完整性。一张表的外键往往对应另一张表的主键。外键可以是重复的，也可以为空。  
 示例：  
 ```sql
 create table t_class (
@@ -953,22 +1056,26 @@ create table t_student (
 - 当数据量很大的时候，为了保证查询的性能，我们需要进行分库分表。一旦分库分表，我们就不能
 保证参照的完整性了。
 
-正是因为这些原因，所以《阿里巴巴开发手册》中规定：不要在数据库中设置外键，一切的参照完整都
-应该在业务层中完成。  
+正是因为这些原因，所以《阿里巴巴开发手册》中规定：
+> 不要在数据库中设置外键，一切的参照完整都应该在业务层中完成。  
+
 当然，这并不是说，外键就一无是处。如果参照完整性都在业务层中完成，也会导致一些问题：  
 - 业务层与数据耦合了。
+
 - 增加了业务层的逻辑。
+
 - 不能够在数据库的层面保证表之间的参照完整性。  
 
 所以，我们应该正确地看待外键。在以下场景中，我们是可以使用外键的。
-- 并发度不高
+- 并发度不高。
+  
 - 数据量不大，不需要分库分表。
+  
 - 正确性 > 性能
 
 #### 3. UNIQUE
 
-唯一性约束保证了字段的值是唯一的。即使我们有了主键，我们还是可以对其它字段设置唯一性约束。
-
+唯一性约束保证了字段的值是唯一的。即使我们有了主键，我们还是可以对其它字段设置唯一性约束。  
 示例：
 ```sql
 create table t_unique(
@@ -992,8 +1099,7 @@ create table t_student (
 
 #### 5. DEFAULT
 
-DEFAULT 表示字段的默认值。如果插入数据的时候，没有给该字段取值，就会设置为默认值。
-
+DEFAULT 表示字段的默认值。如果插入数据的时候，没有给该字段取值，就会设置为默认值。  
 示例：
 ```sql
 create table t_default(
@@ -1004,11 +1110,30 @@ create table t_default(
 #### 6. CHECK
 
 CHECK 表示自定义约束。MySQL 没有实现这个功能，但是其它商用型数据库，比如 Oracle 是有这个
-功能的。
-
+功能的。  
 示例：  
 ```sql
 create table t_check(
     height float(3, 2) check(height between 0.00 and 3.00)
 );
 ```
+
+### 数据库范式设计
+
+范式是数据表设计的基本原则，又很容易被忽略。很多时候，当数据库运行了一段时间之后，我们才发现数据表设计得有问题。重新调整数据表的结构，就需要做数据迁移，还有可能影响程序的业务逻辑，以及网站正常的访问。所以在开始设置数据库的时候，我们就需要重视数据表的设计。
+
+#### 1. 数据库有哪些范式？
+
+我们在设计关系型数据库模型的时候，需要对关系表各个字段之间联系的合理化程度进行定义，这就有了不同等级的规范要求，这些规范要求被称为范式（NF）。你可以把范式理解为，一张关系表的设计结构需要满足的某种设计标准的级别。  
+
+目前关系型数据库一共有 6 种范式，按照范式级别，从低到高分别是：1NF（第一范式）、2NF（第二范式）、3NF（第三范式）、BCNF（巴斯 - 科德范式）、4NF（第四范式）和 5NF（第五范式，又叫做完美范式）。  
+
+数据库的范式设计越高阶，冗余度就越低，同时高阶的范式一定符合低阶范式的要求，比如满足 2NF 的一定满足 1NF，满足 3NF 的一定满足 2NF，依次类推。  
+
+一般来说数据表的设计应尽量满足 3NF。但也不绝对，有时候为了提高某些查询性能，我们还需要破坏范式规则，也就是反范式设计。
+
+#### 2.  数据表中有哪些键？
+
+范式的定义会使用到主键和候选键（因为主键和候选键可以唯一标识元组），数据库中的键（Key）由
+一个或者多个属性组成。
+
