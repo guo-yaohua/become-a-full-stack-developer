@@ -1267,6 +1267,8 @@ NBA 球员表和球队表。
 
 SQL 允许进行复杂的查询，包括：连接查询，联合查询和子查询。
 
+接下来的示例来自：[nba](./file/nba)
+
 ### 连接查询
 
 在设计表的时候，为了避免数据的冗余，我们往往会将数据分散到多个表中。因此，在我们查询数据的时候，需要连接多个表进行查询。  
@@ -1284,8 +1286,11 @@ SQL92 和 SQL99 连表查询的语法有很大的不同。建议大家采用 SQL
 示例：
 ```sql
 select * from player;
+
 select * from team;
-select * from player cross join team;
+
+select * from player 
+cross join team;
 ```
 
 注：
@@ -1302,7 +1307,8 @@ select * from player cross join team;
 `NATURAL JOIN` 会自动查询两张连接表中所有相同的字段，然后进行等值连接。  
 示例：
 ```sql
-SELECT player_id, team_id, player_name, height, team_name FROM player NATURAL JOIN team;
+SELECT player_id, team_id, player_name, height, team_name 
+FROM player NATURAL JOIN team;
 ```
 
 **（2）USING 连接**  
@@ -1310,7 +1316,8 @@ SELECT player_id, team_id, player_name, height, team_name FROM player NATURAL JO
 当然我们还可以用 USING 来指定用哪些同名字段进行等值连接。  
 示例：  
 ```sql
-SELECT player_id, team_id, player_name, height, team_name FROM player JOIN team USING(team_id);
+SELECT player_id, team_id, player_name, height, team_name 
+FROM player JOIN team USING(team_id);
 ```
 
 **（3）ON 连接**  
@@ -1358,6 +1365,8 @@ from girls right join boys
 using (gid);
 ```
 
+注：SQLite 只实现了左外连接。
+
 **（3）全外连接**  
 
 两张表都是主表，都需要显示全部行。但是 MySQL 不支持全外连接。关键字为 `FULL OUTER JOIN`。
@@ -1377,14 +1386,25 @@ ON a.player_name = '布雷克-格里芬' and a.height < b.height;
 
 用 UNION 关键字可以将多个结果集合并成一个结果集，这样的查询称为联合查询。  
 
-应用场景：要查询的结果来自多个表，且多个表没有直接的连接关系，但查询的信息一致时。
+应用场景：要查询的结果来自多个表，且多个表没有直接的连接关系，但查询的信息一致时。  
+示例：
+```sql
+use friend;
+insert into boys values (5, "ET", null);
+insert into girls values (5, "ET", null);
+
+# 查询男生和女生的基本信息
+select * from boys
+union all
+select * from girls;
+```
 
 注:
 - 列数一致。
 
 - 对应的数据最好一致。
 
-- UNION 会去重, UNION ALL不会去重。
+- `UNION` 会去重, `UNION ALL` 不会去重。
 
 
 ### 子查询
@@ -1403,7 +1423,7 @@ ON a.player_name = '布雷克-格里芬' and a.height < b.height;
 SELECT player_name, height 
 FROM player 
 WHERE height = (
-    SELECT max(height) FROM player
+    SELECT max(height) FROM player # 标量子查询
 );
 ```
 
@@ -1420,7 +1440,7 @@ WHERE height > (
 );
 ```
 
-#### 1.  EXISTS 子查询
+#### 1. EXISTS 子查询
 
 关联子查询可能会搭配 EXISTS 关键字一起使用。  
 EXISTS 用来判断子查询的结果集是否为空集。如果不为空集返回 True ，如果为空集返回 False 。  
@@ -1430,18 +1450,22 @@ EXISTS 用来判断子查询的结果集是否为空集。如果不为空集返�
 select player_id, player_name, team_id
 from player
 where exists (
-    select player_id from player_score where player_score.player_id = player.player_id
+    select player_id 
+    from player_score 
+    where player_score.player_id = player.player_id
 );
 ```
 
-那么，NOT EXISTS 自然就是不存在的意思。  
+那么，`NOT EXISTS` 自然就是不存在的意思。  
 示例：
 ```sql
 # 查询没出过场的球员都有哪些，并显示他们的球员 ID，球员姓名，球队ID。
 select player_id, player_name, team_id
 from player
 where not exists (
-    select player_id from player_score where player_score.player_id = player.player_id
+    select player_id 
+    from player_score 
+    where player_score.player_id = player.player_id
 );
 ```
 
@@ -1452,7 +1476,7 @@ where not exists (
 | :- | :- |
 | IN | 判断是否在子查询的结果集中 |
 | SOME (ANY) | 需要与比较操作符一起使用，与子查询结果集中的某个值进行比较 |
-|ALL | 需要与比较操作符一起使用，与子查询结果集中的所有值进行比较 |
+| ALL | 需要与比较操作符一起使用，与子查询结果集中的所有值进行比较 |
 
 示例：
 ```sql
@@ -1460,7 +1484,8 @@ where not exists (
 select player_id, player_name, team_id
 from player
 where player_id in (
-    select distinct player_id from player_score
+    select distinct player_id 
+    from player_score
 );
 ```
 
@@ -1494,3 +1519,522 @@ select team_name, (select count(*) from player where player.team_id = team.team_
 
 注：子查询可以作为计算字段存在时，通常会给这个计算字段起个别名，因为子查询实在
 太长，别名更容易理解。
+
+
+## 事务
+
+### 概述
+
+事务（transaction）：构成单一逻辑工作单元的操作集合。  
+
+即使有故障，数据库系统也必须保证事务的正确执行 —— 要么执行整个事务，要么属于该事务的操作一个也不执行。
+
+事务的基本操作：
+- `START TRANSACTION` / `BEGIN`：开启一个事务，标记事务的起点。
+
+- `COMMIT`：提交事务，表示事务成功被执行。
+
+- `ROLL BACK`：回滚事务，回滚到初始状态或者回滚点。
+
+- `SAVEPOINT`：回滚点。
+
+- `RELEASE SAVEPOINT`：删除回滚点。
+
+- `SET TRANSACTION`：设置隔离级别。
+
+注：
+- `START TRANSACTION` 标志事务的开始，在 MySQL 中可以用 `set autocommit = 0` 替代。
+
+- 结束事务的情况只有两种：
+  - `COMMIT`：表示事务成功被执行，结束事务。
+
+  - 发生故障：结束事务, 不管有没有设置回滚点，都会回到事务开启前的状态。
+
+- `ROLLBACK`：不表示发生故障, 它也是一个数据库操作，属于事务的一部分。表示回滚事务，回滚到事务开启前的状态，或者中间的某个回滚点。要想 `ROLLBACK` 生效，必须要 `COMMIT`。
+
+### 性质
+
+事务的性质 —— ACID：
+- 原子性（Atomicity）：原子性是指事务是一个不可分割的工作单位，事务中的操作要么都发生，要么都不发生。无论是操作系统崩溃，还是计算机停止运行，这项要求都要成立。
+
+- 一致性（Consistency）：事务作为一个原子性操作，它从一个一致性的数据库状态开始运行，事务结束时，数据库的状态必须再次是一致的。
+
+- 隔离性（Isolation）：尽管多个事务可能并发执行，但系统保证，对于任何一对事务 Ti 和 Tj，在 Ti 看来，Tj 要么在 Ti 开始之前已经完成，要么在 Ti 完成之后才开始执行。因此，每个事务都感觉不到系统中有其他事务在并发地执行。
+
+- 持久性（Durability）：一个事务成功完成后，它对数据库的改变必须是永久的，即使出现系统故障。
+
+ACID 这四个特性中，原子性是基础，隔离性是手段，一致性是约束条件，而持久性是目的。
+
+### 并发执行时可能引发的问题
+
+#### 1. 脏写
+
+示例：  
+假设 A 开始为 1000。T1 和 T2 两个事务并发运行。T1 表示给 A 存 100 元，T2 表示给 A 存 100 元。调度如下：  
+<div align="center">
+<img src="./img/p5.png">
+</div>  
+最终，A 账户只会有 1100 块钱。
+
+这个现象，我们称之为脏写。  
+脏写是指当多个事务并发写同一数据时，先执行的事务所写的数据会被后写的数据覆盖。  
+脏写会导致更新丢失。就好像先提交的事务根本没有执行一样。
+
+#### 2. 脏读
+
+示例：  
+假设 A 和 B 开始都为 1000。T1 和 T2 两个事务并发运行。T1 表示 A 给 B 转账 100 元，T2 表示计算 A 和 B 的资金总额。调度如下：  
+<div align="center">
+<img src="./img/p6.png">
+</div>   
+T2 计算的 A，B 总额是 1900。
+
+这种现象称之为脏读。  
+
+如果一个事务 A 向数据库写数据，但该事务还没提交或终止，另一个事务 B 就看到了事务 A 写入数据库的数据，这个现象我们称为脏读。
+
+#### 3. 不可重复读
+
+示例：  
+假设 A 开始为 1000。T1 和 T2 两个事务并发运行。T1 表示 A 中存入 100 元，T2 表示为 A 生成两张不同的报表。调度如下：  
+<div align="center">
+<img src="./img/p7.png">
+</div>   
+结果就是，同一个事务中生成的两张报表是不一致的。
+
+不可重复读：一个事务有对同一个数据项的多次读取，但是在某前后两次读取之间，另一个事务更新该数据项，并且提交了。在后一次读取时，感知到了提交的更新。
+
+#### 4. 幻读
+
+示例：  
+表 t 中现有三个数据 A B C。T1 表示向表 t 中插入新数据 X, T2 表示读取表 t 的所有数据，并生成两张报表。调度如下：  
+<div align="center">
+<img src="./img/p8.png">
+</div> 
+结果就是，同一个事务中生成的两张报表是不一致的。  
+
+一个事务需要进行前后两次统计，在这两次统计期间，另一个事务插入了新的符合统计条件的记录，并且提交了。导致前后两次统计的数据不一致。这种现象称之为幻读。
+- 从这个事务的视角来看，平白无故多了几条数据，就像产生了幻觉一样。
+
+### 隔离级别
+
+数据库提供了不同的隔离级别来应对并发执行事务可能会引发的各种问题。
+
+SQL 标准规定了四种隔离级别，分别为
+- 读未提交（read uncommitted）：允许读取未提交的数据。
+
+- 读已提交（read committed）：只允许读取已提交数据，但不要求可重复读。比如，在事务两次读取一个数据项期间，另一个事务更新了该数据项并提交。
+
+- 可重复读（repeatable read）：只允许读取已提交数据，而且在一个事务两次读取一个数据项期间，其他事务不得更新该数据。但该事务不要求与其他事务可串行化。比如，在两次统计查询中，另一个事务可以插入一些记录，当这些记录中有符合查询条件的，那么就会产生幻读。
+
+- 可串行化（serializable）：看起来事务就好像是串行执行的一样。一个事务结束后，另一个事务才开始执行。
+
+隔离性依次增高：read uncommitted -> read committed -> repeatable read -> serializable
+
+| | 脏写 | 脏读 | 不可重读读 | 幻读 |
+| :- | :-: | :-: | :-: | :-: |
+| read uncommitted | × | √ | √ | √ |
+| read committed | × | × | √ | √ |
+| repeatable read | × | × | × | √ |
+| serializable | × | × | × | × |  
+
+以上所有隔离级别都不允许脏写，即如果有一个数据项已经被另一个尚未提交或中止的事务写入，则该事务不能对该数据项执行写操作。
+
+查看和设置 MySQL 的隔离级别：
+```sql
+# 查看
+select @@[session|global.]transaction_isolation;
+
+# 设置
+set [session|global] transaction isolation level read uncommitted;
+```
+
+示例：
+```sql
+# 当前会话的隔离级别，也就是这个会话中所有事务的默认隔离级别
+select @@transaction_isolation;
+
+# 当前会话的隔离级别
+select @@session.transaction_isolation; 
+
+# 查看全局的隔离级别, 下一个会话的默认隔离级别。
+select @@global.transaction_isolation; 
+
+# 设置下一个事务的隔离级别
+set transaction isolation level read uncommitted; 
+
+# 设置会话的隔离级别 
+set session transaction isolation level read uncommitted; 
+
+# 设置全局的隔离级别 
+set global transaction isolation level read uncommitted;
+```
+
+注：
+- MySQL 支持 4 种隔离级别，默认为 RR（repeatable read）;
+
+- Oracle 只支持 read committed 和 serializable 两种隔离级别，默认为 read committed.
+
+
+## InnoDB索引优化
+
+### MySQL逻辑架构
+
+大体来说，MySQL 可以分为 Server 层和存储引擎层。  
+<div align="center">
+<img src="./img/p9.jpg">
+</div>  
+
+- Server 层包括连接器、查询缓存、解析器、优化器和执行器等，涵盖了 MySQL 大多数核心服务功能。
+
+- 存储引擎层负责数据的存储和提取。其架构模式是插件式的，支持 InnoDB、MyISAM、Mermory  等多个存储引擎。
+
+Server 层：
+- 连接器：当在客户端输入` mysql –u $user –p $pwd` 连接 mysql 的时候，接待的就是连接器。  
+  连接器的作用就是和客户端建立连接、获取权限、维持和管理连接。  
+  ```sql
+  # 查看连接时间，超过该时间没有操作会自动断开
+  select @@wait_timeout; # 默认 8 小时
+  ```
+
+- 查询缓存：建立连接后，就可以执行 `select` 语句了。首先 MySQL 会去查看查询缓存，看下之前是否已经执行过这条查询语句。如果命中缓存，就直接返回，否则就扔给解析器。  
+  注：查询缓存弊大于利，默认查询缓存是关闭的。
+  ```sql
+  # 查看查询缓存
+  select @@query_cache_type;
+  ```
+
+- 解析器：解析器会做词法分析和语法分析。  
+  - 词法分析主要是分析每个词的含义。  
+
+  - 语法分析会判断写的 SQL 语句是否满足 SQL 语法。
+
+- 优化器：经过解析器，MySQL 就知道你想做什么了。但是在开始执行之前，还需要经过优化器的处理。优化器会优化 SQL 语句，生成最终的执行方案（execution plan）。然后进入执行器阶段。
+
+- 执行器：执行器首先会判断你对这张表有没有相应的权限。如果没有，就报错。如果有，就调用相应的存储引擎接口，执行语句。然后将结果集返回给客户端。
+
+### 存储引擎
+
+数据的存储和提取是由存储引擎负责的，它负责和文件系统打交道。
+
+MySQL 的存储引擎是插件式的。不同的存储引擎支持不同的特性。
+
+选择合适的存储引擎对应用非常重要。
+
+```sql
+# 查看 MySQL 支持哪些存储引擎
+SHOW ENGINES;
+
+# 查看默认存储引擎
+SHOW @@default_storage_engine;
+
+# 查看某张表的存储引擎
+SELECT ENGINE FROM information_schema.TABLES
+WHERE TABLE_SCHEMA='$db'
+AND TABLE_NAME='$table';
+```
+
+#### 1. MyISAM
+
+MyISAM 是 MySQL 5.5 之前默认的存储引擎。
+
+特点：
+- 查询速度很快。
+
+- 支持表锁。
+
+- 支持全文索引。
+
+- 不支持事务。
+
+   
+使用 MyISAM 存储表，会生成三个文件：
+- .frm：存储表结构，是任何存储引擎都有的。
+
+- .myd：存放数据。
+
+- .myi：存放索引。
+
+注：索引和数据是分开存放的，这样的索引叫非聚集索引。
+
+#### 2. InnoDB
+
+InnoDB 是 MySQL 5.5 以及以后版本默认的存储引擎。如果没有特殊应用，Oracle 官方推荐使用InnoDB 引擎。
+
+特点：
+- 支持事务。
+
+- 支持行锁。
+
+- 支持 MVCC。
+
+- 支持崩溃恢复。
+
+- 支持外键一致性约束。
+   
+使用 InnoDB 存储表，会生成两个文件：
+- .frm：存储表结构，是任何存储引擎都有的。
+
+- .ibd：存放数据和索引。
+
+注：索引和数据存放在一起，这样的索引叫聚集索引。
+
+#### 3. Memory
+
+Memory 特点：
+-  所有数据都存放在内存中，因此数据库重启后会丢失。
+
+-  支持表锁。
+
+-  支持 Hash 和 BTree 索引。
+
+-  不支持 Blob 和 Text 字段。
+
+Memory 由于数据都放在内存中，以及支持 Hash 索引，它的查询速度是最快的。
+
+一般使用 Memory 存放临时表。
+
+临时表：在单个连接中可见，当连接断开时，临时表也将不复存在。
+
+### 磁盘IO原理
+
+现在存储数据 一般用的还是机械磁盘，不是SSD。
+
+术语：磁盘、盘组、磁道、扇区、读 / 写头和柱面
+
+<div align="center">
+<img src="./img/p10.jpg">
+</div>
+
+- 当磁道在读/写头下通过的时候，就可以读写数据。
+
+磁盘上的数据可以用一个三维地址标识: 柱面号，盘号，块号（磁道上的扇区）。
+
+读 / 写数据的步骤：
+1. 移动磁头到指定的柱面号，这个过程被称为定位或查找。  
+  由于是机械移动，这部分耗时最高，最大可达 0.1s。
+
+2. 根据盘面号确定从哪个磁盘读取数据。
+
+3. 盘组开始旋转，将指定的块号移动到读 / 写头下。  
+  磁盘旋转的速度很快，一般为 7200rpm。旋转一圈大约需要 0.0083s.
+
+4. 读写数据：数据通过系统总线传送到内存。   
+  一般传输一个字节大概需要 0.02us，读写 4KB 大约需要 80us.
+
+磁盘读取数据是以盘块（block）为单位的，一般为 4KB。位于同一盘块的所有数据会被一次性全部读取出来。磁盘 IO 的代价主要花费在第 1 步。
+
+结论：从磁盘上随机的速度是很慢很慢的，我们应该尽量少地读写随机磁盘！
+
+### InnoDB数据页格式
+
+页是 InnoDB 磁盘管理的最小单位。在 InnoDB 存储引擎中, 页默认大小为 16KB。可以通过参数 `innodb_page_size` 将页的大小设置为 4K、8K 和 16K。
+
+InnoDB 每次至少会将 1 个页的数据从磁盘读取到内存，每次至少也会将 1 个页的数据从内存写到磁盘。
+
+在 InnoDB 存储引擎中，有很多种页类型。其中最重要的是数据页，也叫 B-tree Node。里面存储了索引和数据的信息。
+
+InnoDB 存储引擎数据页结构：  
+<div align="center">
+<img src="./img/p12.png">
+</div>
+
+- File Header：主要存储表空间相关信息。
+
+- Page Header：主要存储数据页的元信息。
+
+- Infimum + Supremum Records：每个数据页中有两个虚拟行记录用来限定记录的边界。
+  - infimum record 是数据页上最小的记录。  
+  
+  - supremum record 是数据页上最大的记录。
+
+- User Records：用户数据，实际存储的行记录。
+
+- Free Space：空闲空间。
+
+- Page Directory：页目录，存放了记录的相对位置。
+
+- File Trailer：位于数据页的最后，用来检测页是否完整地写入磁盘。
+
+页面记录逻辑组织结构：  
+<div align="center">
+<img src="./img/p13.png">
+</div>  
+
+行记录是用链表形式组织的，最小最大记录相当于两个哨兵。Page Directory 是一个数组，里面包含很多指向记录的指针（又叫 Slot），S0 指向最小记录的链表, Sn 指向最大记录的链表。S1 ~ Sn-1 的每条链的长度范围为 [4, 8]。
+
+<div align="center">
+<img src="./img/p14.png">
+</div>   
+
+File Header 里面有两个字段：FIL_PAGE_PREV 和 FIL_PAGE_NEXT 用来表示上一个页和下一个页，因此，页与页之间是用双链表链接的。页内的记录是由单链表从大到小依次链接的。
+
+### 索引
+
+简单来说，索引的目的就是为了提高数据的查询效率，就像书的目录一样。
+
+索引：在 MySQL 中也叫做键（key），是存储引擎用于快速找到记录的一种数据结构。
+
+可以作为索引的数据结构：
+- 有序数组。  
+  - 优点：区间查找都比较块。
+  
+  - 缺点：增删需要移动大量的元素，会很慢。
+
+- 哈希表（hash 索引）。  
+  - 优点：增加、删除，等值查询都很快。
+
+  - 缺点：区间查找，排序等操作会很慢。
+
+- 平衡二叉树。
+
+- B 树。
+
+- B+ 树。
+
+#### 1. 平衡二叉树索引
+
+<div align="center">
+<img src="./img/p15.png">
+</div>  
+
+不管是增加、删除还是等值查找，时间复杂度都是 O(logn)（n 是数据页的数目），并且支持范围查找。  
+但是当数据量比较大，页的数目很多时，二叉树的高度会比较高。IO 的次数会比较多，查找效率低。
+
+#### 2. B树索引
+
+
+B 树是一颗多路平衡查找树。我们描述一颗 B 树时需要指定它的阶数，阶数表示了一个结点最多有多少个孩子，一般用字母 m 表示。一颗 m 阶的 B 树定义如下：
+- 除根结点外，每个结点的度 [ceil(m/2), m]。
+
+- 根结点的度 [2, m]。
+
+- 每个结点中的关键字都按照从小到大的顺序排列，每个关键字的左子树中的所有关键字都小于它，而右子树中的所有关键字都大于它。
+
+- 所有叶子结点都位于同一层，或者说根结点到每个叶子结点的路径长度都相同。
+
+<div align="center">
+<img src="./img/p16.png">
+</div>  
+
+这是一棵 4 阶 B 树，从图中我们可以看出：索引和数据是一起存放的。  
+假设一行记录是 16B，那么一页大概可以存 1000 行记录。二层的 B 树大概可以存 1000 * 1000 行记录，三层可以存 1000 * 1000 * 1000 行记录。大大减少了树的高度，也就是减少了一次查找 IO 的次数。
+
+#### 3. B+树索引
+
+B+ 树是在 B 树上做了些改进。一棵 m 阶的 B+ 树定义如下：
+- B+ 树包含 2 种类型的结点：内部结点（也称索引结点）和叶子结点。根结点即可以是内部结点，也可以是叶子结点。根结点的关键字个数可以只有 1 个。
+
+- B+ 树与 B 树最大的不同是内部结点不保存数据，只保存关键字，所有数据（记录）都保存在叶子结点中。
+
+-  m 阶 B+ 树表示了内部结点最多有 m 个关键字。至少有 ceiling(m/2) 个关键字。
+
+- 内部结点中的 key 都按照从小到大的顺序排列，叶子结点中的记录也按照 key 的大小排列。
+
+- 每个叶子结点都存有相邻叶子结点的指针，叶子结点依关键字大小依次链接。
+
+<div align="center">
+<img src="./img/p17.png">
+</div>  
+
+这是一棵 5 阶的 B+ 树。由于内部节点只存储索引，因而每个节点可以有很多很多关键字。这样不管一行记录的数据大小，都可以保证树的高度很低。
+
+假设一页可以存储 20 条记录, 1000 个索引。那么：
+- 1 层：20。
+
+- 2 层：1000 * 20。
+
+- 3 层：1000 * 1000 * 20。
+
+而且由于叶子节点是由链表按大小依次连接的（在InnoDB 中是双链表）。范围查找的时候，也可以避免过多的 IO 次数。
+
+#### 索引的好处和坏处
+
+好处：
+- 提高数据检索的效率，降低数据库的 IO 成本。
+  - 查找。
+
+  - 排序。
+
+  - 分组。
+
+  - 表的连接。
+ 
+坏处：
+- 占用额外的空间。  
+  有时候索引占用的空间甚至比数据占用的空间还多。
+
+- 虽然索引大大提高了查询的速度，但同时也降低了更新表的速度。因为数据库不仅仅要更新数据，还要更新对应的索引信息。
+
+注：索引不是越多越好！
+- 索引太多，应用程序的性能可能会受到影响。  
+
+- 索引太少，查询速度会变慢。
+
+### InnoDB索引
+
+InnoDB 支持以下三种索引：
+- B+ 树索引。
+
+- 全文索引。  
+  全文索引是搜索关键字的，类似于搜索引擎。
+
+- 哈希索引。  
+  哈希索引是自适应的，我们不能自己创建。
+
+InnoDB 中的 B+ 树索引又可以分为聚集索引（clustered index）和辅助索引（secondary index）。  
+- 聚集索引的叶子节点存储的是一整行记录的信息。
+
+- 辅助索引的叶子节点只存放部分信息（关键字和主键）。
+
+#### 1. 聚集索引
+
+聚集索引就是按照每张表的主键构建一棵 B+ 树，同时叶子节点中存放的是整张表的行记录数据。
+
+聚集索引的叶子节点其实就是我们前面讲过的数据页。
+
+在 InnoDB 中, 记录只能存放在聚集索引中，所以每张表有且只有一个聚集索引。在大多数情况下，查询优化器倾向于采用聚集索引。
+
+<div align="center">
+<img src="./img/p18.png">
+</div>
+
+注：如果一张表中没有主键
+- 找第一个定义的唯一键去构建聚集索引。
+
+- 如果没有定义唯一键，Innodb 会提供隐藏的主键，根据隐藏的主键去构建聚集索引。
+
+建议创建表的时候一定要创建主键。
+
+#### 2. 辅助索引
+
+对于辅助索引，叶子节点不包含行记录的全部数据，叶子节点除了包含键以外，还包含聚集索引的键，也就是主键的信息。
+
+辅助索引的存在并不影响数据在聚集索引中的组织，因此每张表可以有多个辅助索引。  
+
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+#### 3. 语法
+
+创建：
+- 创建表的时候指定。会自动给 primary key 和 unique 创建索引。	        
+
+- `CREATE [UNIQUE] INDEX 索引名 ON 表名(字段列表);`
+        
+- `ALTER 表名 ADD [UNIQUE] INDEX 索引名 (字段列表);`
+
+删除：
+- `DROP INDEX 索引名 ON 表名;`
+
+查看：
+- `SHOW INDEX FROM 表名;`
+
+#### 4. 回表
+
+当通过辅助索引来寻找数据的时候，InnoDB 会遍历辅助索引，并通过辅助索引的叶子节点，获取主键。然后再通过聚集索引来找到一个完整的行记录。这个过程我们称之为回表。
+
+如果一个辅助索引的高度为 3，聚集索引的高度为 3。那么我们需要 6 次 IO 操作，才可以访问最终的数据。
+
+注：应该尽量避免回表！
