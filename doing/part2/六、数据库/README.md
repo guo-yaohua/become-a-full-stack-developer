@@ -2,23 +2,201 @@
 
 ## 目录
 
-- [数据库基础](#数据库基础)
-
-- [MySQL](#mysql)
-  - [MySQL安装与配置](#mysql安装与配置)
-  - [登录 MySQL Server](#登录-mysql-server)
-  - [数据库的备份和恢复](#数据库的备份和恢复)
-
-- [SQL](#sql)
-  - [DDL管理数据库](#ddl管理数据库)
-  - [数据类型](#数据类型)
-  - [DDL管理表](#ddl管理表)
-  - [DML数据操纵语言](#dml数据操纵语言)
-  - [常用运算符](#常用运算符)
-  - [DQL数据查询语言](#dql数据查询语言)
-  - [约束](#约束)
+- [数据库](#数据库)
+  - [目录](#目录)
+  - [数据库基础](#数据库基础)
+  - [MySQL](#mysql)
+    - [MySQL安装与配置](#mysql安装与配置)
+    - [登录 MySQL Server](#登录-mysql-server)
+    - [数据库的备份和恢复](#数据库的备份和恢复)
+      - [1. 备份](#1-备份)
+      - [2. 恢复](#2-恢复)
+  - [SQL](#sql)
+    - [DDL管理数据库](#ddl管理数据库)
+      - [1. 创建数据库](#1-创建数据库)
+      - [2. 查看、删除数据库](#2-查看删除数据库)
+      - [3. 修改数据库](#3-修改数据库)
+    - [数据类型](#数据类型)
+      - [1. 整数类型](#1-整数类型)
+      - [2. 浮点数类型和定点数类型](#2-浮点数类型和定点数类型)
+      - [3. 日期与时间类型](#3-日期与时间类型)
+      - [4. 字符串类型](#4-字符串类型)
+      - [5. 二进制类型](#5-二进制类型)
+    - [DDL管理表](#ddl管理表)
+      - [1. 创建表](#1-创建表)
+      - [2. 查询表](#2-查询表)
+      - [3. 修改表](#3-修改表)
+      - [4. 删除表](#4-删除表)
+    - [DML数据操纵语言](#dml数据操纵语言)
+      - [1. INSERT](#1-insert)
+      - [2. UPDATE](#2-update)
+      - [3. DELETE](#3-delete)
+    - [常用运算符](#常用运算符)
+      - [1. 算术运算符](#1-算术运算符)
+      - [2. 比较运算符](#2-比较运算符)
+      - [3. 逻辑运算符](#3-逻辑运算符)
+      - [4. 位操作运算符](#4-位操作运算符)
+    - [DQL数据查询语言](#dql数据查询语言)
+      - [1. 计算表达式和函数的值](#1-计算表达式和函数的值)
+      - [2. 查询表中的字段](#2-查询表中的字段)
+      - [3. 使用 WHERE 子句过滤记录](#3-使用-where-子句过滤记录)
+      - [4. 给字段起别名](#4-给字段起别名)
+      - [5. 去除重复行](#5-去除重复行)
+      - [6. 排序](#6-排序)
+      - [7. 限制结果集](#7-限制结果集)
+      - [8. 计算字段](#8-计算字段)
+      - [9. 聚合函数](#9-聚合函数)
+      - [10. 分组](#10-分组)
+      - [11. SELECT的顺序](#11-select的顺序)
+    - [约束](#约束)
+      - [1. PRIMARY KEY](#1-primary-key)
+      - [2. FOREIGN KEY](#2-foreign-key)
+      - [3. UNIQUE](#3-unique)
+      - [4. NOT NULL](#4-not-null)
+      - [5. DEFAULT](#5-default)
+      - [6. CHECK](#6-check)
   - [数据库范式设计](#数据库范式设计)
-
+    - [数据库有哪些范式？](#数据库有哪些范式)
+    - [数据表中有哪些键？](#数据表中有哪些键)
+    - [从 1NF 到 3NF](#从-1nf-到-3nf)
+    - [BCNF](#bcnf)
+    - [总结](#总结)
+  - [复杂查询](#复杂查询)
+    - [连接查询](#连接查询)
+      - [1. 交叉连接](#1-交叉连接)
+      - [2. 等值连接](#2-等值连接)
+      - [3. 非等值连接](#3-非等值连接)
+      - [4. 外连接](#4-外连接)
+      - [5. 自连接](#5-自连接)
+    - [联合查询](#联合查询)
+    - [子查询](#子查询)
+      - [1. EXISTS 子查询](#1-exists-子查询)
+      - [2. 集合比较子查询](#2-集合比较子查询)
+      - [3. 子查询作为计算字段](#3-子查询作为计算字段)
+  - [事务](#事务)
+    - [概述](#概述)
+    - [性质](#性质)
+    - [并发执行时可能引发的问题](#并发执行时可能引发的问题)
+      - [1. 脏写](#1-脏写)
+      - [2. 脏读](#2-脏读)
+      - [3. 不可重复读](#3-不可重复读)
+      - [4. 幻读](#4-幻读)
+    - [隔离级别](#隔离级别)
+  - [InnoDB索引优化](#innodb索引优化)
+    - [MySQL逻辑架构](#mysql逻辑架构)
+    - [存储引擎](#存储引擎)
+      - [1. MyISAM](#1-myisam)
+      - [2. InnoDB](#2-innodb)
+      - [3. Memory](#3-memory)
+    - [磁盘IO原理](#磁盘io原理)
+    - [InnoDB数据页格式](#innodb数据页格式)
+    - [索引](#索引)
+      - [1. 平衡二叉树索引](#1-平衡二叉树索引)
+      - [2. B树索引](#2-b树索引)
+      - [3. B+树索引](#3-b树索引)
+      - [索引的好处和坏处](#索引的好处和坏处)
+    - [InnoDB索引](#innodb索引)
+      - [1. 聚集索引](#1-聚集索引)
+      - [2. 辅助索引](#2-辅助索引)
+      - [3. 语法](#3-语法)
+      - [4. 回表](#4-回表)
+      - [5. Explain](#5-explain)
+    - [联合索引](#联合索引)
+    - [覆盖索引](#覆盖索引)
+    - [索引的选择](#索引的选择)
+  - [JDBC](#jdbc)
+    - [概述](#概述-1)
+    - [入门案例](#入门案例)
+    - [API详解](#api详解)
+      - [1. Driver&DriverManager](#1-driverdrivermanager)
+      - [2. Statement](#2-statement)
+      - [3. PreparedStatement](#3-preparedstatement)
+      - [4. Batch](#4-batch)
+      - [5. ResultSet](#5-resultset)
+      - [6. 管理连接、语句和结果集](#6-管理连接语句和结果集)
+      - [7.6 JDBC事务相关API](#76-jdbc事务相关api)
+  - [数据库连接池](#数据库连接池)
+    - [手写数据库连接池](#手写数据库连接池)
+    - [优秀的数据库连接池](#优秀的数据库连接池)
+      - [1. DBCP](#1-dbcp)
+      - [2. C3P0](#2-c3p0)
+      - [3. Druid](#3-druid)
+    - [数据库连接池的优点](#数据库连接池的优点)
+****      - [2. UPDATE](#2-update)
+      - [3. DELETE](#3-delete)
+    - [常用运算符](#常用运算符)
+      - [1. 算术运算符](#1-算术运算符)
+      - [2. 比较运算符](#2-比较运算符)
+      - [3. 逻辑运算符](#3-逻辑运算符)
+      - [4. 位操作运算符](#4-位操作运算符)
+    - [DQL数据查询语言](#dql数据查询语言)
+      - [1. 计算表达式和函数的值](#1-计算表达式和函数的值)
+      - [2. 查询表中的字段](#2-查询表中的字段)
+      - [3. 使用 WHERE 子句过滤记录](#3-使用-where-子句过滤记录)
+      - [4. 给字段起别名](#4-给字段起别名)
+      - [5. 去除重复行](#5-去除重复行)
+      - [6. 排序](#6-排序)
+      - [7. 限制结果集](#7-限制结果集)
+      - [8. 计算字段](#8-计算字段)
+      - [9. 聚合函数](#9-聚合函数)
+      - [10. 分组](#10-分组)
+      - [11. SELECT的顺序](#11-select的顺序)
+    - [约束](#约束)
+      - [1. PRIMARY KEY](#1-primary-key)
+      - [2. FOREIGN KEY](#2-foreign-key)
+      - [3. UNIQUE](#3-unique)
+      - [4. NOT NULL](#4-not-null)
+      - [5. DEFAULT](#5-default)
+      - [6. CHECK](#6-check)
+  - [数据库范式设计](#数据库范式设计)
+    - [数据库有哪些范式？](#数据库有哪些范式)
+    - [数据表中有哪些键？](#数据表中有哪些键)
+    - [从 1NF 到 3NF](#从-1nf-到-3nf)
+    - [BCNF](#bcnf)
+    - [总结](#总结)
+  - [复杂查询](#复杂查询)
+    - [连接查询](#连接查询)
+      - [1. 交叉连接](#1-交叉连接)
+      - [2. 等值连接](#2-等值连接)
+      - [3. 非等值连接](#3-非等值连接)
+      - [4. 外连接](#4-外连接)
+      - [5. 自连接](#5-自连接)
+    - [联合查询](#联合查询)
+    - [子查询](#子查询)
+      - [1. EXISTS 子查询](#1-exists-子查询)
+      - [2. 集合比较子查询](#2-集合比较子查询)
+      - [3. 子查询作为计算字段](#3-子查询作为计算字段)
+  - [事务](#事务)
+    - [概述](#概述)
+    - [性质](#性质)
+    - [并发执行时可能引发的问题](#并发执行时可能引发的问题)
+      - [1. 脏写](#1-脏写)
+      - [2. 脏读](#2-脏读)
+      - [3. 不可重复读](#3-不可重复读)
+      - [4. 幻读](#4-幻读)
+    - [隔离级别](#隔离级别)
+  - [InnoDB索引优化](#innodb索引优化)
+    - [MySQL逻辑架构](#mysql逻辑架构)
+    - [存储引擎](#存储引擎)
+      - [1. MyISAM](#1-myisam)
+      - [2. InnoDB](#2-innodb)
+      - [3. Memory](#3-memory)
+    - [磁盘IO原理](#磁盘io原理)
+    - [InnoDB数据页格式](#innodb数据页格式)
+    - [索引](#索引)
+      - [1. 平衡二叉树索引](#1-平衡二叉树索引)
+      - [2. B树索引](#2-b树索引)
+      - [3. B+树索引](#3-b树索引)
+      - [索引的好处和坏处](#索引的好处和坏处)
+    - [InnoDB索引](#innodb索引)
+      - [1. 聚集索引](#1-聚集索引)
+      - [2. 辅助索引](#2-辅助索引)
+      - [3. 语法](#3-语法)
+      - [4. 回表](#4-回表)
+      - [5. Explain](#5-explain)
+    - [联合索引](#联合索引)
+    - [覆盖索引](#覆盖索引)
+    - [索引的选择](#索引的选择)
 
 ## 数据库基础
 
@@ -102,7 +280,17 @@ mysql -u $user -p $db_name < file
 
 **（2）方式二**  
 
-命令行登录 mysql 服务, 先进入数据库，然后执行 `source file`。  
+在命令行中：  
+```
+mysql -u $user -p
+```
+
+进入 mysql 服务后：
+```
+> use $db_name;
+
+> source file
+```
 
 注：后面不要加分号
 
@@ -2038,3 +2226,868 @@ InnoDB 中的 B+ 树索引又可以分为聚集索引（clustered index）和辅
 如果一个辅助索引的高度为 3，聚集索引的高度为 3。那么我们需要 6 次 IO 操作，才可以访问最终的数据。
 
 注：应该尽量避免回表！
+
+#### 5. Explain
+
+查询优化器：通过计算分析系统收集的统计信息，提供它认为最优的执行计划（execution plan）。
+
+explain：查看这个执行计划的信息。
+
+语法：`explain + select 语句`。
+
+示例：
+```sql
+explain select * from t;
+```
+
+explain 的结果有以下列的信息：
+- id: 每个 select 子句的标识。
+
+- select_type: select 语句的类型。
+  - simple、primary、union、subquery、derived。
+
+- table：显示这一行的数据是关于哪张表的。
+
+- partitions：匹配的分表。
+
+- type：连接类型，又叫访问类型。  
+  常用类型有：ALL、index、range、ref、eq_ref、const、system、NULL（从左到右，性能越来越好）。
+
+- possible_keys：可以选择的索引。
+
+- key：实际选择的索引。
+
+- key_len：使用索引的长度（以字节为单位）。
+
+- ref：与索引比较的字段
+
+- rows：大概要检索的行数
+
+- Extra：额外信息。
+  - using filesort：MySQL 中无法利用索引完成的排序操作称为文件排序，常见于排序和分组查询。
+
+  - using temporary：表示 MySQL 需要使用临时表来存储结果集，常见于排序和分组查询。
+   
+  using filesort 和 using temporary, 这两项比较耗时, 需要特别小心。
+
+### 联合索引
+
+联合索引是指对表的多个列进行索引。  
+
+联合索引的创建方法和单个索引创建的方法一样，不同之处仅在于有多个索引列。
+
+多个键值的 B+ 树：  
+<div align="center">
+<img src="./img/p20.png">
+</div>  
+
+联合索引的键 (1, 1), (1, 2), (2, 1), (2, 4), (3, 1), (3, 2) 是按照 (a, b) 的顺序进行存放的。
+
+优点：
+- 最左前缀法则：B+ 树这种数据结构，可以利用索引的最左前缀来定位记录。
+
+- 键是已经排好序的。
+
+### 覆盖索引
+
+InnoDB 存储引擎支持覆盖索引（covering index），即从辅助索引中就可以得到要查询的信息，而不需要回表。
+
+使用覆盖索引的好处是，覆盖索引不包含整行记录的信息，故其大小一般情况下远小于聚集索引，因此可以减少大量的 IO 操作。
+
+对于辅助索引而言，其叶子节点包含主键信息。
+
+### 索引的选择
+
+有些情况虽然建立了索引，但是优化器并没有选择索引去查找数据，而是通过扫描聚集索引，也就是全表扫描来获取数据。
+- 对索引列进行运算。
+
+- 对索引进行不等于判断。
+
+- 范围查找过大。
+
+何时该创建索引：
+- 主键和唯一键会自动创建索引，外键要求必须是 primary key 或者 unique。
+
+- 频繁作为查询条件的字段应该创建索引。
+
+- 与其他表关联的字段应该创建索引。
+
+- 查询中用于经常用于排序的字段。
+
+- 查询中经常用于分组的字段。
+
+何时不该创建索引：
+- 不在 WHERE、GROUP BY、ORDER BY 或者是 DISTINCT 中出现的字段。
+
+- 表的记录太少。
+
+- 经常更新的表。
+
+- 数据字段中包含太多的重复值，比如国籍，性别等字段。
+
+实践策略：
+- 尽量使用覆盖索引，比如尽量不要使用 `select *`。
+
+- 尽量使用最左前缀法则。
+
+- 不要在索引列上做运算。
+
+- 范围查找尽量不要太大。
+
+- 尽量不要使用不等于。
+
+
+## JDBC
+
+### 概述
+
+JDBC (Java Data Base Connectivity) 是一种用于执行 SQL 语句的 Java API。JDBC 是 Java 访问数据库的标准规范，可以为不同的关系型数据库提供统一访问。它由一组用 Java 语言编写的接口和类组成，位于 java.sql 和 javax.sql 包下面。  
+
+JDBC 需要连接驱动。客户端要和 DBMS 进行通信，需要满足一定的通信数据格式 (协议)，协议是由数据库厂商制定的，不同的 DBMS 有不同的协议。因此数据库厂商必须为客户端提供驱动软件，这样客户端才能连接到 DBMS。就像硬件设备厂家为了自家的设备能跑在操作系统上，必须提供驱动程序一样。  
+Sun 公司指定了 Java 访问数据库的规范，这些规范称为 JDBC。而各个数据库厂商提供了各自的实现，这些实现我们称为驱动。
+
+### 入门案例
+
+操作数据库的步骤：
+1. 建立连接；
+
+2. 执行 SQL 语句；
+
+3. 获取返回结果；
+
+4. 退出（exit, 关闭连接，释放资源）。
+
+用 Java 程序操作数据库的过程与之类似：
+1. 注册驱动；
+
+2. 建立连接；
+
+3. 获取 SQL 语句执行平台；
+
+4. 执行 SQL 语句；
+
+5. 处理结果；
+
+6. 退出（关闭连接，释放资源）。
+
+下面以 MySQL 为例（驱动可以从[这里](https://dev.mysql.com/downloads/connector/j/)下载），演示 Java 如何连接 MySQL 并执行 SQL 语句。
+
+首先，修改 MySQL 的配置文件 my.ini：将 [mysqld] 下的 general-log 的值修改为 1。  
+```ini
+[mysqld]
+general-log=1
+```
+
+然后重启 mysql 服务。以管理员身份运行命令行：
+```
+net stop mysql
+
+net start mysql
+```
+
+此时，之后对数据库的操作就会在 `C:\ProgramData\MySQL\MySQL Server 5.7\Data` 文件夹下生成 `主机名.log` 日志文件。这样，就可以通过 log 知道代码在 MySQL 服务器上是怎么执行的了。  
+
+
+单元测试（@test）：
+1. 访问权限必须是 public；
+
+2. 要求方法是成员方法；
+
+3. 方法的返回值类型必须是 void；
+
+4. 没有参数。
+
+示例：
+```java
+@Test
+public void methid() {
+    System.out.println("Hello World!");
+}
+```
+
+断言（Assert）：判断期望结果是否一致。  
+
+示例：
+```java
+int a = 1;
+
+Assert.assertEqual(1, a);
+```
+
+
+用 Java 程序操作数据库示例：
+```java
+public class FooDemo {
+    @Test
+    public void foo() throws SQLException {
+        // 注册驱动
+        Driver driver = new com.mysql.jdbc.Driver();
+
+        // 获取连接
+        String url = "jdbc:mysql://localhost:3306/jdbc_db";
+
+        Properties info = new Properties();
+        info.setProperty("user", "用户名");
+        info.setProperty("password", "密码");
+
+        Connection conn = driver.connect(url, info);
+
+        // 获取 SQL 执行平台
+        Statement stmt = conn.createStatement();
+
+        // 执行 SQL
+        String sql = "select * from t_user";
+        ResultSet rs = stmt.executeQuery(sql);
+
+        // 处理结果
+        while (rs.next()) {
+            // MySQL 索引是从 1 开始的
+            int id = rs.getInt(1);
+            String name = rs.getString(2);
+            String password = rs.getString(3);
+            BigDecimal balance = rs.getBigDecimal(4);
+            System.out.println(id + " " + name + " " + password + " " + balance);
+        }
+
+        // 断开连接，释放资源
+        rs.close();
+        stmt.close();
+        conn.close();
+    }
+}
+```
+
+### API详解
+
+#### 1. Driver&DriverManager
+
+Driver 类常用方法：
+- `Connection connect(String url, Properties info) `：试图创建一个到给定 URL 的数据库连接 
+
+DriverManager:
+- `static void registerDriver(Driver driver)`：向 DriverManager 注册给定驱动程序。
+
+- `static void deregisterDriver(Driver driver)`：从 DriverManager 的列表中删除一个驱动程序。
+
+- `static Connection getConnection(String url, String user, String password)`：试图建立到给定数据库 URL 的连接。
+
+
+测速版本一：
+```java
+@Test
+public void testGetConnection1() throws SQLException {
+    // 注册驱动
+    Driver driver = new com.mysql.jdbc.Driver();
+
+    // 获取连接
+    String url = "jdbc:mysql://localhost:3306/jdbc_db";
+    Properties info = new Properties();
+    info.setProperty("user", "用户名");
+    info.setProperty("password", "密码");
+    Connection conn = driver.connect(url, info);
+
+    // 判断是否成功连接
+    Assert.assertNotNull(conn);
+}
+```
+
+版本二：
+```java
+@Test
+public void testGetConnection2() throws SQLException {
+    Driver driver = new com.mysql.jdbc.Driver();
+
+    DriverManager.registerDriver(driver);
+    String url = "jdbc:mysql:///jdbc_db"; // 连接本机时中间可以省略
+    String user = "用户名";
+    String password = "密码";
+    Connection conn = DriverManager.getConnection(url, user, password);
+
+    Assert.assertNotNull(conn);
+}
+```
+
+版本三：
+```java
+/*
+将常用数据通过键值对存进配置文件 db.properties
+*/
+
+@Test
+@SuppressWarnings("unchecked")
+public void testGetConnection3() throws Exception {
+    Properties info = new Properties();
+    Reader reader = new FileReader("db.properties");
+    info.load(reader);
+    String driver = info.getProperty("driver");
+    Class<Driver> cl = (Class<Driver>) Class.forName(driver);
+    DriverManager.registerDriver(cl.newInstance());
+
+    String url = info.getProperty("url");
+    String user = info.getProperty("user");
+    String password = info.getProperty("password");
+    Connection conn = DriverManager.getConnection(url, user, password);
+
+    Assert.assertNotNull(conn);
+}
+```
+
+版本四：
+```java
+// 查看源码，我们发现 com.mysql.jdbc.Driver 在类加载的时候，就会自动注册。
+
+@Test
+public void testGetConnection4() throws Exception {
+    Properties info = new Properties();
+    Reader reader = new FileReader("db.properties");
+    info.load(reader);
+    String driver = info.getProperty("driver");
+    Class<Driver> cl = (Class<Driver>) Class.forName(driver);
+
+    String url = info.getProperty("url");
+    String user = info.getProperty("user");
+    String password = info.getProperty("password");
+    Connection conn = DriverManager.getConnection(url, user, password);
+    Assert.assertNotNull(conn);
+}
+```
+
+版本五：
+```java
+/*
+JDBC4 规范：要求驱动能够自动加载（类似设备连接 PC 时，驱动能够自动加载运行一样）。因此，我们只要导入 jar 包就可以了。
+*/
+@Test
+public void testGetConnection5() throws Exception {
+    Properties info = new Properties();
+    Reader reader = new FileReader("db.properties");
+    info.load(reader);
+    
+    String url = info.getProperty("url");
+    String user = info.getProperty("user");
+    String password = info.getProperty("password");
+    Connection conn = DriverManager.getConnection(url, user, password);
+
+    Assert.assertNotNull(conn);
+}
+```
+
+#### 2. Statement
+
+我们可以通过 Statement 执行各种 SQL 语句，包括 DDL、DCL、DML、DQL等。
+
+常用方法：
+- `boolean execute(String sql) throws SQLException`：执行给定的 SQL 语句，该语句可能返回多个结果。  
+  如果第一个结果为 ResultSet 对象，则返回 true；如果其为更新计数或者不存在任何结果，则返回 false。
+
+- `int executeUpdate(String sql) throws SQLException`：执行给定 SQL 语句，该语句可能为 INSERT、UPDATE 或 DELETE 语句，或者不返回任何内容的 SQL 语句（如 SQL DDL 语句）。   
+  - 对于 SQL 数据操作语言 (DML) 语句，返回行计数。
+  - 对于什么都不返回的 SQL 语句，返回 0。
+
+- `ResultSet executeQuery(String sql)`：执行给定的 SQL 语句，该语句返回单个 ResultSet 对象。  
+  不管有没有满足查询条件的记录，ResultSet 都不为 null.我们可以通过 ResultSet 的 next() 方法判断是否有满足查询条件的记录。
+
+
+**（1）创建数据库**
+
+```java
+@Test
+public void testCreateDb() throws SQLException {
+    Connection conn = getConnection();
+
+    // 创建 Statement
+    Statement stmt = conn.createStatement();
+
+    // 执行 SQL 语句
+    String sql = "create database test";  // 创建数据库 test
+    stmt.execute(sql);
+}
+```
+
+**（2）创建表**  
+
+```java 
+// 执行SQL语句
+String sql = "create table t_a(a int)";
+stmt.execute(sql);
+```
+
+**（3）插入数据**  
+
+```java
+String sql = "insert into t_a values (1), (2), (3)";
+int rows = stmt.executeUpdate(sql);
+
+Assert.assertEquals(3, rows);
+```
+
+**（4）更新数据**  
+
+```java
+String sql = "update t_a set a = a + 100";
+int rows = stmt.executeUpdate(sql);
+
+Assert.assertEquals(3, rows);
+```
+
+**（5）查找数据**  
+
+```java
+String sql = "select * from t_a";
+ResultSet rs = stmt.executeQuery(sql);
+
+Assert.assertTrue(rs.next());
+```
+
+Statement 会引入 SQL 注入问题：
+```java
+String name = "aaa' or 1=";
+String password = " or 1='1";
+
+name = "'" + name + "'";
+password = "'" + password + "'";
+
+String sql = String.format("select * from user where name=%s and password=%s", name, password);
+```
+
+#### 3. PreparedStatement
+
+通常我们执行一条 SQL 语句，得经过三个过程:
+1. 词法和语义解析；
+
+2. 优化 SQL 语句，制定执行计划；
+
+3. 执行并返回结果
+
+我们把这种普通 SQL 语句称作 Immediate Statements。  
+
+但是很多情况下，一条 SQL 语句可能会被反复执行。或者是反复执行的 SQL 语句，它们结构相似，只是参数不同而已。如果每次执行的时候都要经过上面的词法语义解析、优化 SQL、制定执行计划等，那效率就明显不行了。  
+
+MySQL 提供了预编译语句，可以帮我们解决这个问题。在预编译语句中，参数我们用占位符 `?` 替代，这样我们就可以为多条不同的 SQL 语句，提供统一的模板。我们把这种 SQL 语句称作 PreparedStatements 或者 Parameterized Statements。
+
+预编译语句的优势有以下两点：
+- 一次解析优化，多次执行。
+
+- 可以防止 SQL 注入问题。
+
+语法：
+- 编译：
+  ```sql
+  PREPARE stmt_name FROM prepare_stmt;
+  ```
+
+- 执行：
+  ```sql
+  EXECUTE stmt_name [USING @var_name [, @var_name] ...];
+  ```
+
+- 删除：
+  ```sql
+  {DEALLOCATE | DROP} PREPARE stmt_name
+  ```
+
+示例：
+```sql
+# 编译 
+prepare ps from 'select * from t_user where name=? and password=?';
+
+# 设置参数 
+set @name='Thomas_He';
+set @password='123456';
+
+# 执行
+execute ps using @name, @password;
+
+# 删除 
+drop prepare ps;
+```
+
+在 Java 中我们提供了 PreparedStatement 这个接口来调用数据库的预编译功能。  
+```java
+@Test
+public void testInjection() throws SQLException {
+    Connection conn = getConnection();
+    String sql = "select * from t_user where name=? and password=?";
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+
+    // 设置参数
+    String name = "Thomas_He";
+    String password = "123456";
+    pstmt.setString(1, name);
+    pstmt.setString(2, password);
+
+    // 执行
+    ResultSet rs = pstmt.executeQuery();
+
+    // 处理结果集
+    while (rs.next()) {
+        String username = rs.getString("name");
+        BigDecimal balance = rs.getBigDecimal("balance");
+        System.out.println(username + ": " + balance);
+    }
+}
+```
+
+虽然这样我们就能避免 SQL 注入攻击了，但是测试性能时，我们会发现并没有什么提高。原因在于，这样我们只是开启了客户端预编译，实际还是用 Query 执行的，而不是 Execute 。  
+
+为了提高性能，我们需要开启服务端预编译，在 url 后面添加一些参数。
+```
+url=jdbc:mysql://localhost:3306/jdbc_db?useServerPrepStmts=true&cachePrepStmts=true
+```
+- useServerPrepStmts: 是否启用服务端预编译, true 表示启用。
+
+- cachePrepStmts: 是否缓存预编译语句, true 表示缓存。
+
+#### 4. Batch
+
+不管是 Statement 还是 PreparedStatement，执行一条 SQL 语句，客户端都要和服务器进行一次通信，这样效率就比较低下。因此，MySQL 提供了批处理功能。  
+
+- `void addBatch(String sql)`：将给定的 SQL 命令添加到此 Statement 对象的当前命令列表中。 
+
+- `void clearBatch()`：清空此 Statement 对象的当前 SQL 命令列表。 
+
+- `int[] executeBatch()`：将一批命令提交给数据库来执行，如果全部命令执行成功，则返回更新计数组成的数组。 
+
+```java
+@Test
+public void testPerformance() throws SQLException {
+    Connection conn = getConnection();
+    String sql = "insert into t_user(name, password) values(?, ?)";
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+
+    for (int i = 1; i <= 20000; i++) {
+        pstmt.setString(1, "user" + i);
+        pstmt.setString(2, "123456");
+        pstmt.addBatch();
+
+        if (i % 1000 == 0) {
+            pstmt.executeBatch();
+            pstmt.clearBatch();
+        }
+    }
+}
+```
+
+注：默认情况下，MySQL 没有开启批处理模式。需要在 url 后面添加 `rewriteBatchedStatements=true` 参
+数。
+
+#### 5. ResultSet
+
+Java 中用 ResultSet 接口代表数据库返回的结果集。 
+
+ResultSet 封装执行结果时，采用的类似于表格的方式。ResultSet 对象维护了一个指向表格数据行的游标，初始的时候，游标在第一行之前。ResultSet 的 next() 方法，可以判断是否有还有下一行数据。如果有，返回 true, 将游标指向该行，我们可以通过 ResultSet 对象获取该行的数据。如果没有，返回 false。
+
+ResultSet API：
+- getXXX(int index)。
+
+- getXXX(String columnName)。
+
+- next()。
+
+- previous()。
+
+- absolute(int row)：绝对定位。
+
+- beforeFirst()：移动到第一行前。
+
+- afterLast()：移动到最后一行后面。
+
+示例：
+```java
+@Test
+public void testGetter() throws SQLException {
+    Connection conn = getConnection();
+    String sql = "select id, name as username, password, balance from t_user where id = ?";
+    PreparedStatement pstmt = conn.prepareStatement(sql);
+    pstmt.setInt(1, 1);
+    ResultSet rs = pstmt.executeQuery();
+    while (rs.next()) {
+        int id = rs.getInt("id");
+        String name = rs.getString("username");
+        String password = rs.getString("password");
+        BigDecimal balance = rs.getBigDecimal("balance");
+        System.out.println(id + " " + name + " " + password + " " + balance);
+    }
+
+    // 逆序
+    rs.afterLast();
+    while (rs.previous()) {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        String password = rs.getString("password");
+        BigDecimal balance = rs.getBigDecimal("balance");
+        System.out.println(id + " " + name + " " + password + " " + balance);
+    }
+}
+```
+
+常用数据类型对应表：
+
+| MySQL 数据类型 | JDBC 对应的 getter/setter | Java 数据类型 |
+| :- | :- | :- |
+| tinyInt | getByte()/setByte() | byte |
+| smallint | getShort()/setShort() | short |
+| int | getInt()/setInt() | int |
+| bigint | getLong()/setLong() | long |
+| char, | varchar | getString()/setString() | String |
+| Text | getClob()/setClob() | Clob |
+| Blob | getBlob()/setBlob() | Blob |
+| Date | getDate()/setDate() | java.sql.Date |
+| Time | getTime()/setTime() | java.sql.Time |
+| TimeStamp | getTimeStamp()/setTimeStamp() | java.sql.TimeStamp |
+
+#### 6. 管理连接、语句和结果集
+
+每个 Connection 对象都可以创建一个或多个 Statement 对象。同一个 Statement 对象可以用于多个不相关的命令和查询。但是，一个 Statement 对象最多只能有一个打开的结果集。如果需要执行多个查询操作，且需要同时分析查询结果，那么必须创建多个 Statement 对象。  
+
+使用完 ResultSet、Statement 或 Connection 对象后，应立即调用 close() 方法。这些对象都使用了规模较大的数据结构，它们会占用数据库服务器有限的资源。  
+
+如果 Statement 对象上有一个打开的结果集，那么调用 close() 方法将自动关闭该结果集。同样地，调用 Connection 类的 close() 方法将关闭该连接上所有的 Statement。
+
+#### 7.6 JDBC事务相关API
+
+Connection：
+- `void setAutoCommit(boolean autoCommit)`。
+
+- `void commit()`。
+
+- `void rollback()`。
+
+- `void rollback(Savepoint savepoint)`。
+
+- `Savepoint setSavepoint()`。
+
+- `void releaseSavepoint(Savepoint savepoint)`。
+
+- `void setTransactionIsolation(int level)`。
+
+- ```java
+  static int TRANSATION_NONE, TRANSACTION_READ_UNCOMMITTED,
+  TRANSACTION_READ_COMMITTED, TRANSACTION_REPEATABLE_READ,
+  TRANSACTION_SERIALIZABLE
+  ```
+
+示例：
+```java
+@Test
+public void testTransaction() throws SQLException {
+    Connection conn = getConnection();
+    String sql = "update t_user set balance = balance - 100 where id=?";
+    PreparedStatement pstmt1 = conn.prepareStatement(sql);
+    pstmt1.setInt(1, 1);
+
+    // 开启事务
+    conn.setAutoCommit(false);
+    pstmt1.executeUpdate();
+    System.out.println(1/0);
+    sql = "update t_user set balance = balance + 100 where id=?";
+    PreparedStatement pstmt2 = conn.prepareStatement(sql);
+    pstmt2.setInt(1, 2);
+    pstmt2.executeUpdate();
+
+    // 提交事务
+    conn.commit();
+}
+```
+
+## 数据库连接池
+
+所谓的数据库连接池技术，就是用来分配、管理、释放数据库连接的。我们以前用 JDBC 操作数据库的时候，每次操作完都会将连接关闭。数据库连接是极其宝贵的资源，频繁的创建和销毁会极大地降低服务器的性能。因此，我们可以利用池化技术，重复利用数据库资源，避免没必要的开销。
+
+### 手写数据库连接池
+
+首先，我们来手写一个基本的数据库连接池，加深对数据库连接池原理的理解。
+
+```java
+public class MyConnectionPool {
+    private static int INIT_SIZE;
+    private static int MAX_SIZE;
+    private int size;
+    private LinkedList<Connection> pool = new LinkedList<>();
+    private static final Properties info = new Properties();
+    static {
+        try (Reader reader = new FileReader("info.properties")) {
+            info.load(reader);
+            INIT_SIZE = Integer.parseInt(info.getProperty("INIT_SIZE"));
+            MAX_SIZE = Integer.parseInt(info.getProperty("MAX_SIZE"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public MyConnectionPool() {
+        for (int i = 0; i < INIT_SIZE; i++) {
+            pool.add(createConnection());
+        }
+    }
+    public Connection getConnection() {
+        if (!pool.isEmpty()) {
+            return pool.removeFirst();
+        }
+        if (size < MAX_SIZE) {
+            return createConnection();
+        }
+        throw new RuntimeException("数据库连接数目已达到最大");
+    }
+    private Connection createConnection(){
+        String url = info.getProperty("url");
+        String user = info.getProperty("user");
+        String password = info.getProperty("password");
+        PoolConnection poolConn = null;
+        try {
+            Connection conn = DriverManager.getConnection(url, user, password);
+            poolConn = new PoolConnection(conn);
+            size++;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return poolConn;
+    }
+    private class PoolConnection extends MyConnectionWrapper {
+        public PoolConnection(Connection conn) {
+            super(conn);
+        }
+        @Override
+        public void close() throws SQLException {
+            if (pool.size() < INIT_SIZE) pool.addLast(this);
+            else {
+                size--;
+                conn.close();
+            }
+        }
+    }
+}
+```
+
+### 优秀的数据库连接池
+
+Sun 公司规定：Java 中所有的数据库连接池都需要实现 DataSource 接口。该接口定义如下：
+```java
+public interface DataSource extends CommonDataSource, Wrapper {
+    Connection getConnection() throws SQLException;
+    Connection getConnection(String username, String password) throws
+    SQLException;
+}
+```
+其中，定义了两个获取连接的方法。
+
+#### 1. DBCP
+
+DBCP 是由 Apache 开发的一个 Java 数据库连接池项目。Tomcat 内置的连接池组件就是 DBCP。单独使用 DBCP需要3个包：common-dbcp.jar,common-pool.jar,common-logging.jar。它预先将数据库连接放在内存中，应用程序需要建立数据库连接时直接到连接池中申请一个就行，用完再放回。单线程，并发量低，性能不好，适用于小型系统。
+
+使用的方式主要有两种，一种是硬编码方式，就是在代码中设置各种参数（不推荐）。
+```
+BasicDataSource ds = new BasicDataSource();
+ds.setInitialSize(3);
+ds.setMaxTotal(10);
+ds.setMaxIdle(1800);
+ds.setUrl("jdbc:mysql://localhost:3306/jdbc_db");
+ds.setUsername("root");
+ds.setPassword("r00tme");
+Connection conn = ds.getConnection();
+Assert.assertNotNull(conn);
+```
+
+第二种方式就是配置相应的配置文件 (推荐)。在 dbcp.properties 文件中配置如下信息。
+```
+url=jdbc:mysql://localhost:3306/jdbc_db
+username=root
+password=r00tme
+initialSize=3
+maxTotal=10
+maxIdle=1800
+```
+
+```java
+Properties info = new Properties();
+Connection conn = null;
+try (Reader reader = new FileReader("dbcp.properties")) {
+    info.load(reader);
+    BasicDataSource ds = BasicDataSourceFactory.createDataSource(info);
+    conn = ds.getConnection();
+} catch (Exception e) {
+    e.printStackTrace();
+}
+Assert.assertNotNull(conn);
+```
+
+#### 2. C3P0
+
+开源的 JDBC 连接池，支持 JDBC3 规范和 JDBC2 的标准扩展。目前使用它的开源项目有Hibernate、Spring等。单线程，性能较差，适用于小型系统。使用 C3P0 需要 c3p0-0.9.5.2.jar 和 mchangecommons-java-0.2.11.jar。
+
+c3p0 会默认从 src 根目录下读取文件名为 c3p0-config.xml 的文件。在该文件中，我们可以配置我们自己需要的参数，如下所示，更多的参数可以自己查阅相关参数。
+```
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<c3p0-config>
+    <default-config>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/jdbc_db</property>
+        <property name="driverClass">com.mysql.jdbc.Driver</property>
+        <property name="user">root</property>
+        <property name="password">r00tme</property>
+        <property name="initialPoolSize">3</property>
+        <property name="maxPoolSize">10</property>
+        <property name="maxIdleTime">1800</property>
+    </default-config>
+</c3p0-config>
+```
+
+然后，我们在 Java 代码中，只要创建 ComboPooledDataSource 对象即可。
+```java
+ComboPooledDataSource ds = new ComboPooledDataSource();
+Connection conn = null;
+try {
+    conn = ds.getConnection();
+} catch (SQLException e) {
+    e.printStackTrace();
+}
+Assert.assertNotNull(conn);
+```
+
+#### 3. Druid
+
+Druid 是 Java 语言中最好的数据库连接池，Druid 能够提供强大的监控和扩展功能，是一个可用于大数据实时查询和分析的高容错、高性能的开源分布式系统，尤其是当发生代码部署、机器故障以及其他产品系统遇到宕机等情况时，Druid 仍能够保持 100% 正常运行。  
+
+主要特色: 
+- 为分析监控设计。
+
+- 快速的交互式查询。
+
+- 高可用。
+
+- 可扩展。
+
+我们可以在 `druid.properties` 配置文件中，配置如下信息。
+```
+url=jdbc:mysql://localhost:3306/jdbc_db
+username=root
+password=r00tme
+initialSize=3
+maxActive=10
+maxWait=1800
+```
+
+```java
+Properties info = new Properties();
+Connection conn = null;
+try(Reader reader = new FileReader("druid.properties")) {
+    info.load(reader);
+    DataSource ds = DruidDataSourceFactory.createDataSource(info);
+    conn = ds.getConnection();
+} catch (Exception e) {
+    e.printStackTrace();
+}
+
+Assert.assertNotNull(conn);
+```
+
+### 数据库连接池的优点
+
+数据库连接池主要有以下优点：
+- 数据库连接得以重用，避免了频繁创建和销毁引起的大量性能开销，同时也增加了系统的稳定性。
+
+- 数据库连接池在初始化过程中，往往就已经创建了若干个连接。因此可以提高系统的反应速度。
+
+- 如果有多个应用共用一个 DBMS，由于 DBMS 的连接是有限的，因此我们可以通过数据库连接池
+限制一个应用最大的连接数目，避免某一应用独占所有的连接。
+
+- 在较为完善的数据库连接池中，可以设置占用超时，强制回收被占用的连接，从而避免了常规数据
+库连接操作中可能出现的资源泄露问题。
