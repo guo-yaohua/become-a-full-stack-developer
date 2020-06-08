@@ -122,6 +122,10 @@
       - [2. C3P0](#2-c3p0)
       - [3. Druid](#3-druid)
     - [数据库连接池的优点](#数据库连接池的优点)
+  - [DbUtils](#dbutils)
+    - [QueryRunner](#queryrunner)
+    - [ResultSetHandler](#resultsethandler)
+    - [DbUtils](#dbutils-1)
 ****      - [2. UPDATE](#2-update)
       - [3. DELETE](#3-delete)
     - [常用运算符](#常用运算符)
@@ -3091,3 +3095,154 @@ Assert.assertNotNull(conn);
 
 - 在较为完善的数据库连接池中，可以设置占用超时，强制回收被占用的连接，从而避免了常规数据
 库连接操作中可能出现的资源泄露问题。
+
+
+## DbUtils
+
+utils 是 Apache 组织提供的一个开源 JDBC 工具类库，它是对 JDBC 的简单封装，学习成本极低，使用 dbutils 可以简化 jdbc 编码的工作量，同时也不会影响程序的性能。
+
+使用 DBUtils 需要导入 commons-dbutils-1.7.jar。DBUtils 有三个核心的组件：
+1. QueryRunner：该类提供了 DML 和 DQL 的 API；
+
+2. ResultSetHandler：该接口定义如何封装结果集；
+
+3. DbUtils：一个简单的工具类，简化了关闭资源和事务处理，可以简化 JDBC 操作的模板代码。
+
+###  QueryRunner
+
+构造方法：
+- `QueryRunner()`：需要指定连接。
+
+- `QueryRunner(DataSource ds)`：从数据源中获取连接。
+
+常用 API：
+- `<T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object...params)`
+
+- `<T> T query(Connection conn, String sql, ResultSetHandler<T> rsh)`。
+
+- `<T> T query(String sql, ResultSetHandler<T> rsh, Object... params)`。
+
+- `<T> T query(String sql, ResultSetHandler<T> rsh)`。
+
+- `int update(Connection conn, String sql, Object... params)`。
+
+- `int update(Connection conn, String sql)`。
+
+- `int update(String sql, Object... params)`。
+
+- `int update(String sql)`。
+
+- `int[] batch(Connection conn, String sql, Object[][] params)`。
+
+- `int[] batch(String sql, Object[][] params)`。
+
+CRUD：
+```java
+@Test
+public void testInsert() throws SQLException {
+    QueryRunner queryRunner = new QueryRunner(getDataSource());
+    String sql = "insert into t_user(username, password, balance) values (?,
+            ?, ?)";
+    Object[] params = {"Thomas_He", "123456", "1000"};
+    int rows = queryRunner.update(sql, params);
+    Assert.assertEquals(1, rows);
+}
+
+@Test
+public void testUpdate() throws SQLException {
+    QueryRunner queryRunner = new QueryRunner();
+    String sql = "update t_user set balance = balance - 100 where id = ?";
+    Object param = 1;
+    Connection conn = getConnection();
+    int rows = queryRunner.update(conn, sql, param);
+    Assert.assertEquals(1, rows);
+}
+
+@Test
+public void testDelete() throws SQLException {
+    QueryRunner queryRunner = new QueryRunner(getDataSource());
+    String sql = "delete from t_user where id = ?";
+    Object param = 3;
+    int rows = queryRunner.update(sql, 3);
+    Assert.assertEquals(1, rows);
+}
+
+@Test
+public void testQuery() throws SQLException {
+    QueryRunner queryRunner = new QueryRunner(getDataSource());
+    String sql = "select * from t_user where id = ?";
+    User user = queryRunner.query(sql, new BeanHandler<>(User.class), 1);
+    System.out.println(user);
+    Assert.assertEquals(700, user.getBalance());
+}
+
+@Test
+public void testBatch() throws SQLException {
+    QueryRunner queryRunner = new QueryRunner(getDataSource());
+    String sql = "insert into t_user (username, password, balance) values
+    (?,?,?)";
+    Object[][] params = new Object[1000][3];
+    for (int i = 0; i < 1000; i++) {
+        params[i] = new Object[]{"user" + i, "pwd" + i, i};
+    }
+    int[] rowsArr = queryRunner.batch(sql, params);
+}
+```
+
+### ResultSetHandler 
+
+该接口用于处理 ResultSet，将查询返回的 ResultSet 按要求转换为另一种形式。该接口的定义如下：
+```java
+public interface ResultSetHandler<T> {
+    T handle(ResultSet rs) throws SQLException;
+}
+```
+
+该接口的实现类：
+- ArrayHandler：把结果集中的第一行数据转成对象数组。
+
+- ArrayListHandler：把结果集中的每一行数据都转成一个数组，再存放到 List 中。
+
+- BeanHandler：将结果集中的第一行数据封装到一个对应的 JavaBean 实例中。
+
+- BeanListHandler：将结果集中的每一行数据都封装到一个对应的 JavaBean 实例中，存放到 List 里。
+
+- ColumnListHandler：将结果集中某一列的数据存放到 List 中。
+
+- KeyedHandler(name)：将结果集中的每一行数据都封装到一个 Map 里，再把这些 map 再存到一个 map 里，其 key 为指定的 key。
+
+- MapHandler：将结果集中的第一行数据封装到一个 Map 里，key 是列名，value 就是对应的值。
+
+- MapListHandler：将结果集中的每一行数据都封装到一个 Map 里，然后再存放到 List。
+
+使用 BeanHandler 和 BeanListHandler 需要注意以下几点：
+- 对应的 JavaBean 必须提供无参构造方法。
+
+- JavaBean 的属性名应该和返回结果的字段名相同。
+
+- JavaBean 中必须提供公共的 Setter 方法。
+
+### DbUtils
+
+提供如关闭连接、装载JDBC驱动程序等常规工作的工具类，里面的所有方法都是静态的。  
+
+主要API：
+- `void close(Connection conn)`：可以避免空指针异常。
+
+- `void close(ResultSet rs)`。
+
+- `void close(Statement stmt)`。
+
+- `void closeQuietly(Connection conn)`：不需要判空, 处理异常。
+
+- `void closeQuietly(ResultSet rs)`。
+
+- `void closeQuietly(Statement stmt)`。
+
+- `void closeQuietly(Connection conn, Statement stmt, ResultSet rs)`。
+
+- `void commitAndClose(Connection conn)`：提交事务并且关闭连接。
+
+- `void commitAndCloseQuietly(Connection conn)`。
+
+- `boolean loadDriver(String driverClassName)`。
