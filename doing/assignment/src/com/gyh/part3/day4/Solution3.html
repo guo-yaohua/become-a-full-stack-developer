@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        select, button{
+            height: 30px;
+        }
+        input{
+            height: 20px;
+        }
+        .div2{
+            margin-bottom: 5px ;
+        }
+
+        td{
+            width: 200px;
+            height: 30px;
+            text-align: center;
+        }
+
+        [colspan] {
+            background: red;
+        }
+        .div1{
+            width: 610px;
+            margin: 0 auto;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="div1">
+
+    <div class="div2">
+        <select id="left0">
+            <option value="USD">USD</option>
+            <option value="CNY">CNY</option>
+            <option value="JPY">JPY</option>
+        </select>
+
+        <button onclick="change()">互换</button>
+
+        <select id="right0">
+            <option value="USD">USD</option>
+            <option value="CNY">CNY</option>
+            <option value="JPY">JPY</option>
+        </select>
+
+        数额:
+        <input id="inputStr">
+
+        <button onclick="res()">按汇率换算</button>
+
+    </div>
+    <table border="1px">
+        <tr>
+            <td colspan="3">按当前汇率换算结果</td>
+        </tr>
+        <tr>
+            <td id="left1"></td>
+            <td>汇率</td>
+            <td id="right1"></td>
+        </tr>
+        <tr>
+            <td id="left2"></td>
+            <td id="center"></td>
+            <td id="right2"></td>
+        </tr>
+
+    </table>
+</div>
+
+<script>
+    let currencys = {"USD":1,
+        "CNY":7,
+        "JPY":106
+    };
+
+    let left0 = document.getElementById('left0');
+    let right0 = document.getElementById('right0');
+
+    function change() {
+        let tmp = left0.value;
+        left0.value = right0.value;
+        right0.value = tmp;
+    }
+
+    function res() {
+        // 获取输入值
+        let inputStr = document.getElementById('inputStr');
+
+        // 计算汇率
+        let rate = currencys[right0.value] / currencys[left0.value];
+        console.log(rate);
+        // 改变text
+        let left1 = document.getElementById('left1');
+        left1.innerText = left0.value;
+
+        let right1 = document.getElementById('right1');
+        right1.innerText = right0.value;
+
+        let left2 = document.getElementById('left2');
+        left2.innerText = inputStr.value;
+
+        let center = document.getElementById('center');
+        center.innerText = rate.toFixed(2).toString();
+
+        let right2 = document.getElementById('right2');
+        let res_value = inputStr.value * rate
+        right2.innerText = res_value.toFixed(2).toString();
+    }
+</script>
+
+
+</body>
+</html>

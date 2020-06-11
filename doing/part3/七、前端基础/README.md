@@ -52,6 +52,27 @@
       - [3.6.1 默认定位](#361-默认定位)
       - [3.6.2 相对定位](#362-相对定位)
       - [3.6.3 绝对定位](#363-绝对定位)
+  - [4 JavaScript](#4-javascript)
+    - [4.1 概述](#41-概述)
+    - [4.2 常见操作](#42-常见操作)
+      - [4.2.1 引用 JS](#421-引用-js)
+    - [4.2.2 日志和注释](#422-日志和注释)
+    - [4.3 语法](#43-语法)
+      - [4.3.1 声明变量](#431-声明变量)
+      - [4.3.2 变量的类型](#432-变量的类型)
+      - [4.3.3 函数](#433-函数)
+      - [4.3.4 语言逻辑](#434-语言逻辑)
+    - [4.4 核心对象](#44-核心对象)
+      - [4.4.1 Number](#441-number)
+      - [4.4.2 String](#442-string)
+      - [4.4.3 Array](#443-array)
+      - [4.4.4 Math](#444-math)
+      - [4.4.5 Boolean](#445-boolean)
+  - [5 DOM](#5-dom)
+    - [5.1 概述](#51-概述)
+    - [5.2 节点](#52-节点)
+    - [5.3 document 方法和属性](#53-document-方法和属性)
+    - [5.4 Element 对象](#54-element-对象)
 
 ## 1 背景知识
 
@@ -900,3 +921,476 @@ z-index:z-index 仅能在定位元素上奏效，static 无效。
 
 注：一般子元素设置绝对定位，父元素设置相对对定位（子绝父相），是一种习惯
 
+## 4 JavaScript
+
+### 4.1 概述
+
+JavaScript 是可插入 HTML 页面的编程代码。
+- 一种轻量级的编程语言。
+
+- 一种弱类型语言。
+
+- 解释器被称为 JavaScript 引擎，为浏览器的一部分。主
+
+- 跨平台特性，在绝大多数浏览器的支持下。
+
+### 4.2 常见操作
+
+#### 4.2.1 引用 JS
+
+在 HTML 中引用：
+- 内部 JS 程序（在 HTML文本中）：  
+  HTML 中的 JS 脚本（代码）必须位于 `<script>` 与 `</script>` 标签之间。
+
+- 外部 JS 程序：  
+  `<script src="xxx.js"></script>`。在引用外部 JS 的 script 标签间不能编写 JavaScript 代码
+
+### 4.2.2 日志和注释
+
+常用测试：
+- `alert()`。
+
+- `console.log()`。
+
+注释语句：
+- `// 注释`。
+
+- `/* 注释 */`。
+
+### 4.3 语法
+
+#### 4.3.1 声明变量
+
+
+JavaScript 在声明变量时统一使用无类型（untyped）的 `var` 关键字。
+
+JavaScript 并没有避开数据类型，它的数据类型是根据所赋值的类型来确定的。
+
+JavaScript 对大小写敏感。
+
+变量名有命名规范：只能由英语字母、数字、下划线、美元符号 `$` 构成，且不能以数字开头，并且不能是 JavaScript 保留字。
+
+如果重新声明 JavaScript 变量，该变量的值不会丢失。示例：
+```js
+// 在以下两条语句执行后，变量 carname 的值依然是 "Volvo"
+var carname="Volvo";
+var carname;
+```
+
+let 和 const 关键字是 ES6 的新语法，主要用来取代 var 来定义变量。  
+ES6 出了这么一个简单的新语法其实足以说明 JS 有很多不好的地方，而其中之一就是变量声明。
+
+#### 4.3.2 变量的类型
+
+String。
+
+Number：只要是个数，那么就是数值型的，无论整浮、无论大小、无论正负，都是 Number 类型的。
+
+Boolean。
+
+数组。示例：
+```js
+var cars = new Array();
+cars[0]="Audi";
+
+var cars = new Array("Audi","BMW","Volvo");
+
+var cars = ["Audi","BMW","Volvo"];
+```
+
+对象。示例：
+```js
+var person={firstname:"Bill", lastname:"Gates", id:5566};
+```
+- 获取参数：
+```js
+name=person.lastname;
+name=person["lastname"];
+```
+
+- 添加参数并赋值：
+```js
+person.aaa = 'aaaa';
+```
+
+注：
+```js
+var person={firstname:"Bill", lastname:"Gates", id:5566};
+var b = person;
+b.lastname = 'b';
+console.log(b); // 结果: lastname 为 b
+console.log(person);    // 结果: lastname 为 b
+```
+
+类型检测：typeof 表示某某的类型。  
+语法：`typeof 变量`。示例：
+```js
+console.log(typeof b)
+```
+
+`instanceof`表示是某某类型。
+
+#### 4.3.3 函数
+
+函数就是包裹在花括号中的代码块，前面使用了关键词 function：
+```js
+function functionname(parm){
+    // 执行代码
+}
+```
+示例：
+```js
+<button onclick="myFunction(`123`, `yyyy`)">点击这里</button> 
+
+<script> 
+function myFunction(num,str){ alert(num + str); }
+</script>
+```
+
+#### 4.3.4 语言逻辑
+
+运算符：`+`，`-`，`*`，``/`，``%`，``++`，`--`，``=`，`+=`，` -=`，`*=`，`/=`，`%=`。
+
+注:`30-'10'` 结果为 10。
+
+比较和逻辑运算符：`!=`，`>`，`<`，`>=`，`<=`，`?`，`&&` ，`||`，`!`。
+
+注:
+- `==`：值相等。
+
+- `===`：值相等并且类型相等。
+
+- `!==`：值不相等或类型不相等。
+
+逻辑语句 `if----else`：
+```js
+if (条件 1) {
+  当条件 1 为 true 时执行的代码
+} else if (条件 2) {
+  当条件 2 为 true 时执行的代码
+} else {
+  当条件 1 和 条件 2 都不为 true 时执行的代码
+}
+```
+
+逻辑语句 `switch`：
+```js
+switch(n) {
+case 1:
+	执行代码块 1
+	break;
+case 2:
+	执行代码块 2
+	break;
+default:
+	n 与 case 1 和 case 2 不同时执行的代码
+}
+```
+
+逻辑语句 `for`：
+- 种类一：
+    ```js
+    var person={fname:"John",lname:"Doe",age:25};
+    for (x  in person) {
+        alert(x)             
+        alert(person[x])
+    }
+    ```
+
+- 种类二：
+    ```js
+    for (var i=0; i<5; i++) {
+        x=x + "The number is " + i + "<br>";
+    }
+    ```
+
+逻辑语句 `while`：
+```js
+while (条件){
+	需要执行的代码
+}
+```
+
+### 4.4 核心对象
+
+#### 4.4.1 Number
+
+常用 api：
+- `toString()`：以字符串返回数值。
+
+- `toFixed()`：返回字符串值，它包含了指定位数小数的数字（四舍五入）。示例：
+  ```js
+    var x = 9.6544;
+    x.toFixed(2);           // 返回 9.65
+  ```
+
+- `toPrecision()`：返回字符串值，它包含了指定长度的数字。
+
+- `MAX_VALUE`：返回 JavaScript 中的最大数字。
+
+- `MIN_VALUE`。
+
+- `parseInt()`：允许空格。只返回首个整数。示例：
+  ```js
+    parseInt("10");         // 返回 10
+    parseInt("10.33");      // 返回 10
+    parseInt("10 20 30");   // 返回 10
+    parseInt("10 years");   // 返回 10
+    parseInt("years 10");   // 返回 NaN
+  ```
+ 
+- `parseFloat()`：允许空格。只返回首个数字。示例：
+  ```js
+    parseFloat("10"); // 返回 10
+    parseFloat("10.33"); // 返回 10.33
+    parseFloat("10 20 30"); // 返回 10
+    parseFloat("10 years"); // 返回 10
+    parseFloat("years 10"); // 返回 NaN
+  ```
+
+
+#### 4.4.2 String
+
+常用 api：
+- `length`：返回字符串的长度。
+
+- `indexOf()`：返回字符串中指定文本首次出现的索引（位置），不存在则返回 -1。
+
+- `slice()`：切片。
+
+- `split()`：将字符串转换为数组。示例：
+  ```js
+    var txt = "a,b,c,d,e";   // 字符串
+    txt.split(",");          // 用逗号分隔
+    txt.split(" ");          // 用空格分隔
+    txt.split("|");          // 用竖线分隔
+  ```  
+  如果分隔符是 `""`，被返回的数组将是间隔单个字符的数组。
+
+#### 4.4.3 Array
+
+常用 api：
+- `toString()`：返回数组转换的数组值（逗号分隔）的字符串。
+
+- `pop()`：从数组中删除最后一个元素,返回删除的元素
+
+- `push()`：（在数组结尾处）向数组添加一个新的元素，返回数组长度。
+
+- `splice()`：用于向数组添加新项，返回被删除的内容。示例：
+  ```js
+    var fruits = ["Banana", "Orange", "Apple", "Mango"];
+    var new_fruit = fruits.splice(2, 0, "Lemon", "Kiwi");   //  new_fruit = []
+    // 第一个参数：添加新元素的起始位置。
+    // 第二个参数：定义应删除多少元素。
+    // 其余参数（“Lemon”，“Kiwi”）定义要添加的新元素。
+  ```
+
+- `sort()`：以字母顺序对数组进行排序，返回值和原数组是经过排序的数组。
+
+- `reverse()`：反转数组中的元素。返回值和原数组都变为经过反转数组。
+
+#### 4.4.4 Math
+
+常用 api：
+- `Math.ceil(x)`：返回大于等于 x 的最小整数。
+
+- `Math.floor(x)`：返回小于等于 x 的最大整数。
+
+- `Math.random()`：返回 0 ~ 1 之间的随机数。 
+
+- `Math.round(x)`：把一个数四舍五入为最接近的整数。
+
+- `Math.max(x,y,z,...,n)`：返回最高值。
+
+- `Math.min(x,y,z,...,n)`：返回最低值
+
+
+#### 4.4.5 Boolean
+
+为 true 的情况：
+```js
+var myBoolean=new Boolean(1);
+var myBoolean=new Boolean(true);
+var myBoolean=new Boolean("true");
+var myBoolean=new Boolean("false");
+var myBoolean=new Boolean("Bill Gates");
+```
+
+为 false 的情况：
+```js
+var myBoolean=new Boolean();
+var myBoolean=new Boolean(0);
+var myBoolean=new Boolean(null);
+var myBoolean=new Boolean("");
+var myBoolean=new Boolean(false);
+var myBoolean=new Boolean(NaN);
+```
+
+
+## 5 DOM
+
+### 5.1 概述
+
+文档对象模型(document object model )。
+
+HTML DOM 将 HTML 文档视作树结构。这种结构被称为节点树：DOM Tree。  
+<div align="center">
+<img src="./img/p9.png">
+</div>
+
+DOM 加载顺序（HTML 从代码 -> 真正显示）：
+1. 解析 HTML 结构（从上向下的过程）；
+
+2. 加载外部脚本和样式表文件；
+
+3. 解析并执行脚本代码；
+
+4. 构造 HTML DOM 模型；
+
+5. 加载图片等外部文件；
+
+6. 页面加载完毕。
+
+### 5.2 节点
+
+DOM 树中的节点彼此拥有层级关系。
+
+父、子和同胞（兄弟或姐妹）专指元素节点。
+- 在节点树中，顶端节点被称为根（root）。
+
+- 每个节点都有父节点、除了根（它没有父节点）。
+
+- 一个节点可拥有任意数量的子节点。
+
+- 同胞是拥有相同父节点的节点。
+
+整个文档是一个文档节点。
+
+每个 HTML 元素是元素节点。
+
+HTML 元素内的文本是文本节点。
+
+每个 HTML 属性是属性节点。
+
+注释是注释节点。
+
+### 5.3 document 方法和属性
+
+获得节点的常用方法：
+- `getElementById()`。
+
+- `getElementsByName()`：获得结点数组，根据 name 属性。
+
+- `getElementsByTagName()`：获得节点数组，根据标签名。示例：
+
+### 5.4 Element 对象
+
+Element 对象表示 HTML 元素（节点）对象。
+
+Element 对象是拥有类型为元素节点、文本节点、注释节点等子节点的节点（标签）。
+
+部分方法：
+- `element.appendChild()`：向元素添加新的子节点，作为最后一个子节点。示例：
+  ```js
+    <ol id="ollist"><li>1</li><li>2</li><li>3</li></ol>
+
+    <input id="inputStr">
+    <button onclick="add()">添加</button>
+
+    <script>
+        function add() {
+            var inputStr = document.getElementById('inputStr')
+
+            var ollist = document.getElementById('ollist')
+
+            // 创建一个节点
+            var  li = document.createElement('LI')
+            // 创建一个文本节点
+            var inputNode = document.createTextNode(inputStr.value)
+
+            li.appendChild(inputNode)
+            ollist.appendChild(li)
+
+            // 清空输入框
+            inputStr.value = ''
+        }
+    </script>
+  ```
+
+- `element.removeChild()`：从元素中移除子节点。示例：
+  ```html
+    <ol id="ollist"><li>1</li><li>2</li><li>3</li></ol>
+
+    节点下标:<input id="inputStr">
+    <button onclick="delete1()">删除节点</button>
+
+    <script>
+        function delete1() {
+            var inputStr = document.getElementById('inputStr')
+            var ollist = document.getElementById('ollist')
+
+            // 获得ol标签(节点)的子节点数组
+            var list = ollist.childNodes
+
+            // 获得输入下标的对应ol的子节点
+            var deleteNode = list[inputStr.value]
+
+            ollist.removeChild(deleteNode)
+        }
+    </script>
+  ```
+
+- `element.replaceChild()`：替换元素中的子节点。示例：
+  ```html
+    <ol id="ollist"><li>1</li><li>2</li><li>3</li></ol>
+
+    节点下标:<input id="inputTag"><br>
+    替换内容:<input id="inputStr">
+
+    <button onclick="change1()">替换节点</button>
+
+    <script>
+        function change1() {
+            var  inputTag = document.getElementById('inputTag')
+            var  inputStr = document.getElementById('inputStr')
+
+            var  ollist = document.getElementById('ollist')
+
+            // 创建一个节点
+            var liNode = document.createElement('LI')
+            var inputStrNode = document.createTextNode(inputStr.value)
+            liNode.appendChild(inputStrNode)
+
+            // 获得旧节点
+            var oldNode = ollist.childNodes[inputTag.value]
+
+            // replaceChild 有两个参数, 第一个参数: 新节点, 第二个参数:旧节点
+            ollist.replaceChild(liNode, oldNode)
+
+            inputTag.value = ''
+            inputStr.value = ''
+        }
+    </script>
+  ```
+
+- `innerText`：改变节点中的文本。示例：
+  ```html
+    <div id="div1">
+        我是一个div
+    </div>
+
+    <button onclick="change1()">改变</button>
+
+
+    <script>
+        function change1() {
+
+        var div1  = document.getElementById('div1')
+
+            div1.innerText = '123'
+
+        }
+    </script>
+    ```
+
+- `innerHTML`：向一个节点中插入内容, 但是可以插入 HTML 代码（HTML 代码在这个插入过程中是可以解析的）。
