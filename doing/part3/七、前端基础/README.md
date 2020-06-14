@@ -73,6 +73,22 @@
     - [5.2 节点](#52-节点)
     - [5.3 document 方法和属性](#53-document-方法和属性)
     - [5.4 Element 对象](#54-element-对象)
+    - [6.3 Vue 基础指令](#63-vue-基础指令)
+      - [6.3.1 v-bind](#631-v-bind)
+      - [6.3.2 v-model](#632-v-model)
+      - [6.3.3 v-test 和 v-html](#633-v-test-和-v-html)
+      - [6.3.4 v-on](#634-v-on)
+      - [6.3.5 v-show](#635-v-show)
+      - [6.3.6 v-if](#636-v-if)
+      - [6.3.7 v-for](#637-v-for)
+      - [6.3.8 v-pre](#638-v-pre)
+      - [6.3.9 v-cloak](#639-v-cloak)
+      - [6.3.10 v-once](#6310-v-once)
+    - [6.4 选项 / 数据](#64-选项--数据)
+      - [6.4.1 computed](#641-computed)
+      - [6.4.2 watch](#642-watch)
+      - [6.4.3 template](#643-template)
+      - [6.4.4 component](#644-component)
 
 ## 1 背景知识
 
@@ -1394,3 +1410,569 @@ Element 对象是拥有类型为元素节点、文本节点、注释节点等子
     ```
 
 - `innerHTML`：向一个节点中插入内容, 但是可以插入 HTML 代码（HTML 代码在这个插入过程中是可以解析的）。
+
+## 6 Vue
+
+### 6.1 概述
+
+Vue.js ——— 渐进式框架。与其他重量级框架不同的是，Vue 采用自底向上增量开发的设计。Vue 的核心库只关注视图层，并且非常容易学习，非常容易与其它库或已有项目整合。另一方面，Vue 完全有能力驱动采用单文件组件和 Vue 生态系统支持开发复杂单页应用。
+- 渐进式：从核心到完备的全家桶。
+
+- 增量：从少到多，从一页到多页，从简单到复杂。
+
+- 单文件组件： 一个文件描述一个组件。
+
+- 单页应用： 经过打包生成一个单页的 HTML 文件和一些 JS 文件。
+
+Vue 优缺点：
+- 基本语法简单。  
+  简洁、轻量、快速、数据驱动、模块友好、组件化。
+
+- 各种插件完善：  
+  Vue 官方提供了一系列的工具，如：  
+  - 路由 vue-router。
+
+  - 状态树管理器 vuex（假如您的页面不存在非常复杂的交互或数据递进式体验时，您可能不需要 vuex）。
+
+  - 网络请求 axios（非 Vue 官方出）。
+
+### 6.2 HTML 中的 Vue
+
+[Vue 官网](https://cn.vuejs.org/v2/guide/installation.html)。
+
+选中该部分的网址并访问：  
+
+<div align="center">
+<img src="./img/p10.png">
+</div>
+
+选中网页展示的全部内容并复杂：
+
+<div align="center">
+<img src="./img/p11.png">
+</div>
+
+在 HTML 项目中新建 `Vue.js` 文件，将复制的内容粘贴到此。
+
+之后在 HTML 的 head 标签内导入即可：
+```html
+<!-- 引入 vue.js 最好放在 head 部分（避免页面抖屏）-->
+<script src="./vue.js"><srcipt>
+```
+
+### 6.3 Vue 基础指令
+
+[Vue官网教程](https://cn.vuejs.org/v2/api)。
+
+#### 6.3.1 v-bind
+
+单向绑定数据和属性以及表达式，缩写为：`:`。
+
+示例：
+```html
+<div id="root">
+    {{msg}}
+    <br>
+    <img :src="imageSrc">
+</div>
+
+<script>
+    new Vue({
+        el: "#root",
+        data: {
+            msg: "???",
+            imageSrc: "demo.jpg"
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p12.png">
+</div>
+
+#### 6.3.2 v-model
+
+在表单控件或者组件上创建双向绑定。随表单控件类型不同而不同。
+
+限制：
+- `<input>`。
+
+- `<select>`。
+
+- `<textarea>`。
+
+- components。
+
+示例：
+```html
+<div id="root">
+    1:<input type="radio" value="one" v-model="text" />
+    2:<input type="radio" value="two" v-model="text" />
+    <div >{{text}}</div>
+</div>
+
+<script>
+    new  Vue({
+        el:"#root",
+        data:{
+            text:"-----"
+        }
+    })
+</script>
+```
+<div align="center">
+<img src="./img/p14.png">
+<img src="./img/p13.png">
+</div>
+
+#### 6.3.3 v-test 和 v-html
+
+v-text 类似更新元素的 innerText。  
+
+v-html 类似更新元素的 innerHTML。
+
+示例：
+```html
+<div id="root">
+    <div v-text="test1"></div>
+    
+    <div v-html="test2"></div>
+</div>
+
+<script>
+    new Vue({
+        el:'#root',
+        data: {
+            test1: 'one',
+            test2: '<b>two</b>'
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p15.png">
+</div>
+
+#### 6.3.4 v-on
+
+绑定事件监听器，把监听到的事件, 触发到对应 Vue 对象的 `methods` 里面去。可简写为：`@`。  
+
+
+
+示例：
+```html
+<div id="root">
+    {{msg}}
+    <input v-model="aaa">
+    <button @click="f1">点击</button>
+</div>
+
+<script>
+    new Vue({
+        el: '#root',
+        data: {
+            msg: "test",
+            aaa: ''
+        },
+        methods:{
+            f1: function () {
+                this.msg = this.aaa
+            }
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p16.png">
+</div>
+
+
+#### 6.3.5 v-show
+
+标签控制隐藏（display : none）。
+
+示例：
+```html
+<div id="root">
+
+    <div v-show="bool">
+        我是一个 div
+    </div>
+
+    <button @click="change1">隐藏和显示</button>
+
+</div>
+<script>
+    new Vue({
+        el:'#root',
+        data: {
+            bool: true,
+        },
+        methods: {
+            change1: function () {
+                this.bool = !this.bool
+            }
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p17.png">
+</div>
+
+#### 6.3.6 v-if
+
+根据表达式的值的真假条件渲染元素。可以和 v-else-if、v-else 一块使用。
+
+示例：
+```html
+<div id="root">
+    <div v-if="bool1">
+        div1
+    </div>
+    <div v-else-if="bool2">
+        div2
+    </div>
+    <div v-else>
+        div3
+    </div>
+
+</div>
+<script>
+    new Vue({
+        el:'#root',
+        data: {
+            bool1: false,
+            bool2: ture
+        }
+    })
+</script>
+```
+
+div align="center">
+<img src="./img/p18.png">
+</div>
+
+v-show 不同于 v-if。`v-if=false` 是把 v-if 所在标签整个标签取消在 DOM 中，而 `v-show=false` 则是把这个标签隐藏，但是这个标签还存在于 DOM 树上。
+
+#### 6.3.7 v-for
+
+基于源数据多次渲染元素或模板块（循环渲染元素）。
+- 循环渲染的，是 v-for 这个指令所在的 HTML 元素。
+
+- v-for 指令必须要和 `:key` 配套出现，并且 key 值唯一，不可重复。
+
+- 可以用 of/in 两种形式来循环。
+
+示例：
+```html
+<div id="root">
+    <div v-for="(aaa, index) of list"  :key="index">
+        {{aaa}}--{{index}}
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#root',
+        data: {
+            list: ['1', '22', '333', '4444']
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+#### 6.3.8 v-pre
+
+v-pre 可以用来阻止预编译，有 v-pre 指令的标签内部的内容不会被编译。  
+
+示例:
+```html
+<div id="root">
+    <div v-pre>
+        {{msg}}
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#root',
+        data: {
+            msg: "test"
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p20.png">
+</div>
+
+#### 6.3.9 v-cloak
+
+这个指令保持在元素上直到关联实例结束编译。  
+
+和 CSS 规则如 `[v-cloak] { display: none }` 一起用时，这个指令可以隐藏未编译的标签直到实例准备完毕。
+
+示例：
+```html
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<div id="root">
+    <div v-cloak>
+        {{msg}}
+    </div>
+
+</div>
+<script>
+
+    // setTimeout  在多少毫秒秒之后,执行什么什么东西
+    setTimeout('f()', 3000)
+
+    function f() {
+        new Vue({
+            el:'#root',
+            data:{
+                msg: "test"
+            }
+        })
+    }
+</script>
+
+<!--3s 后页面由空白转而显示字符串 test -->
+```
+
+#### 6.3.10 v-once
+
+只渲染元素和组件一次。随后的重新渲染，元素 / 组件及其所有的子节点将被视为静态内容并跳过。这可以用于优化更新性能。
+
+示例：
+```html
+<div id="root">
+    <div v-once>
+        {{msg}}
+    </div>
+
+    {{msg}}
+    <input v-model="msg">
+
+</div>
+
+<script>
+    new Vue({
+        el: '#root',
+        data: {
+            msg: "once"
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p21.png">
+</div>
+
+### 6.4 选项 / 数据
+
+#### 6.4.1 computed
+
+computed 指的是一个属性通过其他属性计算而来。
+
+示例：
+```html
+<div id="root">
+    数1: <input v-model="num1"><br>
+    数2: <input v-model="num2"><br>
+    和: {{sum}}
+</div>
+
+<script>
+    new Vue({
+        el: '#root',
+        data: {
+            num1: 0,
+            num2: 0
+
+        },
+        computed: {
+            sum: function () {
+                return parseInt(this.num1) + parseInt(this.num2)
+            }
+        },
+    })
+</script>
+```
+<div align="center">
+<img src="./img/p22.png">
+</div>
+
+注：
+- 计算属性的结果会被缓存，除非依赖的响应式 property 变化才会重新计算。
+
+- 如果某个依赖（比如非响应式 property）在该实例范畴之外，则计算属性是不会被更新的。
+
+#### 6.4.2 watch
+
+监听一个属性改变触发一个事件。
+
+示例：
+```html
+<div id="root">
+    改变次数: {{changetimes}}<br>
+
+    {{msg}}<br>
+
+    <input v-model="inputStr">
+    <button @click="change1">修改</button>
+</div>
+
+<script>
+    new Vue({
+        el:'#root',
+        data: {
+            msg: "start",
+            inputStr: "",
+            changetimes: 0
+        },
+        watch: {
+            msg: function () {
+                this.changetimes = this.changetimes + 1
+            }
+        },
+        methods: {
+            change1: function () {
+                this.msg = this.inputStr;
+                this.inputStr = ""
+            }
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p23.png">
+</div>
+
+#### 6.4.3 template
+
+一个字符串模板作为 Vue 实例的标识使用。模板将会替换挂载的元素。挂载元素的内容都将被忽略（除非模板的内容有分发插槽）。
+
+示例：
+```html
+<div id="root">
+</div>
+
+<script>
+    new Vue({
+        el:'#root',
+        template: '<div>567--{{msg}}</div>',
+        data: {
+            msg: 123
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p24.png">
+</div>
+
+#### 6.4.4 component
+
+组件（component）是 Vue.js 最强大的功能之一。  
+
+组件可以扩展 HTML 元素，封装可重用的代码。  
+
+组件系统让让我们可以用独立可复用的小组件来构建大型应用，几乎任意类型的应用的界面都可以抽象为一个组件树。
+
+全局组件：直接注册一个 Vue 对象, 在 Vue 域里面使用。
+- 通过 `Vue.component` 创建出一个 Vue 对象, 给这个 Vue 对象起一个名字
+
+-  在 Vue 域里就可以直接使用以该对象名字为标签的组件。
+
+示例：
+```html
+<div id="root">
+
+    <div1></div1>
+    <div2></div2>
+    <div3></div3>
+
+</div>
+
+
+<script>
+    Vue.component( 'div1', {
+        template: '<div>div1 value</div>'
+    })
+    Vue.component( 'div2', {
+        template: '<div>div2 value</div>'
+    })
+    Vue.component( 'div3', {
+        template: '<div>div3 value</div>'
+    })
+
+    new Vue({
+        el: '#root',
+        data: {
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p25.png">
+</div>
+
+局部组件：局部起作用，必须要在别的 Vue 对象中引入，它才具有 Vue 对象的意义。
+- 声明的时候这就是一个普普通的 JS 对象。
+
+- 如果组件名存在大写字符，那么使用的时候把除首字母之外的大写字母转化为 `-小写` 的模式。  
+
+示例：
+```html
+<div id="root">
+    <aaa></aaa>
+    <b-bb></b-bb>
+    <ccc></ccc>
+</div>
+
+<script>
+    let div1 = {
+        template: '<div>div1 value</div>'
+    }
+    let div2 = {
+        template: '<div>div2 value</div>'
+    }
+    let div3 = {
+        template: '<div>div3 value</div>'
+    }
+
+    new Vue({
+        el: '#root',
+        components: {
+            aaa: div1,
+            BBb: div2,
+            Ccc: div3
+        },
+        data: {
+        }
+    })
+</script>
+```
+
+<div align="center">
+<img src="./img/p25.png">
+</div>

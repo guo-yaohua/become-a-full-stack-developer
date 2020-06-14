@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>汇率换算</title>
+
+    <style>
+        .window {
+            width: 600px;
+            border: 1px solid silver;
+            margin-top: 5px;
+            padding: 1px;
+            position: relative;
+        }
+        .bar {
+            background-color: red;
+            padding: 5px;
+            margin-bottom: 3px;
+        }
+        .window tr td {
+            width: 200px;
+            border: 1px solid silver;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <select>
+        <option selected="selected">
+            123
+        </option>
+        <option>
+            234
+        </option>
+        <option>
+            345
+        </option>
+    </select>
+
+    <input type="button" value="互换">
+
+    <select>
+        <option selected="selected">
+            123
+        </option>
+        <option>
+            234
+        </option>
+        <option>
+            345
+        </option>
+    </select>
+    数额：
+    <input type="text">
+    <input type="button" value="汇率换算">
+</div>
+
+<table class="window">
+    <tr class="bar">
+        <th colspan="3">按照当前汇率兑换结果</th>
+    </tr>
+    <tr valign="top">
+        <td><div align="center">1</div></td>
+        <td><div align="center">1</div></td>
+        <td><div align="center">1</div></td>
+    </tr>
+    <tr>
+        <td><div align="center">1</div></td>
+        <td><div align="center">1</div></td>
+        <td><div align="center">1</div></td>
+    </tr>
+</table>
+
+
+</body>
+</html>
