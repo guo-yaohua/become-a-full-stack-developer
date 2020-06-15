@@ -84,11 +84,17 @@
       - [6.3.8 v-pre](#638-v-pre)
       - [6.3.9 v-cloak](#639-v-cloak)
       - [6.3.10 v-once](#6310-v-once)
-    - [6.4 选项 / 数据](#64-选项--数据)
+    - [6.4 部分选项](#64-部分选项)
       - [6.4.1 computed](#641-computed)
       - [6.4.2 watch](#642-watch)
       - [6.4.3 template](#643-template)
       - [6.4.4 component](#644-component)
+      - [6.4.5 组件传值：向下传值](#645-组件传值向下传值)
+      - [6.4.6 组件传值：向上](#646-组件传值向上)
+      - [6.4.7 生命周期钩子](#647-生命周期钩子)
+    - [6.5 创建 Vue 项目（工程化）](#65-创建-vue-项目工程化)
+      - [6.5.1 安装环境](#651-安装环境)
+      - [6.5.2 创建项目](#652-创建项目)
 
 ## 1 背景知识
 
@@ -1559,8 +1565,6 @@ v-html 类似更新元素的 innerHTML。
 
 绑定事件监听器，把监听到的事件, 触发到对应 Vue 对象的 `methods` 里面去。可简写为：`@`。  
 
-
-
 示例：
 ```html
 <div id="root">
@@ -1784,7 +1788,7 @@ v-pre 可以用来阻止预编译，有 v-pre 指令的标签内部的内容不�
 <img src="./img/p21.png">
 </div>
 
-### 6.4 选项 / 数据
+### 6.4 部分选项
 
 #### 6.4.1 computed
 
@@ -1822,6 +1826,8 @@ computed 指的是一个属性通过其他属性计算而来。
 - 计算属性的结果会被缓存，除非依赖的响应式 property 变化才会重新计算。
 
 - 如果某个依赖（比如非响应式 property）在该实例范畴之外，则计算属性是不会被更新的。
+
+- 不常用。
 
 #### 6.4.2 watch
 
@@ -1872,6 +1878,7 @@ computed 指的是一个属性通过其他属性计算而来。
 示例：
 ```html
 <div id="root">
+    000
 </div>
 
 <script>
@@ -1898,18 +1905,16 @@ computed 指的是一个属性通过其他属性计算而来。
 组件系统让让我们可以用独立可复用的小组件来构建大型应用，几乎任意类型的应用的界面都可以抽象为一个组件树。
 
 全局组件：直接注册一个 Vue 对象, 在 Vue 域里面使用。
-- 通过 `Vue.component` 创建出一个 Vue 对象, 给这个 Vue 对象起一个名字
+- 通过 `Vue.component` 创建出一个 Vue 对象, 给这个 Vue 对象起一个名字。
 
 -  在 Vue 域里就可以直接使用以该对象名字为标签的组件。
 
 示例：
 ```html
 <div id="root">
-
     <div1></div1>
     <div2></div2>
     <div3></div3>
-
 </div>
 
 
@@ -1976,3 +1981,221 @@ computed 指的是一个属性通过其他属性计算而来。
 <div align="center">
 <img src="./img/p25.png">
 </div>
+
+#### 6.4.5 组件传值：向下传值
+
+props 用于接收来自父组件的数据。props 可以是简单的数组，或者使用对象作为替代，对象允许配置高级选项，如类型检测、自定义验证和设置默认值。
+
+传值至少要分两步：
+1. 传递（父组件，传递通过 v-bind）； 
+
+2. 接收（子组件接收，通过 props）。
+
+示例：
+```html
+<div id="root">
+    <aaa v-bind:test="msg"></aaa>
+</div>
+
+<script>
+    Vue.component('aaa', {
+        props: ['test'], // 不能修改
+        template: '<div>{{test}}</div>'
+    })
+
+    new Vue({
+        el: '#root',
+        data: {
+            msg: 'rootValue',
+        }
+    })
+</script>
+```
+<div align="center">
+<img src="./img/p26.png">
+</div>
+
+#### 6.4.6 组件传值：向上
+
+向上传值也分两步：  
+1. 子组件通知父组件（通过 $emit）；
+
+2. 父组件监听字组件（自定义方法）。
+
+示例：
+```html
+<div id="root">
+    <aaa v-for="(item, index) in list"
+         :key="index"
+         v-bind:bbb="item"
+         v-bind:index="index"
+         @fun="delete1"
+    ></aaa>
+</div>
+
+<script>
+    Vue.component('aaa', {
+        props: ['bbb', 'index'], // 不能修改
+        template: '<div><div @click="click1">{{bbb}}--{{index}}</div></div>',
+        methods: {
+            click1: function () {
+                this.$emit('fun', this.index)   // 向上传递
+            }
+        }
+    })
+    
+    new Vue({
+        el:'#root',
+        data: {
+            list: [ '1' , '2', '3', '4']
+        },
+        methods: {
+            delete1: function (parm) {
+                this.list.splice(parm, 1)
+            }
+        }
+    })
+</script>
+```
+
+点击元素实现删除对应 div：   
+<div align="center">
+<img src="./img/p27.png">
+</div>
+
+#### 6.4.7 生命周期钩子
+
+> 所有的生命周期钩子自动绑定 this 上下文到实例中，因此你可以访问数据，对 property 和方法进行运算。这意味着你不能使用箭头函数来定义一个生命周期方法（例如 created: () => this.fetchTodos()）。这是因为箭头函数绑定了父上下文，因此 this 与你期待的 Vue 实例不同，this.fetchTodos 的行为未定义。
+
+示例：
+```html
+<div id="root">
+    {{msg}}
+    <input v-model="msg">
+
+</div>
+<script>
+
+    var root = new Vue({
+        el:"#root",
+        data: {
+            msg: "test"
+        },
+        beforeCreate:function () {
+            console.log("控制台打印:beforeCreate")
+        },
+        created:function () {
+            console.log("控制台打印:created")
+        },
+        beforeMount:function () {
+            //页面还未被渲染
+            console.log(this.$el),
+                console.log("控制台打印:beforeMount")
+        },
+        mounted:function () {
+            //页面渲染完成
+            console.log(this.$el),
+                console.log("控制台打印：mounted")
+        },
+        beforeUpdate:function () {
+            console.log("控制台打印：beforeUpdate")
+        },
+        updated:function () {
+            console.log("控制台打印：updated")
+        },
+        beforeDestroy:function () {
+            console.log("控制台打印：beforeDestory")
+        },
+        destroyed:function () {
+            console.log("控制台打印：destroyed")
+        }
+    })
+</script>
+```
+<div align="center">
+<img src="./img/p28.png">
+</div>
+
+### 6.5 创建 Vue 项目（工程化）
+
+#### 6.5.1 安装环境
+
+第一步：安装 node。  
+- 官网：https://nodejs.org/en/ 。
+
+- 安装过程完全默认。
+
+- 检查是否安装成功：  
+    ```
+    $ node -v
+    $ npm -v
+    ```
+
+第二步：安装 cnpm。
+- 命令行操作：
+    ```
+    npm install -g cnpm --registry=https://registry.npm.taobao.org
+    ```
+    
+- 检查是否安装成功：
+    ```
+    $ cnpm -v
+    ```
+
+第三步：安装 vue-cli。
+- 使用 Vue.js 开发大型应用时，我们需要考虑代码目录结构、项目构建和部署、热加载、代码单元测试等事情，如果每个项目都要手动完成这些工作，那无疑效率低下，所以通常我们会使用一些脚手架工具来帮助完成这些事情。在 Vue.js 生态中我们可以使用 vue-cli 脚手架工具来快速构建项目。
+
+- 命令行操作：
+    ```
+    $ cnpm install -g @vue/cli 
+    $ cnpm install -g @vue/cli-init 
+    ```
+
+
+- 检查是否安装成功：
+    ```
+    $ vue –V
+    ```
+
+第四步：安装 webpack。
+- 命令行操作：
+    ```
+    $ cnpm install -g webpack
+    ```
+
+- 检查是否安装成功：
+    ```
+    $ webpack –V
+    ```
+
+#### 6.5.2 创建项目
+
+第一步：创建项目
+- 命令行操作：
+    ```
+    $ vue init webpack 项目名称
+    ```
+    注：项目名称不能出现大写字母！  
+
+    安装过程直接回车即可，遇到选项就选 no：  
+    <div align="center">
+    <img src="./img/p29.png">
+    </div>
+
+第二步：配置包。
+- 命令行操作：
+    ```
+    $ cd 项目文件夹
+    $ cnpm install
+    ```
+
+第三步：运行项目。
+- 命令行操作：
+    ```
+    $ npm run dev
+    ```
+
+- 成功执行后，即可在浏览器访问 `localhost:8080`。页面如下即成功：   
+    <div align="center">
+    <img src="./img/p30.png">
+    </div>

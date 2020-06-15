@@ -10,34 +10,44 @@
 
 
 <div id="root">
-    <aaa></aaa>
-    <b-bb></b-bb>
-    <ccc></ccc>
-</div>
+    {{msg}}
+    <input v-model="msg">
 
+</div>
 <script>
 
-    let div1 = {
-        template: '<div>div1 value</div>'
-    }
-    let div2 = {
-        template: '<div>div2 value</div>'
-    }
-    let div3 = {
-
-        template: '<div>div3 value</div>'
-    }
-
-    new Vue({
-        el: '#root',
-        components: {
-            // 经过这一步, 就把一个js对象变成了一个vue对象
-            // 如果组件名存在大写字符, 那么使用的时候把除首字母之外的大写字母转化为  -小写  的模式
-            aaa: div1,
-            BBb: div2,
-            Ccc: div3
-        },
+    var root = new Vue({
+        el:"#root",
         data: {
+            msg: "test"
+        },
+        beforeCreate:function () {
+            console.log("控制台打印:beforeCreate")
+        },
+        created:function () {
+            console.log("控制台打印:created")
+        },
+        beforeMount:function () {
+            //页面还未被渲染
+            console.log(this.$el),
+                console.log("控制台打印:beforeMount")
+        },
+        mounted:function () {
+            //页面渲染完成
+            console.log(this.$el),
+                console.log("控制台打印：mounted")
+        },
+        beforeUpdate:function () {
+            console.log("控制台打印：beforeUpdate")
+        },
+        updated:function () {
+            console.log("控制台打印：updated")
+        },
+        beforeDestroy:function () {
+            console.log("控制台打印：beforeDestory")
+        },
+        destroyed:function () {
+            console.log("控制台打印：destroyed")
         }
     })
 </script>
