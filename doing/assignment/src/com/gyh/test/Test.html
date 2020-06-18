@@ -1,56 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test</title>
-
-    <script src="../part3/day5/vue.js"></script>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
 </head>
 <body>
-
-
-<div id="root">
-    {{msg}}
-    <input v-model="msg">
-
-</div>
-<script>
-
-    var root = new Vue({
-        el:"#root",
-        data: {
-            msg: "test"
-        },
-        beforeCreate:function () {
-            console.log("控制台打印:beforeCreate")
-        },
-        created:function () {
-            console.log("控制台打印:created")
-        },
-        beforeMount:function () {
-            //页面还未被渲染
-            console.log(this.$el),
-                console.log("控制台打印:beforeMount")
-        },
-        mounted:function () {
-            //页面渲染完成
-            console.log(this.$el),
-                console.log("控制台打印：mounted")
-        },
-        beforeUpdate:function () {
-            console.log("控制台打印：beforeUpdate")
-        },
-        updated:function () {
-            console.log("控制台打印：updated")
-        },
-        beforeDestroy:function () {
-            console.log("控制台打印：beforeDestory")
-        },
-        destroyed:function () {
-            console.log("控制台打印：destroyed")
-        }
-    })
-</script>
 
 </body>
 </html>
