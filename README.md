@@ -1,21 +1,30 @@
-# 王道训练营
+# aJavaer
 
 ## 前言
 
-记录本人参与王道训练营 22th Java 班的学习过程，包括入营前的作业和入营后的课程。  
+记录成为一个 Javaer 的过程，笔记内容从 HelloWorld 到 SSM。 
 
-笔记内容除个人总结、王道课件外，还摘抄一些优秀资料，包括《第一行代码Java》、《Java核心技术第10版 卷Ⅰ》等。
+## 目录
+
+- [零、计算机基础](./零、计算机基础/README.md)
+
+- [一、Java入门](./一、Java入门/REAMDE.md)
+
+- [二、面向对象](./二、面向对象/README.md)
+
+- [三、高级特性](./三、高级特性/README.md)
+
+- [四、高级类型](./四、高级类型/README.md)
+
+- [五、数据结构](./五、数据结构/README.md)
+
+- [六、数据库](./六、数据库/README.md)
+
+- [七、前端基础](./七、前端基础/README.md)
+
+- [八、JavaWeb](./八、JavaWeb/README.md)
+## 其它
 
 文档格式参考 <a href = "https://github.com/sparanoid/chinese-copywriting-guidelines">中文文档排版指北</a> 和 <a href = "https://github.com/ruanyf/document-style-guide">中文技术文档的写作规范（阮一峰）</a> 。  
 
 不使用 `![]()` 这种方式来引用图片，而是用 `<img>` 标签。一方面是为了能够控制图片以合适的大小显示，另一方面是因为 GFM 不支持 `<center> ![]() </center>` 这种方法让图片居中显示，只能使用 `<div align="center"> <img src=""/> </div>` 达到居中的效果。
-
-## 目录
-
-- [前言](#前言)
-
-- [目录](#目录)
-
-- [入营作业](./before)
-
-- [学习过程](./doing)
