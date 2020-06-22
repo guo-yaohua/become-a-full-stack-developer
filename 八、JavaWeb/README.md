@@ -17,6 +17,18 @@
     - [2.2 实现第一个 Servlet](#22-实现第一个-servlet)
       - [2.2.1 FirstServlet](#221-firstservlet)
       - [2.2.2 Servlet 执行流程](#222-servlet-执行流程)
+    - [2.3 Servlet 接口实现类](#23-servlet-接口实现类)
+    - [2.4 IDEA 开发 Servlet](#24-idea-开发-servlet)
+    - [2.5 Servlet 的生命周期](#25-servlet-的生命周期)
+    - [2.6 url-pattern 细节](#26-url-pattern-细节)
+      - [2.6.1 多个映射关系](#261-多个映射关系)
+      - [2.6.2 两个特殊的 url-pattern](#262-两个特殊的-url-pattern)
+    - [2.7 ServletConfig](#27-servletconfig)
+    - [2.8 ServletContext](#28-servletcontext)
+      - [2.8.1 全局性初始化参数](#281-全局性初始化参数)
+      - [2.8.2 全局性共享数据](#282-全局性共享数据)
+      - [2.8.3 获取绝对路径](#283-获取绝对路径)
+  - [3 ServletRequest](#3-servletrequest)
 
 
 ## 1. Tomcat
@@ -245,3 +257,217 @@ javac -classpath xx/xx/xx/apache-tomcat-8.5.56/lib/servlet-api.jar FirstServlet.
 
 8. connector 读取 response 对象里面的数据，然后生成一个响应报文，发送出去。
 
+### 2.3 Servlet 接口实现类
+
+Servlet 接口定义了两个默认实现类：GenericServlet、HttpServlet。
+
+HttpServlet 指能够处理 HTTP 请求的 Servlet，它在原有 Servlet 接口上添加了一些与 HTTP 协议处理方法，它比 Servlet 接口的功能更为强大。  
+因此，开发人员在编写 Servlet 时，通常应继承这个类，而避免直接去实现 Servlet 接口。
+
+HttpServlet 在实现 Servlet 接口时，覆写了 service 方法，该方法体内的代码会自动判断用户的请求方式，如为 GET 请求，则调用 HttpServlet 的 doGet 方法，如为 Post 请求，则调用 doPost 方法。  
+因此，开发人员在编写 Servlet 时，通常只需要覆写 doGet 或 doPost 方法，而不要去覆写 service 方法。
+
+### 2.4 IDEA 开发 Servlet
+
+第一步：创建 Project 和 Module。  
+<div align="center">
+<img src="./img/p6.png">
+<img src="./img/p7.png">
+</div>
+
+第二步：创建 Web 应用。  
+
+<div align="center">
+<img src="./img/p8.png">
+<img src="./img/p9.png">
+<img src="./img/p10.png">
+</div>
+
+第三步：Debug，然后就可以在浏览器访问。  
+<div align="center">
+<img src="./img/p11.png">
+<img src="./img/p12.png">
+</div>
+
+
+### 2.5 Servlet 的生命周期
+
+Servlet 是一个供其他 Java 程序（Servlet 引擎）调用的 Java 类，它不能独立运行，它的运行完全由 Servlet 引擎来控制和调度。
+
+针对客户端的多次 Servlet 请求，通常情况下，服务器只会创建一个 Servlet 实例对象，也就是说 Servlet 实例对象一旦创建，它就会驻留在内存中，为后续的其它请求服务，直至 Web 容器退出（或应用停止），Servlet 实例对象才会销毁。
+
+在 Servlet 的整个生命周期内，Servlet 的 init 方法只被调用一次。而对一个 Servlet 的每次访问请求都导致 Servlet 引擎调用一次 Servlet 的 service 方法。对于每次访问请求，Servlet引擎都会创建一个新的 HttpServletRequest 请求对象和一个新的 HttpServletResponse 响应对象，然后将这两个对象作为参数传递给它调用的 Servlet 的 service() 方法，service 方法再根据请求方式分别调用 doXXX 方法。 
+
+### 2.6 url-pattern 细节
+
+#### 2.6.1 多个映射关系
+
+同一个 Servlet 可以被映射到多个 URL 上，即多个 `<servlet-mapping>` 元素的 `<servlet-name>` 子元素的设置值可以是同一个 Servlet 的注册名。  
+
+在 Servlet 映射到的 URL 中也可以使用 `*` 通配符，但是只能有两种固定的格式：
+- 一种格式是 `*.扩展名`。
+
+- 一种格式是以正斜杠 `/` 开头并以 `/*` 结尾。
+
+优先级：
+- `/*` 的优先级要高于 `*.do`。
+
+- 以 `/` 开头的优先级要高于 `*.后缀` 的优先级。
+
+- 如果多个 `/` 开头的 url-pattern 同时满足，那么匹配的程度越高，越优先执行谁。
+
+如以下的映射关系：  
+Servlet1 映射到 `/abc/*`；   
+Servlet2 映射到 `/*`；   
+Servlet3 映射到 `/abc`；   
+Servlet4 映射到 `*.do`。   
+
+则：
+- 当请求 URL 为 `/abc/a.html`，`/abc/*` 和`/*` 都匹配，Servlet 引擎将调用 Servlet1。
+
+- 当请求 URL 为 `/abc` 时，`/abc` 和 `/*` 都匹配，Servlet 引擎将调用 Servlet3。
+
+- 当请求 URL 为 `/abc/a.do` 时，`/abc/*` 和 `*.do` 和 `/*` 都匹配，Servlet 引擎将调用 Servlet1。
+
+- 当请求 URL 为 `/a.do` 时，`/*` 和 `*.do` 都匹配，Servlet 引擎将调用 Servlet2。
+
+- 当请求 URL 为 `/xxx/yyy/a.do` 时，`/*` 和 `*.do` 都匹配，Servlet 引擎将调用 Servlet2。
+
+#### 2.6.2 两个特殊的 url-pattern
+
+如果某个 Servlet 的映射路径仅仅为一个正斜杠 `/`，那么这个 Servlet 就成为当前 Web 应用程序的缺省 Servlet。  
+凡是在 `web.xml` 文件中找不到匹配的 `<servlet-mapping>` 元素的 URL，它们的访问请求都将交给缺省 Servlet 处理。也就是说，缺省 Servlet 用于处理所有其他 Servlet 都不处理的访问请求。 
+
+在 `tomcat/conf/web.xml` 文件中，注册了一个名称为 `org.apache.catalina.servlets.DefaultServlet` 的 Servlet，并将这个 Servlet 设置为了缺省 Servlet。  
+当访问 Tomcat 服务器中的某个静态 HTML 文件和图片时，实际上是在访问这个缺省 Servlet。 
+
+### 2.7 ServletConfig
+
+在 Servlet 的配置文件中，可以使用一个或多个 `<init-param>` 标签为某个 Servlet 配置一些初始化参数。
+
+当 Servlet 配置了初始化参数后，Web 容器在创建 Servlet 实例对象时，会自动将这些初始化参数封装到 ServletConfig 对象中，并在调用 `Servlet` 的 init 方法时，将 ServletConfig 对象传递给 Servlet。进而，通过 ServletConfig 对象就可以得到当前 Servlet 的初始化参数信息。
+
+示例：
+```xml
+<servlet>
+  <servlet-name>config</servlet-name>
+  <servlet-class>com.gyh.test</servlet-class>
+  <init-param>
+    <param-name>name</param-name>
+    <param-value>zhang3</param-value>
+  </init-param>
+</servlet>
+```
+```java
+ServletConfig servletConfig = getServletConfig();
+String name = servletConfig.getInitParameter("name");
+System.out.printf(name);
+
+// 即可打印 name 的 value
+```
+
+### 2.8 ServletContext
+
+#### 2.8.1 全局性初始化参数
+
+示例：
+```xml
+<context-param>
+  <param-name>key</param-name>
+  <param-value>utf-8</param-value>
+</context-param>
+```
+```java
+String key = getServletContext().getInitParameter("key");
+System.out.println(key);
+```
+
+#### 2.8.2 全局性共享数据
+
+
+Context 类下的三个数据操作：
+- `setAttribute(key,value)`。
+
+- `getAttribute(key)`。
+
+- `removeAttribute(key)`。
+
+示例：记录网站历史访问次数。  
+```java
+ServletContext servletContext = getServletContext();
+synchronized (servletContext){
+    Integer count = (Integer) servletContext.getAttribute("count");
+    if(count == null){
+        count = 0;
+    }
+    servletContext.setAttribute("count", ++count);
+}
+response.getWriter().println("history total count: " + servletContext.getAttribute("count"));
+```
+
+#### 2.8.3 获取绝对路径
+
+Context 关于路径的两个操作：
+- `getRealpath(String path)`：获取绝对路径。  
+  path 为文件和部署根目录的相对路径关系。  
+
+  注：该方法也可以获取 `WEB-INF` 目录下的文件。
+
+
+## 3 ServletRequest
+
+Web 服务器收到客户端的 http 请求，会针对每一次请求，分别创建一个用于代表请求的 Request 对象、和代表响应的 Response 对象。   
+- Request：获取客户机（浏览器）提交过来的数据。
+
+- Response：向浏览器（客户端）输出数据。
+
+HttpServletRequest 对象代表客户端的请求，当客户端通过 HTTP 协议访问 http 服务器时，HTTP 请求头（正文）中的所有信息都封装在这个对象中，开发人员通过这个对象的方法，可以获得客户这些信息。
+
+请求行：
+- `getMethod`：请求方法。
+
+- `getRequestURL`：URL。
+
+- `getRequestURI`：资源名。
+
+- `getProtoco`：协议 / 版本。
+
+请求头：
+- `getRemoteAddr`：方法返回发出请求的客户机的 IP 地址。
+
+- `getRemoteHost`：方法返回发出请求的客户机的完整主机名。
+
+- `getRemotePort`：方法返回客户机所使用的网络端口号。
+
+- `getLocalAddr`：方法返回 WEB 服务器的 IP 地址。
+
+- `getLocalName`：方法返回 WEB 服务器的主机名。
+
+获得客户机请求参数（客户端提交的数据）：
+- `getParameter(name)`。
+
+- `getParameterValues(String name)`。
+
+- `getParameterNames`。
+
+示例：
+```xml
+<form action="http://localhost:8080/app/submit" method="post">
+    用户名：<input type="text" name="username"><br>
+    密码：<input type="password" name="password"><br>
+    性别：男<input type="radio" name="gender" value="male">
+          女<input type="radio" name="gender" value="female"><br>
+    爱好：java<input type="checkbox" name="hobby" value="java">
+          c++<input type="checkbox" name="hobby" value="c++">
+          python<input type="checkbox" name="hobby" value="python"><br>
+    简介<textarea name="description"></textarea><br>
+    <input type="submit">
+</form>
+```
+```java
+String username = request.getParameter("username");
+String password = request.getParameter("password");
+String gender = request.getParameter("gender");
+String[] hobbies = request.getParameterValues("hobby");
+String description = request.getParameter("description");
+```
