@@ -585,7 +585,7 @@ ALTER TABLE table_name change col_name new_col_name datatype [DEFAULT expr] [, c
 alter table t_user change column balance salary int;
 ```
 
-**（3）修改 列定义**  
+**（3）修改列定义**  
 
 ```sql
 ALTER TABLE table_name MODIFY column datatype [DEFAULT expr] [,MODIFY column datatype]...;

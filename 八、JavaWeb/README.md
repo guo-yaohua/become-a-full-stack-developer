@@ -69,6 +69,46 @@
       - [6.4.3 设置 domain](#643-设置-domain)
   - [7 Session](#7-session)
     - [7.1 Session 概述](#71-session-概述)
+  - [8 JSP](#8-jsp)
+    - [8.1 概述](#81-概述)
+    - [8.2 JSP 语法](#82-jsp-语法)
+      - [8.2.1 JSP 模板元素](#821-jsp-模板元素)
+      - [8.2.2 JSP 表达式](#822-jsp-表达式)
+      - [8.2.3 JSP 脚本片断](#823-jsp-脚本片断)
+      - [8.2.4 JSP 声明](#824-jsp-声明)
+      - [8.2.5 JSP 注释](#825-jsp-注释)
+      - [8.2.6 JSP 指令](#826-jsp-指令)
+    - [8.3 JSP 九大隐式对象](#83-jsp-九大隐式对象)
+      - [8.3.1 out 隐式对象](#831-out-隐式对象)
+      - [8.3.2 pageContext 对象](#832-pagecontext-对象)
+  - [9 Listener](#9-listener)
+    - [9.1 概述](#91-概述)
+    - [9.2 编写 Listener](#92-编写-listener)
+  - [10 Filter](#10-filter)
+    - [10.1 概述](#101-概述)
+    - [10.2 工作原理](#102-工作原理)
+    - [10.3 创建过滤器](#103-创建过滤器)
+    - [10.4 Filter 链](#104-filter-链)
+    - [10.5 Filter 生命周期](#105-filter-生命周期)
+  - [11 JSON](#11-json)
+    - [11.1 概述](#111-概述)
+    - [11.2 JSON 和 XML](#112-json-和-xml)
+    - [11.3 Java 操作 JSON](#113-java-操作-json)
+  - [12 MVC](#12-mvc)
+    - [12.1 概述](#121-概述)
+    - [12.2 案例](#122-案例)
+  - [13 Maven](#13-maven)
+    - [13.1 概述](#131-概述)
+    - [13.2 安装和配置 Maven](#132-安装和配置-maven)
+      - [13.2.1 安装 Maven](#1321-安装-maven)
+      - [13.2.2 设置国内镜像](#1322-设置国内镜像)
+      - [13.2.3 设置默认 JDK 版本](#1323-设置默认-jdk-版本)
+      - [13.2.3 本地仓库](#1323-本地仓库)
+    - [13.3 IDEA 开发 Maven 项目](#133-idea-开发-maven-项目)
+    - [13.4 认识 Maven](#134-认识-maven)
+      - [13.4.1 Maven 目录结构](#1341-maven-目录结构)
+      - [13.4.2 Maven 常用命令](#1342-maven-常用命令)
+      - [13.4.3 Maven 生命周期](#1343-maven-生命周期)
 
 
 ## 1. Tomcat
@@ -195,8 +235,8 @@ Tomcat 自动映射：Tomcat 服务器会自动管理 webapps 目录下的所有
 
 Servlet 是 Sun 公司提供的一门用于开发动态 Web 资源的技术。  
 
-Sun 公司在其 API 中提供了一个 servlet 接口，用户若想开发一个动态 Web 资源（即开发一个 Java 程序向浏览器输出数据），需要完成以下 2 个步骤：
-1. 编写一个 Java 类，实现 servlet 接口；
+Sun 公司在其 API 中提供了一个 Servlet 接口，用户若想开发一个动态 Web 资源（即开发一个 Java 程序向浏览器输出数据），需要完成以下 2 个步骤：
+1. 编写一个 Java 类，实现 Servlet 接口；
 
 2. 把开发好的 Java 类部署到 Web 服务器中。
 
@@ -1387,3 +1427,864 @@ path1 界面多次请求，Cookie 值也不会出现 name，访问 path2 界面�
 
 服务器给每个浏览器创建了一块区域，专门用来存放数据。只要是一个浏览器的行为，均可以把这些数据存放在这个 Session 中。即，浏览器和某个 Sessionn 对象做了一个绑定。
 
+
+## 8 JSP
+
+### 8.1 概述
+
+JSP 全称 Java Server Pages，它和 Servle 技术一样，都是 SUN 公司定义的一种用于开发动态 Web 资源的技术。  
+
+JSP 特点：
+- 就可以把 JSP 当做 HTML 来对待，但是它相较于 HTML 还有很大的优势。
+
+- 这里面可以嵌套 Java 代码，然后显示动态数据。
+
+- Java 代码不可以随意的书写，需要在特殊的标签里才有效。
+
+浏览器访问 JSP 页面时，Web 服务器通过 Servlet 调用并执行 JSP 页面页面。  
+
+JSP 页面中的 Java 代码服务器是执行步骤：先找到 JSP 页面，然后 Tomcat 会生成一个 JSP 对应的 Java 文件编译成 class 字节码文件。然后加载 class 字节码文件。调用 JSP 的 service 方法。然后产生结果，并把结果写回到 client。
+
+从本质上来说，JSP 也就是 servlet。例如访问 `http://localhost:8080/index.jsp`：
+1. Tomcat 里面配置了一个 Servlet，它的 url-pattern 是 `*.jsp` 和 `*.jspx`，所以当前请求会交给它；
+
+2.  这个 Servlet 就是 JSP 引擎。该引擎首先根据访问的资源 `index.jsp`，到指定目录下去寻找该文件，如果找得到，则将该文件翻译称为 Java 文件（其实就是 Servlet，形成 `index_jsp.java` 文件），之后再经过编译，形成 `index_jsp.class` 文件;
+
+3. 最后调用 Servlet 的 service 方法，显示出页面里面的数据。
+
+不管是 JSP 还是 Servlet，虽然都可以用于开发动态 Web 资源，但由于这两门技术各自的特点，在长期的软件实践中，人们逐渐把 Servlet 作为 Web 应用中的控制器组件来使用，而把 JSP 技术作为数据显示模板来使用。  
+其原因为，程序的数据通常要美化后再输出。
+- 让 JSP 既用 Java 代码产生动态数据，又做美化会导致页面难以维护。
+
+- 让 Servlet 既产生数据，又在里面嵌套 HTML 代码美化数据，同样也会导致程序可读性差，难以维护。
+
+- 因此最好的办法就是根据这两门技术的特点，让 Servlet 只负责响应请求产生数据，并把数据通过转发技术带给 JSP，数据的显示 JSP 来做。
+
+### 8.2 JSP 语法
+
+#### 8.2.1 JSP 模板元素
+
+JSP 页面中的 HTML 内容称之为 JSP 模版元素。  
+
+JSP 模版元素定义了网页的基本骨架，即，定义了页面的结构和外观。
+
+#### 8.2.2 JSP 表达式
+
+JSP 表达式（expression）用于将程序数据输出到客户端。  
+语法：
+```jsp
+<%= 变量或表达式 %>
+```
+示例：
+```jsp
+当前时间:<%= new java.util.Date() %> 
+```
+
+JSP 引擎在翻译 JSP 表达式时，会将程序数据转成字符串，然后在相应位置用 `out.print(…)` 将数据输给客户端。
+
+JSP 脚本表达式中的变量或表达式后面不能有分号 `;`。
+
+#### 8.2.3 JSP 脚本片断
+
+JSP 脚本片断（scriptlet）用于在 JSP 页面中编写多行 Java 代码。  
+语法：
+```jsp
+<% 
+    多行java代码 
+%> 
+```
+
+JSP 脚本片断中只能出现 Java 代码，不能出现其它模板元素。JSP 引擎在翻译 JSP 页面中，会将 JSP 脚本片断中的 Java 代码将被原封不动地放到 Servlet 的 `_jspService` 方法中。  
+
+JSP 脚本片断中的 Java 代码必须严格遵循 Java 语法。例如，每执行语句后面必须用分号 `;` 结束。
+
+在一个 JSP 页面中可以有多个脚本片断，在两个或多个脚本片断之间可以嵌入文本、HTML 标记和其他 JSP 元素。  
+示例：
+```jsp
+<%
+	int x = 10;
+	out.println(x);
+%>
+<p>这是 JSP 页面文本</p>
+<%
+	int y = 20;
+	out.println(y);
+%>
+```
+
+多个脚本片断中的代码可以相互访问，犹如将所有的代码放在一对 `<%%>` 之中的情况。
+
+单个脚本片断中的 Java 语句可以是不完整的，但是，多个脚本片断组合后的结果必须是完整的 Java 语句。  
+示例：
+```jsp
+// 打印 100 行 H1
+<%
+	for (int i=1; i<5; i++) 
+	{
+%>
+	<H1>this is H1 title</H1>
+<%
+	}
+%> 
+```
+
+#### 8.2.4 JSP 声明
+
+JSP 页面中编写的所有代码，默认会翻译到 Servlet 的 service 方法中， 而 JSP 声明中的 Java 代码被翻译到 `_jspService` 方法的外面。  
+语法：
+```jsp
+<%！ 
+	Java 代码 
+%>
+```
+
+所以，JSP 声明可用于定义 JSP 页面转换成的 Servlet 程序的静态代码块、成员变量和方法。 
+
+多个静态代码块、变量和函数可以定义在一个 JSP 声明中，也可以分别单独定义在多个 JSP 声明中。
+
+JSP 隐式对象的作用范围仅限于 Servlet 的 `_jspService` 方法，所以在 JSP 声明中不能使用这些隐式对象。 
+
+示例：
+```jsp
+<%!
+static 
+{ 
+	System.out.println("loading Servlet!"); 
+}
+private int globalVar = 0;
+public void jspInit()
+{
+	System.out.println("initializing jsp!");
+}
+%>
+<%!
+public void jspDestroy()
+{
+	System.out.println("destroying jsp!");
+}
+%>
+```
+
+#### 8.2.5 JSP 注释
+
+JSP 注释的格式：
+```jsp
+<%-- 注释信息 --%>
+```
+
+JSP 引擎在将 JSP 页面翻译成 Servlet 程序时，忽略 JSP 页面中被注释的内容。
+
+JSP 注释和 HTML 注释区别：
+- HTML 注释会原封不动地翻译到客户端。  
+
+- JSP 注释，在翻译称为 Java 代码时，就会消失。
+
+
+#### 8.2.6 JSP 指令
+
+JSP 指令（directive）是为 JSP 引擎而设计的，它们并不直接产生任何可见输出，而只是告诉引擎如何处理 JSP 页面中的其余部分。在 JSP 2.0 规范中共定义了三个指令：
+- page 指令。
+
+- Include 指令。
+
+- taglib 指令（jsp、~~el、jstl~~）。
+
+JSP 指令的基本语法格式：
+```jsp
+<%@ 指令 属性名="值" %>
+```
+示例：
+```jsp
+<%@ page contentType="text/html;charset=gb2312"%>
+```
+
+如果一个指令有多个属性，这多个属性可以写在一个指令中，也可以分开写。  
+示例：
+```jsp
+<%@ page contentType="text/html;charset=gb2312"%>
+<%@ page import="java.util.Date"%>
+```
+也可以写作：
+```jsp
+<%@ page contentType="text/html;charset=gb2312" import="java.util.Date"%> 
+```
+
+
+**（1）page**  
+
+page 指令用于定义 JSP 页面的各种属性，无论 page 指令出现在 JSP 页面中的什么地方，它作用的都是整个 JSP 页面。  
+为了保持程序的可读性和遵循良好的编程习惯，page 指令最好是放在整个 JSP 页面的起始位置。 
+
+JSP 规范中定义的 page 指令的语法：
+```jsp
+<%@ page 
+	[ language="java" ] 
+	[ extends="package.class" ] 
+	[ import="{package.class | package.*}, ..." ] 
+	[ session="true | false" ]  // true创建session对象 
+	[ buffer="none | 8kb | sizekb" ] 
+	[ contentType="mimeType [ ;charset=characterSet ]" | "text/html ; charset=ISO-8859-1" ] 
+	[ pageEncoding="characterSet | ISO-8859-1" ] 
+%>
+```
+
+**（2）include**
+
+include 指令用于引入其它 JSP 页面，如果使用 include 指令引入了其它 JSP 页面，那么 JSP 引擎将把这两个 JSP 翻译成一个 Servlet。所以 include 指令引入通常也称之为静态引入。  
+语法：
+```jsp
+<%@ include file="被包含组件的绝对 URL 或相对 URL" %>
+```
+其中的 file 属性用于指定被引入文件的路径。路径以 `/` 开头，表示代表当前web应用。
+
+细节：
+- 被引入的文件必须遵循 JSP 语法。
+
+- 被引入的文件可以使用任意的扩展名，即使其扩展名是 HTML，JSP 引擎也会按照处理 JSP 页面的方式处理它里面的内容。  
+  为了见名知意，JSP 规范建议使用 `.jspf`（JSP fragments）作为静态引入文件的扩展名。 
+
+- 由于使用 include 指令将会涉及到两个 JSP 页面，并会把两个 JSP 翻译成一个 Servlet，所以这两个 JSP 页面的指令不能冲突（除了 pageEncoding 和导包除外）。 
+
+### 8.3 JSP 九大隐式对象
+
+JSP 引擎先将 JSP 翻译成一个 `_jspServlet`（实质上也是一个 Servlet），然后按照 Servlet 的调用方式进行调用。  
+
+由于 JSP 第一次访问时会翻译成 Servlet，所以第一次访问通常会比较慢，但第二次访问，JSP 引擎如果发现 JSP 没有变化，就不再翻译，而是直接调用，所以程序的执行效率不会受到影响。  
+
+JSP 引擎在调用 JSP 对应的 `_jspServlet` 时，会传递或创建 9 个与 Web 开发相关的对象供 `_jspServlet` 使用。JSP 技术的设计者为便于开发人员在编写 JSP 页面时获得这些 Web 对象的引用，特意定义了 9 个相应的成员变量，开发人员在 JSP 页面中通过这些变量就可以快速获得这 9 大对象的引用。  
+- request：HttpServletRequest
+
+- response：HttpServletResponse
+
+- config： ServletConfig
+
+- application：ServletContext
+
+- Session：HttpSession
+
+- out
+
+- exception：Throwable
+
+- page：this Object
+
+- pageContext
+
+#### 8.3.1 out 隐式对象
+
+out 隐式对象用于向客户端发送文本数据。  
+
+out 对象是通过调用 pageContext 对象的 `getOut` 方法返回的，其作用和用法与 `ServletResponse.getWriter` 方法返回的 PrintWriter 对象非常相似。  
+
+JSP 页面中的 out 隐式对象的类型为 JspWriter，JspWriter 相当于一种带缓存功能的 PrintWriter，设置 JSP 页面的 page 指令的 buffer 属性可以调整它的缓存大小，甚至关闭它的缓存。  
+
+只有向 out 对象中写入了内容，且满足如下任何一个条件时，out 对象才去调用 `ServletResponse.getWriter` 方法，并通过该方法返回的 PrintWriter 对象将 out 对象的缓冲区中的内容真正写入到 Servlet 引擎提供的缓冲区中。
+- 设置 page 指令的 buffer 属性关闭了 out 对象的缓存功能。
+
+- out 对象的缓冲区已满。
+
+- 整个 JSP 页面结束，提交响应。
+
+示例：
+```jsp
+<%
+    out.println("aaa");
+    response.getWriter().write("bbb");
+%>
+```
+工作原理：  
+<div align="center">
+<img src="./img/p16.png">
+</div>
+
+#### 8.3.2 pageContext 对象 
+
+pageContext 对象是 JSP 技术中最重要的一个对象，它代表 JSP 页面的运行环境，这个对象不仅封装了对其它 8 大隐式对象的引用，它自身还是一个域对象，可以用来保存数据。并且，这个对象还封装了 Web 开发中经常涉及到的一些常用操作，检索其它域对象中的属性等。 
+
+通过 pageContext 获得其他对象：
+- `getException`：返回 exception 隐式对象。
+
+- `getPage`：返回 page 隐式对象。
+
+- `getRequest`：返回 request 隐式对象。
+
+- `getResponse`：返回 response 隐式对象。
+
+- `getServletConfig`：返回 config 隐式对象。
+
+- `getServletContext`：返回 application 隐式对象。
+
+- `getSession`：返回 session 隐式对象。
+
+- `getOut`：返回 out 隐式对象。
+
+pageContext 作为域对象：
+- `public void setAttribute(java.lang.String name,java.lang.Object value)`
+
+- `public java.lang.Object getAttribute(java.lang.String name)`
+
+- `public void removeAttribute(java.lang.String name)`
+
+pageContext 对象中还封装了访问其它域的方法：
+- `public java.lang.Object getAttribute(java.lang.String name,int scope)`
+
+- `public void setAttribute(java.lang.String name, java.lang.Object value,int scope)`
+
+- `public void removeAttribute(java.lang.String name,int scope)`
+
+scope 代表各个域的常量：
+- `PageContext.APPLICATION_SCOPE`
+
+- `PageContext.SESSION_SCOPE`
+
+- `PageContext.REQUEST_SCOPE`
+
+- `PageContext.PAGE_SCOPE `
+
+`findAttribute` 方法：查找各个域中的属性（从下往上找）。
+
+## 9 Listener
+
+### 9.1 概述
+
+Listener 是监听器。
+
+现实生活中的案例：
+- 监听对象：艺人明星。
+
+- 监听事件：吸毒嫖娼。
+
+- 监听器：朝阳人民群众。
+
+- 触发事件：报警。
+
+Web：
+- 监听对象：ServletContext。
+
+- 监听事件：context 创建和销毁。
+
+- 监听器：自己编写的一个监听器。
+
+- 触发事件：监听器里面的代码执行。
+
+### 9.2 编写 Listener
+
+编写 listener 步骤：
+1. 编写一个类实现 ServletContextListener 接口；
+
+2. 注册该 Listener；
+
+示例：
+```java
+@WebListener
+public class MyServletContextListener implements ServletContextListener {
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        System.out.println("context init");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        System.out.println("context destroy");
+    }
+}
+```
+
+## 10 Filter
+
+### 10.1 概述
+
+过滤器（Filter）是 Servlet 规范的高级特性。过滤器技术是从 Servlet2.3 规范开始引入的。是一种 Web 应用程序组件，可以部署在 Web 应用程序中。
+
+过滤器由 Servlet 容器调用，用来拦截以及处理请求和响应。过滤器本身并不能生成请求和响应对象，但是可以对请求和响应对象进行检查和修改。 
+
+Filter 的功能：
+- 可以设置拦截或者放行（如：设置 info 页面仅登录可用）。
+
+- 可以在请求到达 Servlet 之前修改 Request 对象，也可以在响应之后修改 Response 对象（如：设置字符编码格式）。
+
+### 10.2 工作原理
+
+过滤器介于客户端与 Servlet/JSP 等相关的资源之间，对于与过滤器关联的 Servlet 来说，过滤器可以在 Servlet 被调用之前检查并且修改 Request 对象，在 Servlet 调用之后检查并修改 Response 对象。   
+<div align="center">
+<img src="./img/p17.png">
+</div>
+
+以上过程可分为以下步骤：
+1. 客户端将请求发送给 Web 容器；
+
+2. Web 容器根据客户端发送的请求生成请求对象 request 和响应对象 response；
+
+3. Web 容器在调用与过滤器相关联的 Web 组件（例如 Servlet/JSP）之前，先将 request 对象以及 response 对象发送给过滤器；
+
+4. 过滤器对 request 对象进行必要的处理；
+
+5. 过滤器把处理过的 request 对象以及 response 对象传递给 Web 组件；
+
+6. Web 组件调用完成后，再次通过过滤器，此时过滤器对 response 对象进行必要的处理；
+
+7. 过滤器把处理过的 response 对象传递给 Web 容器；
+
+8. Web 容器将响应的结果返回到客户端，并在浏览器上显示。
+ 
+
+### 10.3 创建过滤器
+
+创建过滤器的步骤如下：
+1. 创建一个实现 Filter 接口的 Java 类；
+
+2. 实现 init() 方法，如有必要，读取过滤器的初始化参数；
+
+3. 实现 doFilter() 方法，完成对 ServletRequest 对象以及 ServletResponse 对象的检查和处理；
+
+4. 在 doFilter() 方法中调用 FilterChain 接口对象 chain 的 doFilter() 方法，以便将过滤器传递给后续的过滤器或资源。
+
+5. 在 web.xml 中注册过滤器，设置参数以及过滤器要过滤的资源。 
+
+过滤器方法：
+- `void doFilter(ServletRequst request, ServletResponse response, FilterChain chain)`：此方法是 Filter 接口的核心方法，用于对请求对象和响应对象进行检查和处理。  
+  此方法包括三个输入参数：
+  - ServletRequest 对象为请求对象，包括表单数据、Cookie 以及 HTTP 请求头等信息。
+
+  - ServletResponse 对象为响应对象，用于响应使用 ServletRequest 对象访问的信息。
+
+  - FilterChain 用来调用过滤器链中的下一个资源，即将 ServletRequest 对象以及 ServletResponse 对象传递给下一个过滤器或者是其它的 Servlet/JSP 等资源。
+
+- `void destroy()`：此方法用于销毁过滤器，当容器要销毁过滤器实例时调用此方法，Servlet 过滤器占用的资源会被释放。
+
+示例：
+```java
+public class FilterDemo implements Filter {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        System.out.println("生命周期 init");
+    }
+
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        servletResponse.setContentType("text/html;charset=utf-8");
+        
+        System.out.println("生命周期 doFilter");
+
+        // Filter 默认执行的是拦截操作，如果想要放行代码往下执行，必须要有这句话
+        filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("生命周期 destroy");
+    }
+}
+```
+```xml
+<filter>
+    <filter-name>firstFilter</filter-name>
+    <filter-class>FilterDemo</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>firstFilter</filter-name>
+    <url-pattern>/servlet</url-pattern>
+</filter-mapping>
+```
+
+### 10.4 Filter 链
+
+多个 Filter 对同一个资源进行了拦截，那么当我们在开始的 Filter 中执行 `chain.doFilter(request,response)` 时，是访问下一下 Filter，直到最后一个 Filter 执行时，它后面没有了 Filter，才会访问 Web 资源。
+
+多个 FIlter 的访问顺序问题：
+- 如果有多个 Filter 形成了 Filter 链，它们的执行顺序取决于 `<filter-mapping>` 在 `web.xml` 文件中配置的先后顺序。
+
+- 对于注解的方式，按照类名的 ASCII 码表顺序。
+
+### 10.5 Filter 生命周期
+
+Filter 的生命周期：
+1. Init：随着应用的启动而实例化；
+
+2. doFilter：当访问资源时，路径与 Filter 的拦截路径匹配，会执行 Filter 中的 doFilter 方法，这个方法是真正拦截操作的方法；
+
+3. Destroy：应用的卸载或者服务器关闭。
+
+## 11 JSON
+
+### 11.1 概述
+
+JSON（JavaScript Object Notation）是一种轻量级的数据交换格式。它基于 JavaScript 的一个子集，它利用了 JavaScript 的一些模式来表示结构化数据。
+- 一种数据格式，而非编程语言。
+
+- Json 并不从属于 JavaScript。
+
+- 很多编程语言都有针对 Json 的解析器。
+
+需要记住一点：`{}` 表示的是一个对象，`[]` 表示的是一个数组或者集合。
+
+### 11.2 JSON 和 XML
+
+XML 数据格式：
+```xml
+<?xml version="1.0"encoding="utf-8"?>
+<country>
+    <name>中国</name>
+    <province>
+        <name>黑龙江</name>
+        <cities>
+            <city>哈尔滨</city>
+            <city>大庆</city>
+        </cities>
+    </province>
+    <province>
+        <name>广东</name>
+        <cities>
+            <city>广州</city>
+            <city>深圳</city>
+            <city>珠海</city>
+        </cities>
+    </province>
+    <province>
+        <name>台湾</name>
+        <cities>
+            <city>台北</city>
+            <city>高雄</city>
+        </cities>
+    </province>
+    <province>
+        <name>新疆</name>
+        <cities>
+            <city>乌鲁木齐</city>
+        </cities>
+    </province>
+</country>
+```
+
+JSON 数据格式：
+```json
+var pro ={
+    "name":"中国",
+    "province":[{"name":"黑龙江",”cities”:["哈尔滨","大庆"]},
+		        {"name":"广东","cities":["广州","深圳","珠海"]},
+		        {"name":"台湾","cities":["台北","高雄"]},
+		        {"name":"新疆","cities":["乌鲁木齐"]}]
+}
+```
+
+比较：
+- 可读性：JSON 和 XML 的可读性可谓不相上下，一边是简易的语法，一边是规范的标签形式，很难分出胜负。
+
+- 可扩展性：XML 天生有很好的扩展性，JSON 当然也有，没有什么是 XML 可以扩展而 JSON 却不能扩展的。
+
+- 解码难度：XML 的解析方式有两种：一是通过文档模型解析，另外一种方法是遍历节点。  
+  如果预先知道 JSON 结构的情况下，使用 JSON 进行数据传递简直是太美妙了，可以写出很实用美观可读性强的代码。
+
+- 数据效率：JSON 作为数据包格式传输的时候具有更高的效率，这是因为 JSON 不像 XML 那样需要有严格的闭合标签，这就让有效数据量与总数据包比大大提升，从而减少同等数据流量的情况下，网络的传输压力。
+
+### 11.3 Java 操作 JSON
+
+其他类型数据生成json字符串：
+```java
+String json = "{\"id\":\"" + user.getName() + "\",\"id\":\"" + user.getPassword() + "\"}";
+Gson gson = new Gson() ;
+gson.toJson(Object);
+```
+
+JSON 字符串转变为 Java 对象：
+```java
+Gson gson = new Gson() ;
+gson.fromJson(json, Class);
+```
+
+JSON 字符串转变为 `List<T>` 类型：
+```java
+Gson.fromJson(json, new TypeToken<List<T>>(){}.getType())
+```
+
+示例：
+```java
+// 实现注册功能
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // 取出参数
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+    String confirmPassword = request.getParameter("confirmPassword");
+    // 校验是否为空，确认密码是否一致
+    if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password)||
+    StringUtils.isEmpty(confirmPassword)){
+            response.getWriter().println("参数不能为空");
+            return;
+    }
+    if(!password.equals(confirmPassword)){
+        response.getWriter().println("两次密码不一致，请确认");
+        return;
+    }
+    // 封装对象
+    User user = new User();
+    user.setUsername(username);
+    user.setPassword(password);
+    
+    // 读取 JSON 文件，检查用户名是否存在
+    InputStream inputStream = RegisterServlet.class.getClassLoader().getResourceAsStream("user.json");
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    byte[] bytes = new byte[1024];
+    int length = 0;
+    while ((length = inputStream.read(bytes))!= -1){
+        byteArrayOutputStream.write(bytes, 0, length);
+    }
+    String jsonStr = byteArrayOutputStream.toString("utf-8");
+    Gson gson = new Gson();
+    List<User> userList = new ArrayList<>();
+    if(!"".equals(jsonStr)){
+        JsonElement jsonElement = new JsonParser().parse(jsonStr);
+        JsonArray jsonArray = jsonElement.getAsJsonArray();
+        for (JsonElement element : jsonArray) {
+            User u = gson.fromJson(element, User.class);
+            // 判断是否存在当前用户名
+            if(u.getUsername().equals(username)){
+                response.getWriter().println("当前用户名已经存在");
+                return;
+            }
+            userList.add(u);
+        }
+    }
+    userList.add(user);
+
+    // 直接写回数据到 JSON 文件中
+    String information = gson.toJson(userList);
+    String file = RegisterServlet.class.getClassLoader().getResource("user.json").getFile();
+    FileOutputStream fileOutputStream = new FileOutputStream(file);
+    fileOutputStream.write(information.getBytes("utf-8"));
+    response.getWriter().println("注册成功，即将跳转至登录页");
+}
+```
+
+## 12 MVC
+
+### 12.1 概述
+
+MVC（Model-View-Controller）：把一个应用的输入、处理、输出流程按照 Model、View、Controller 的方式进行分离，这样一个应用被分成三个块，即模型层、视图层、控制层。
+- 数据模型（Model）：封装的是数据模型和所有基于对这些数据的操作。在一个组件中，Model 往往表示组件的状态和操作状态的方法。
+
+- 视图（View）：封装的是对数据 Model 的一种显示。一个模型可以由多个视图，而一个视图理论上也可以同不同的模型关联起来。
+
+- 控制器（Controller）：封装的是外界作用于模型的操作，通常，这些操作会转发到模型上，并调用模型中相应的一个或者多个方法。一般 Controller 在 Model 和 View 之间起到了沟通的作用，处理用户在 View 上的输入，并转发给 Model。这样 Model 和 View 两者之间可以做到松散耦合，甚至可以彼此不知道对方，而由 Controller 连接起这两个部分。
+
+MVC 模式广泛用于 Web 程序、GUI 程序的架构，优点：
+- 分离数据和其表示，使得添加或者删除一个用户数据变得很容易，甚至可以在程序执行时动态的进行。Model 和 View 能够单独的开发，增加了程序了可维护性，可扩展性，并使测试变得更为容易。
+
+- 将控制逻辑和表现界面分离，允许程序能够在运行时根据工作流、用户习惯或者模型状态来动态选择不同的用户界面（JSP）。
+
+### 12.2 案例
+
+
+## 13 Maven
+
+### 13.1 概述
+
+> Maven 是一个项目管理工具，它包含了一个项目对象模型（POM：Project Object Model），一组标准集合，一个项目生命周期（Project Lifecycle），一个依赖管理系统（Dependency Management System），和用来运行定义在生命周期阶（phase）中插件（plugin）目标（goal）的逻辑。
+
+简单来说，Maven 是一个项目管理工具，可以对 Java 项目进行构建、依赖管理。
+
+Maven 一键构建项目流程：Maven 将整个构建过程分为多个阶段，每个阶段对应 Maven 中的一个命令。  
+<div align="center">
+<img src="./img/p18.png">
+</div>
+
+示例：
+- clean 命令，对应的是上述的清理阶段，用于清除生成的 class 字节码文件。
+
+- compile 命令，对应上述的编译阶段，用于将 Java 文件遵循一个原则编译成 class 字节码文件。
+
+- package 命令，对应上述的编译阶段，用于将 Java 打包成 jar 包或者 war 包。
+
+### 13.2 安装和配置 Maven
+
+#### 13.2.1 安装 Maven
+
+[官网地址](https://maven.apache.org/download.cgi)。
+
+选择对应版本：  
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+Maven 下载后，将 Maven 解压到一个没有中文没有空格的路径下。  
+解压后目录结构如下：  
+<div align="center">
+<img src="./img/p20.png">
+</div>
+
+- `bin`：存放了 Maven 的命令。
+
+- `boot`：存放了一些 Maven 本身的引导程序，如类加载器等
+
+- `conf`：存放了 Maven 的一些配置文件，如 `setting.xml` 文件
+
+- `lib`：存放了 Maven 本身运行所需的一些 jar 包
+
+配置环境变量：
+1. 配置 MAVEN_HOME，变量值为 Maven 的安装路径；
+
+2. 将 JAVA_HOME/bin 配置环境变量 path。
+
+配置完成后，通过 `mvn -v` 可以检查 Maven 是否安装成功：  
+<div align="center">
+<img src="./img/p21.png">
+</div>
+
+#### 13.2.2 设置国内镜像
+
+在 `conf/settings.xml` 文件中 `<mirrors>` 节点下新增：
+```xml
+<mirror>
+        <id>nexus-aliyun</id>
+        <mirrorOf>central</mirrorOf>
+        <name>Nexus aliyun</name>
+        <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+</mirror>
+```
+
+#### 13.2.3 设置默认 JDK 版本
+
+在 `conf/settings.xml`文件中新增 `<profile>` 节点：
+```xml
+<profile>
+    <id>jdk-1.8</id>
+    <activation>
+        <activeByDefault>true</activeByDefault>
+        <jdk>1.8</jdk>
+    </activation>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+    </properties>
+</profile>
+```
+
+#### 13.2.3 本地仓库
+
+Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的项目 A、项目 B 等都会通过 Maven 软件从远程仓库下载 jar 包并存在本地仓库，当第二次需要此 jar 包时则不再从远程仓库下载，因为本地仓库已经存在了，可以将本地仓库理解为缓存，有了本地仓库就不用每次从远程仓库下载了。
+<div align="center">
+<img src="./img/p22.png">
+</div>
+- 中央仓库：在 Maven 软件中内置一个远程仓库地址 `http://repo1.maven.org/maven2`，它是中央仓库，服务于整个互联网，它是由 Maven 团队自己维护，里面存储了非常全的 jar 包，它包含了世界上大部分流行的开源项目构件。但是在国外，网速较慢。
+
+本地仓库默认位置是在 `${user.dir}/.m2/repository，${user.dir}`，在 `conf/settings.xml` 文件中的 `<localRepository>` 标签下可以配置本地仓库位置。  
+<div align="center">
+<img src="./img/p23.png">
+</div>
+
+### 13.3 IDEA 开发 Maven 项目
+
+第一步：选择本地 Maven 目录，指定 settings 配置文件。  
+<div align="center">
+<img src="./img/p24.png">
+</div>
+
+第二步：创建项目。  
+<div align="center">
+<img src="./img/p25.png"><br>
+<img src="./img/p26.png">
+</div>
+
+第三步：给应用添加一个 Web 根目录 `src/main/webapp`。
+<div align="center">
+<img src="./img/p27.png"><br>
+<img src="./img/p28.png">
+</div>
+
+第四步：设置 artifacts。  
+<div align="center">
+<img src="./img/p29.png">
+</div>
+
+第五步：添加 Tomcat。
+<div align="center">
+<img src="./img/p30.png">
+</div>
+
+第六步：pom.xml 添加配置。  
+配置 servlet：
+```xml
+<dependencies>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>3.1.0</version>
+    </dependency>
+</dependencies>
+```
+配置 jar 依赖：
+```xml
+<packaging>war</packaging>
+```
+
+
+第七步：设置 JDK。
+<div align="center">
+<img src="./img/p31.png">
+</div>
+
+### 13.4 认识 Maven
+
+#### 13.4.1 Maven 目录结构
+
+<div align="center">
+<img src="./img/p32.png">
+</div>  
+
+- `src/main/java`：存放项目的 .java 文件。
+
+- `src/main/resources`：存放项目资源文件，如 spring, hibernate 配置文件。
+
+- `src/test/java`：存放所有单元测试.java 文件，如 JUnit 测试类。
+
+- `src/test/resources`：测试资源文件。
+
+- `target`：项目输出位置，编译后的 .class 文件会输出到此目录。
+
+- `pom.xml`：配置文件。
+
+注意：如果是普通的 Java 项目，那么就没有 `webapp` 目录。
+
+ #### 13.4.2 Maven 常用命令
+
+**（1）mvn compile**
+
+compile 是 Maven 工程的编译命令，作用是将 `src/main/java` 下的文件编译为 .class 文件输出到 `target`
+目录下。
+
+删除 IDEA 自动在 `target` 目录下生成的 .class 文件，然后在 Maven 项目下，命令行执行 `mvn compile`，发现 `target` 目录下，.class 文件成功已生成。
+<div align="center">
+<img src="./img/p33.png">
+</div>
+
+**（2）mvn test**
+
+mvn test 是 Maven 工程的测试命令，会执行 `src/test/java` 下的单元测试类。
+
+**（3）mvn clean**
+
+mvn clean 是 Maven 工程的清理命令，执行 clean 会删除 target 目录及内容。
+
+**（4）mvn package**
+
+mvn package 是 Maven 工程的打包命令，对于 Java 工程执行 package 打成 jar 包，对于 web 工程打成 war 包。
+
+**（5）mvn install**
+
+mvn install 是 Maven 工程的安装命令，执行 install 将 Maven 打成 jar 包或 war 包发布到本地仓库。
+
+#### 13.4.3 Maven 生命周期
+
+Maven 对项目构建过程分为三套相互独立的生命周期。
+- clean：在进行真正的构建之前进行一些清理工作。
+
+- default：构建的核心部分，编译、测试、打包、部署等等。
+
+- site：生成项目报告、站点，发布站点。
+
+每个生命周期都包含一些阶段，比如 clean 包含 pre-clean 阶段、clean 阶段、post-clean 阶段。当调用 pre-clean 时，只有 pre-clean 执行；调用 clean 时，pre-clean 和 clean 都会顺序执行；执行 post-clean，pre-clean、clean、post-clean 都会按照顺序执行。
+
+default 阶段：
+<div align="center">
+<img src="./img/p34.png">
+</div>
