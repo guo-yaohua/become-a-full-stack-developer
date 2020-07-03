@@ -8,4 +8,8 @@ public interface AdminDao {
     Admin login(Admin admin);
 
     List<Admin> allAdmins();
+
+    int addAdminss(Admin admin);
+
+    Admin deleteAdmins(int id);
 }

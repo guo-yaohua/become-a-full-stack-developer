@@ -6,7 +6,7 @@ package com.gyh.mall.model.bo;
  * vo:view object
  * 响应报文中需要用到的对象
  */
-public class AdminLoginBO {
+public class AdminLoginBo {
 
     private String email;
 

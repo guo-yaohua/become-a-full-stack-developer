@@ -1,21 +1,20 @@
 package com.gyh.mall.controller;
 
+import com.gyh.mall.model.bo.AdminAddBo;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.bo.AdminLoginBO;
+import com.gyh.mall.model.bo.AdminLoginBo;
 import com.gyh.mall.model.vo.AdminLoginVo;
 import com.gyh.mall.service.AdminService;
 import com.gyh.mall.service.AdminServiceImpl;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,6 +34,35 @@ public class AdminServlet extends HttpServlet {
         if ("login".equals(action)) {
             login(request, response);
         }
+
+        // 解析请求
+        String action2 = requestURI.replace("/api/admin/", "");
+
+        // 添加管理员
+        if ("addAdminss".equals(action)) {
+            addAdminss(request, response);
+        }
+    }
+
+    /**
+     * 添加管理员
+     * @param request
+     * @param response
+     */
+    private void addAdminss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 读取请求体，返回 json 字符串
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        // json 转 Java 对象
+        AdminAddBo addBo = gson.fromJson(requestBody, AdminAddBo.class);
+
+        int code = adminService.addAdminss(addBo);
+        if (code == 0) {
+            response.getWriter().println(Result.error("添加失败"));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok(addBo)));
+            // response.setHeader("refresh","1;url=" + request.getContextPath() + "/admin.html#/backstage/editAdmins");
+        }
     }
 
     /**
@@ -50,9 +78,9 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminLoginBO loginBO = gson.fromJson(requestBody, AdminLoginBO.class);
+        AdminLoginBo loginBo = gson.fromJson(requestBody, AdminLoginBo.class);
 
-        Admin login = adminService.login(loginBO);
+        Admin login = adminService.login(loginBo);
 
         if (login != null) {
             AdminLoginVo loginVo = new AdminLoginVo();
@@ -74,6 +102,27 @@ public class AdminServlet extends HttpServlet {
         if ("allAdmins".equals(action)) {
             allAdmins(request, response);
         }
+
+        // 删除管理员
+        if ("deleteAdmins".equals(action)) {
+            deleteAdmins(request, response);
+        }
+    }
+
+    /**
+     * 删除管理员
+     * @param request
+     * @param response
+     */
+    private void deleteAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        Admin admin = adminService.deleteAdmins(id);
+        
+        Result result = new Result();
+        result.setCode(0);
+        result.setData(admin);
+        response.getWriter().println(gson.toJson(result));
     }
 
     /**

@@ -43,4 +43,32 @@ public class AdminDaoImpl implements AdminDao {
         }
         return admins;
     }
+
+    @Override
+    public int addAdminss(Admin admin) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            int code = runner.update("insert into admin(email, pwd, nickname) values(? , ? , ?)",
+                    admin.getEmail(),
+                    admin.getNickname(),
+                    admin.getPwd());
+            return code;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public Admin deleteAdmins(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Admin admin = new Admin();
+        try {
+            runner.update("delete from admin where id = ?", id);
+            admin.setId(id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return admin;
+    }
 }
