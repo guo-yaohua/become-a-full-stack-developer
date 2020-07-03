@@ -2196,27 +2196,28 @@ Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的
 <img src="./img/p29.png">
 </div>
 
-第五步：添加 Tomcat。
-<div align="center">
-<img src="./img/p30.png">
-</div>
+第五步：pom.xml 添加配置。  
+配置 jar 依赖：
+```xml
+<packaging>war</packaging>
+```
 
-第六步：pom.xml 添加配置。  
-配置 servlet：
+配置 servlet 依赖：
 ```xml
 <dependencies>
     <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
         <version>3.1.0</version>
+        <scope>provided</scope>
     </dependency>
 </dependencies>
 ```
-配置 jar 依赖：
-```xml
-<packaging>war</packaging>
-```
 
+第六步：添加 Tomcat。
+<div align="center">
+<img src="./img/p30.png">
+</div>
 
 第七步：设置 JDK。
 <div align="center">

@@ -1,7 +1,13 @@
-package com.gyh.project1.controller;
+package com.gyh.mall.controller;
 
+import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
-import com.gyh.project1.model.bo.AdminLoginBO;
+import com.gyh.mall.model.Admin;
+import com.gyh.mall.model.Result;
+import com.gyh.mall.model.bo.AdminLoginBO;
+import com.gyh.mall.model.vo.AdminLoginVo;
+import com.gyh.mall.service.AdminService;
+import com.gyh.mall.service.AdminServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -11,9 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/api/admin/admin/*")
 public class AdminServlet extends HttpServlet {
+
+    private AdminService adminService = new AdminServiceImpl();
 
     Gson gson = new Gson();
 
@@ -37,25 +46,48 @@ public class AdminServlet extends HttpServlet {
      * @param response
      */
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // 取出请求参数
-        ServletInputStream inputStream = request.getInputStream();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        // 读取请求体，返回 json 字符串
+        String requestBody = HttpUtils.getRequestBody(request);
 
-        byte[] bytes = new byte[1024];
-        int length = 0;
-        while ((length = inputStream.read(bytes)) != -1) {
-            outputStream.write(bytes, 0 , length);
-        }
-
-        // json 字符串 -> Java 对象
-        String requestBody = outputStream.toString("utf-8");
+        // json 转 Java 对象
         AdminLoginBO loginBO = gson.fromJson(requestBody, AdminLoginBO.class);
 
+        Admin login = adminService.login(loginBO);
 
+        if (login != null) {
+            AdminLoginVo loginVo = new AdminLoginVo();
+            loginVo.setToken(login.getNickname());
+            loginVo.setName(login.getNickname());
+            response.getWriter().println(gson.toJson(Result.ok(loginVo)));
+        } else {
+            response.getWriter().println(Result.error("用户名或者密码错误"));
+        }
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 解析请求
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/admin/admin/", "");
 
+        // 获取所有管理员信息
+        if ("allAdmins".equals(action)) {
+            allAdmins(request, response);
+        }
+    }
+
+    /**
+     * 显示所有的 admin 信息
+     * 1. 查询数据库，返回数据
+     * 2. 做出响应
+     * @param request
+     * @param response
+     */
+    private void allAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Admin> adminList = adminService.allAdmins();
+        Result result = new Result();
+        result.setCode(0);
+        result.setData(adminList);
+        response.getWriter().println(gson.toJson(result));
     }
 }

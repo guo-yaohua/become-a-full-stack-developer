@@ -1,4 +1,4 @@
-package com.gyh.project1.model.bo;
+package com.gyh.mall.model.bo;
 
 /**
  * bo:business object
@@ -26,5 +26,13 @@ public class AdminLoginBO {
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
+    }
+
+    @Override
+    public String toString() {
+        return "AdminLoginBO{" +
+                "email='" + email + '\'' +
+                ", pwd='" + pwd + '\'' +
+                '}';
     }
 }

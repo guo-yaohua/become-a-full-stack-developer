@@ -1,4 +1,4 @@
-package com.gyh.project1.filter;
+package com.gyh.mall.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
