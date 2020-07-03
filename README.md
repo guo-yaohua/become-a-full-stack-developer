@@ -6,23 +6,23 @@
 
 ## 目录
 
-- [零、计算机基础](./零、计算机基础/README.md)
+- [零、计算机基础](./docs/零、计算机基础/README.md)
 
-- [一、Java入门](./一、Java入门/REAMDE.md)
+- [一、Java入门](./docs/一、Java入门/REAMDE.md)
 
-- [二、面向对象](./二、面向对象/README.md)
+- [二、面向对象](./docs/二、面向对象/README.md)
 
-- [三、高级特性](./三、高级特性/README.md)
+- [三、高级特性](./docs/三、高级特性/README.md)
 
-- [四、高级类型](./四、高级类型/README.md)
+- [四、高级类型](./docs/四、高级类型/README.md)
 
-- [五、数据结构](./五、数据结构/README.md)
+- [五、数据结构](./docs/五、数据结构/README.md)
 
-- [六、数据库](./六、数据库/README.md)
+- [六、数据库](./docs/六、数据库/README.md)
 
-- [七、前端基础](./七、前端基础/README.md)
+- [七、前端基础](./docs/七、前端基础/README.md)
 
-- [八、JavaWeb](./八、JavaWeb/README.md)
+- [八、JavaWeb](./docs/八、JavaWeb/README.md)
 
 - [九、Spring]()
 
