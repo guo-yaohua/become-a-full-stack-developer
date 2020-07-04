@@ -20,7 +20,6 @@ public class AdminDaoImpl implements AdminDao {
     public Admin login(Admin admin) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         Admin query = null;
-        String s = admin.getEmail();
         try {
             query = runner.query("select * from admin where email = ? and pwd = ?",
                     new BeanHandler<>(Admin.class),
@@ -32,6 +31,10 @@ public class AdminDaoImpl implements AdminDao {
         return query;
     }
 
+    /**
+     * 查询所有管理员，返回 adminList
+     * @return
+     */
     @Override
     public List<Admin> allAdmins() {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -44,14 +47,19 @@ public class AdminDaoImpl implements AdminDao {
         return admins;
     }
 
+    /**
+     * 添加管理员，返回添加的 admin 对象
+     * @param admin
+     * @return
+     */
     @Override
     public int addAdminss(Admin admin) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
             int code = runner.update("insert into admin(email, pwd, nickname) values(? , ? , ?)",
                     admin.getEmail(),
-                    admin.getNickname(),
-                    admin.getPwd());
+                    admin.getPwd(),
+                    admin.getNickname());
             return code;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -59,6 +67,11 @@ public class AdminDaoImpl implements AdminDao {
         return 0;
     }
 
+    /**
+     * 删除管理员，返回删除的 admin 对象（仅包含 id 信息）
+     * @param id
+     * @return
+     */
     @Override
     public Admin deleteAdmins(int id) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -70,5 +83,45 @@ public class AdminDaoImpl implements AdminDao {
             throwables.printStackTrace();
         }
         return admin;
+    }
+
+    /**
+     * 更新管理员信息，返回数据变动数目
+     * @param admin
+     * @return
+     */
+    @Override
+    public int updateAdminss(Admin admin) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            int code = runner.update("update admin set email = ?, nickname = ?, pwd = ? WHERE id = ?",
+                    admin.getEmail(),
+                    admin.getNickname(),
+                    admin.getPwd(),
+                    admin.getId());
+            return code;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * 获取管理员信息，返回 admin
+     * @param id
+     * @return
+     */
+    @Override
+    public Admin getAdminsInfo(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Admin query = null;
+        try {
+            query = runner.query("select * from admin where id = ?",
+                    new BeanHandler<>(Admin.class),
+                    id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return query;
     }
 }

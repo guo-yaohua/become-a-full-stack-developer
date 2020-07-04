@@ -1,6 +1,7 @@
 package com.gyh.mall.controller;
 
 import com.gyh.mall.model.bo.AdminAddBo;
+import com.gyh.mall.model.bo.AdminUpdateBo;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
@@ -35,13 +36,38 @@ public class AdminServlet extends HttpServlet {
             login(request, response);
         }
 
-        // 解析请求
-        String action2 = requestURI.replace("/api/admin/", "");
-
         // 添加管理员
         if ("addAdminss".equals(action)) {
             addAdminss(request, response);
         }
+
+        // 修改管理员信息
+        if ("updateAdminss".equals(action)) {
+            updateAdminss(request, response);
+        }
+    }
+
+    /**
+     * 修改管理员信息
+     * 1. 获取管理员信息
+     * 2. 修改管理员信息
+     * @param request
+     * @param response
+     */
+    private void updateAdminss(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 读取请求体，返回 json 字符串
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        // json 转 Java 对象
+        AdminUpdateBo updateBo = gson.fromJson(requestBody, AdminUpdateBo.class);
+
+        int code = adminService.updateAdminss(updateBo);
+        if (code == 0) {
+            response.getWriter().println(Result.error("修改失败"));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok(updateBo)));
+        }
+
     }
 
     /**
@@ -61,7 +87,6 @@ public class AdminServlet extends HttpServlet {
             response.getWriter().println(Result.error("添加失败"));
         } else {
             response.getWriter().println(gson.toJson(Result.ok(addBo)));
-            // response.setHeader("refresh","1;url=" + request.getContextPath() + "/admin.html#/backstage/editAdmins");
         }
     }
 
@@ -106,6 +131,28 @@ public class AdminServlet extends HttpServlet {
         // 删除管理员
         if ("deleteAdmins".equals(action)) {
             deleteAdmins(request, response);
+        }
+
+        // 获取管理员信息
+        if ("getAdminsInfo".equals(action)) {
+            getAdminsInfo(request, response);
+        }
+    }
+
+    /**
+     * 获取管理员信息
+     * @param request
+     * @param response
+     */
+    private void getAdminsInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        Admin admin = adminService.getAdminsInfo(id);
+
+        if (admin != null) {
+            response.getWriter().println(gson.toJson(Result.ok(admin)));
+        } else {
+            response.getWriter().println(Result.error("获取失败"));
         }
     }
 

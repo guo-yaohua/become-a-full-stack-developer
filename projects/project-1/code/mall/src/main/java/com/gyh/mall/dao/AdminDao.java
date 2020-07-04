@@ -12,4 +12,8 @@ public interface AdminDao {
     int addAdminss(Admin admin);
 
     Admin deleteAdmins(int id);
+
+    int updateAdminss(Admin admin);
+
+    Admin getAdminsInfo(int id);
 }
