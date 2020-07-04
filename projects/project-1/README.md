@@ -42,12 +42,14 @@
 
 ### 3.2 undefined
 
-情形 1：vue 界面显示 undefined。
+情形 1：vue 界面显示 `xxx undefined`。
 
 可能情况：服务端的变量名书写有误，导致代码能正常运行，但是数据传输时 vue 找不到对应的 key。  
-例如：服务端的 message 错误书写为 massage。
+示例 1：服务端的 message 错误书写为 massage。
 
-情形 2：点击功能后显示 undefined。  
+情形 2：点击功能后显示 `undefined`。  
 
 可能情况：servlet 的 url 书写有误。  
-例如：将 allUser 功能书写在 /admin/admin/* 此 servlrt 中。
+- 示例 1：将 allUser 功能书写在 /admin/admin/* 此 servlrt 中。
+
+- 示例 2：将应该在 get 请求中的方法写入 post。
