@@ -1,5 +1,6 @@
 package com.gyh.mall.controller;
 
+import com.gyh.mall.model.User;
 import com.gyh.mall.model.bo.*;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
@@ -210,9 +211,8 @@ public class AdminServlet extends HttpServlet {
      */
     private void allAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Admin> adminList = adminService.allAdmins();
-        Result result = new Result();
-        result.setCode(0);
-        result.setData(adminList);
-        response.getWriter().println(gson.toJson(result));
+        response.getWriter().println(gson.toJson(Result.ok(adminList)));
     }
+
+
 }

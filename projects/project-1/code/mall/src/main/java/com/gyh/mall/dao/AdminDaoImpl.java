@@ -2,6 +2,7 @@ package com.gyh.mall.dao;
 
 import com.alibaba.druid.util.StringUtils;
 import com.gyh.mall.model.Admin;
+import com.gyh.mall.model.User;
 import com.gyh.mall.model.bo.AdminChangePwdBo;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -150,6 +151,11 @@ public class AdminDaoImpl implements AdminDao {
         return null;
     }
 
+    /**
+     * 修改管理员密码
+     * @param changePwdBo
+     * @return
+     */
     @Override
     public int changePwd(AdminChangePwdBo changePwdBo) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());

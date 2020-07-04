@@ -1,6 +1,7 @@
 package com.gyh.mall.service;
 
 import com.gyh.mall.model.Admin;
+import com.gyh.mall.model.User;
 import com.gyh.mall.model.bo.*;
 
 import java.util.List;
