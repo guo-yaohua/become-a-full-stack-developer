@@ -1,6 +1,7 @@
 package com.gyh.mall.controller;
 
 import com.gyh.mall.model.bo.AdminAddBo;
+import com.gyh.mall.model.bo.AdminSearchBo;
 import com.gyh.mall.model.bo.AdminUpdateBo;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
@@ -34,17 +35,30 @@ public class AdminServlet extends HttpServlet {
         // 登录
         if ("login".equals(action)) {
             login(request, response);
-        }
-
-        // 添加管理员
-        if ("addAdminss".equals(action)) {
+        } else if ("addAdminss".equals(action)) {  // 添加管理员
             addAdminss(request, response);
-        }
-
-        // 修改管理员信息
-        if ("updateAdminss".equals(action)) {
+        } else if ("updateAdminss".equals(action)) {   // 修改管理员信息
             updateAdminss(request, response);
+        } else if ("getSearchAdmins".equals(action)) {  // 搜索管理员
+            getSearchAdmins(request, response);
         }
+    }
+
+    /**
+     * 搜索管理员
+     * @param request
+     * @param response
+     */
+    private void getSearchAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 读取请求体，返回 json 字符串
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        // json 转 Java 对象
+        AdminSearchBo searchBo = gson.fromJson(requestBody, AdminSearchBo.class);
+
+        List<Admin> admins = adminService.getSearchAdmins(searchBo);
+
+        response.getWriter().println(gson.toJson(Result.ok(admins)));
     }
 
     /**

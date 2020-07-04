@@ -5,6 +5,7 @@ import com.gyh.mall.dao.AdminDaoImpl;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.bo.AdminAddBo;
 import com.gyh.mall.model.bo.AdminLoginBo;
+import com.gyh.mall.model.bo.AdminSearchBo;
 import com.gyh.mall.model.bo.AdminUpdateBo;
 
 import java.util.List;
@@ -55,5 +56,13 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public Admin getAdminsInfo(int id) {
         return adminDao.getAdminsInfo(id);
+    }
+
+    @Override
+    public List<Admin> getSearchAdmins(AdminSearchBo searchBo) {
+        Admin admin = new Admin();
+        admin.setNickname(searchBo.getNickname());
+        admin.setEmail(searchBo.getEmail());
+        return adminDao.getSearchAdmins(admin);
     }
 }

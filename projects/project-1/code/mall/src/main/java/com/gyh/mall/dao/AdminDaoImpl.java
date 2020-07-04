@@ -1,5 +1,6 @@
 package com.gyh.mall.dao;
 
+import com.alibaba.druid.util.StringUtils;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -7,7 +8,10 @@ import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminDaoImpl implements AdminDao {
 
@@ -123,5 +127,47 @@ public class AdminDaoImpl implements AdminDao {
             e.printStackTrace();
         }
         return query;
+    }
+
+    /**
+     * 查询管理员
+     * @param admin
+     * @return
+     */
+    @Override
+    public List<Admin> getSearchAdmins(Admin admin) {
+        Map<String, Object> result = getDynamicSql(admin);
+        String sql = (String) result.get("sql");
+        List<String> params = (List<String>) result.get("params");
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            List<Admin> admins = runner.query(sql, new BeanListHandler<Admin>(Admin.class), params.toArray());
+            return admins;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 动态 sql 思想
+     * @param admin
+     * @return
+     */
+    private Map<String, Object> getDynamicSql(Admin admin) {
+        String base = "select * from admin where 1 = 1";
+        List<String> params = new ArrayList<>();
+        if (!StringUtils.isEmpty(admin.getEmail())) {
+            base = base + " and email like ?";
+            params.add("%" + admin.getEmail() + "%");
+        }
+        if (!StringUtils.isEmpty(admin.getNickname())) {
+            base = base + " and nickname like ?";
+            params.add("%" + admin.getNickname() + "%");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("sql", base);
+        map.put("params", params);
+        return map;
     }
 }

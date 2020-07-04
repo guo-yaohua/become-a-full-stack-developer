@@ -16,4 +16,6 @@ public interface AdminDao {
     int updateAdminss(Admin admin);
 
     Admin getAdminsInfo(int id);
+
+    List<Admin> getSearchAdmins(Admin admin);
 }
