@@ -3,10 +3,7 @@ package com.gyh.mall.service;
 import com.gyh.mall.dao.AdminDao;
 import com.gyh.mall.dao.AdminDaoImpl;
 import com.gyh.mall.model.Admin;
-import com.gyh.mall.model.bo.AdminAddBo;
-import com.gyh.mall.model.bo.AdminLoginBo;
-import com.gyh.mall.model.bo.AdminSearchBo;
-import com.gyh.mall.model.bo.AdminUpdateBo;
+import com.gyh.mall.model.bo.*;
 
 import java.util.List;
 
@@ -64,5 +61,10 @@ public class AdminServiceImpl implements AdminService{
         admin.setNickname(searchBo.getNickname());
         admin.setEmail(searchBo.getEmail());
         return adminDao.getSearchAdmins(admin);
+    }
+
+    @Override
+    public int changePwd(AdminChangePwdBo changePwdBo) {
+        return adminDao.changePwd(changePwdBo);
     }
 }

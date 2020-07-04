@@ -2,6 +2,7 @@ package com.gyh.mall.dao;
 
 import com.alibaba.druid.util.StringUtils;
 import com.gyh.mall.model.Admin;
+import com.gyh.mall.model.bo.AdminChangePwdBo;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -98,7 +99,7 @@ public class AdminDaoImpl implements AdminDao {
     public int updateAdminss(Admin admin) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
-            int code = runner.update("update admin set email = ?, nickname = ?, pwd = ? WHERE id = ?",
+            int code = runner.update("update admin set email = ?, nickname = ?, pwd = ? where id = ?",
                     admin.getEmail(),
                     admin.getNickname(),
                     admin.getPwd(),
@@ -147,6 +148,20 @@ public class AdminDaoImpl implements AdminDao {
             throwables.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public int changePwd(AdminChangePwdBo changePwdBo) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            return runner.update("update admin set pwd = ? where nickname = ? and pwd = ?",
+                    changePwdBo.getNewPwd(),
+                    changePwdBo.getAdminToken(),
+                    changePwdBo.getOldPwd());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
     }
 
     /**

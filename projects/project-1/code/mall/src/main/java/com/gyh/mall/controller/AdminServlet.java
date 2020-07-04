@@ -1,13 +1,10 @@
 package com.gyh.mall.controller;
 
-import com.gyh.mall.model.bo.AdminAddBo;
-import com.gyh.mall.model.bo.AdminSearchBo;
-import com.gyh.mall.model.bo.AdminUpdateBo;
+import com.gyh.mall.model.bo.*;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.bo.AdminLoginBo;
 import com.gyh.mall.model.vo.AdminLoginVo;
 import com.gyh.mall.service.AdminService;
 import com.gyh.mall.service.AdminServiceImpl;
@@ -32,8 +29,8 @@ public class AdminServlet extends HttpServlet {
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/admin/", "");
 
-        // 登录
-        if ("login".equals(action)) {
+        // action
+        if ("login".equals(action)) {   // 登录
             login(request, response);
         } else if ("addAdminss".equals(action)) {  // 添加管理员
             addAdminss(request, response);
@@ -41,6 +38,30 @@ public class AdminServlet extends HttpServlet {
             updateAdminss(request, response);
         } else if ("getSearchAdmins".equals(action)) {  // 搜索管理员
             getSearchAdmins(request, response);
+        } else if ("changePwd".equals(action)) {    // 修改密码
+            changePwd(request, response);
+        }
+    }
+
+    /**
+     * 修改当前管理员密码
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void changePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 读取请求体，返回 json 字符串
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        // json 转 Java 对象
+        AdminChangePwdBo changePwdBo = gson.fromJson(requestBody, AdminChangePwdBo.class);
+
+        int code = adminService.changePwd(changePwdBo);
+
+        if (code == 0) {
+            response.getWriter().println(Result.error("修改失败"));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok(changePwdBo)));
         }
     }
 
@@ -137,18 +158,12 @@ public class AdminServlet extends HttpServlet {
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/admin/", "");
 
-        // 获取所有管理员信息
-        if ("allAdmins".equals(action)) {
+        // action
+        if ("allAdmins".equals(action)) {   // 获取所有管理员信息
             allAdmins(request, response);
-        }
-
-        // 删除管理员
-        if ("deleteAdmins".equals(action)) {
+        } else if ("deleteAdmins".equals(action)) {    // 删除管理员
             deleteAdmins(request, response);
-        }
-
-        // 获取管理员信息
-        if ("getAdminsInfo".equals(action)) {
+        } else if ("getAdminsInfo".equals(action)) {   // 获取管理员信息
             getAdminsInfo(request, response);
         }
     }
