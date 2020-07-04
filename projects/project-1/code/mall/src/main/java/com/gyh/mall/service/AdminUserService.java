@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AdminUserService {
     List<User> allUser();
+
+    void deleteUser(int id);
 }

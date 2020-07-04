@@ -18,4 +18,9 @@ public class AdminUserServiceImpl implements AdminUserService{
     public List<User> allUser() {
         return adminUserDao.allUser();
     }
+
+    @Override
+    public void deleteUser(int id) {
+        adminUserDao.deleteUser(id);
+    }
 }

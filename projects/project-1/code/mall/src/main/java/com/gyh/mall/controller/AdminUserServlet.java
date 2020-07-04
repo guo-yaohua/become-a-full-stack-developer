@@ -1,6 +1,7 @@
 package com.gyh.mall.controller;
 
 import com.google.gson.Gson;
+import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
 import com.gyh.mall.model.User;
 import com.gyh.mall.service.AdminUserService;
@@ -21,14 +22,18 @@ public class AdminUserServlet extends HttpServlet {
     Gson gson = new Gson();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        // 解析请求
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/admin/user/", "");
     }
+
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 解析请求
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/user/", "");
 
+        // action
         if ("allUser".equals(action)) {  // 获取所有用户
             allUser(request, response);
         } else if ("deleteUser".equals(action)) {   // 删除指定用户
@@ -41,8 +46,11 @@ public class AdminUserServlet extends HttpServlet {
      * @param request
      * @param response
      */
-    private void deleteUser(HttpServletRequest request, HttpServletResponse response) {
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
 
+        adminUserService.deleteUser(id);
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

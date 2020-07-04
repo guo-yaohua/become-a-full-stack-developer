@@ -195,11 +195,8 @@ public class AdminServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         Admin admin = adminService.deleteAdmins(id);
-        
-        Result result = new Result();
-        result.setCode(0);
-        result.setData(admin);
-        response.getWriter().println(gson.toJson(result));
+
+        response.getWriter().println(gson.toJson(Result.ok(admin)));
     }
 
     /**

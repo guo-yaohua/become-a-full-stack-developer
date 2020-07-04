@@ -9,6 +9,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AdminUserDaoImpl implements AdminUserDao{
+
+    /**
+     * 获取全部用户
+     * @return
+     */
     @Override
     public List<User> allUser() {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -19,5 +24,20 @@ public class AdminUserDaoImpl implements AdminUserDao{
             throwables.printStackTrace();
         }
         return users;
+    }
+
+    /**
+     * 删除指定用户
+     * @param id
+     * @return
+     */
+    @Override
+    public void deleteUser(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("delete from user where id = ?", id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }
