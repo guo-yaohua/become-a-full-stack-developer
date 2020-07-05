@@ -8,4 +8,6 @@ public interface AdminUserService {
     List<User> allUser();
 
     void deleteUser(int id);
+
+    List<User> searchUser(String word);
 }

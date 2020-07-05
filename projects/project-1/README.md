@@ -12,7 +12,7 @@
     - /admin/admin/login：管理员登录
     - /admin/admin/addAdminss：添加管理员
     - /admin/admin/updateAdminss：更新管理员信息
-    - /admin/admin/getSearchAdmins：管理员查询
+    - /admin/admin/getSearchAdmins：搜索管理员
     - /admin/admin/changePwd：修改当前管理员密码
     - **↑ post ↓ get**
     - /admin/admin/allAdmins：获取全部管理员
@@ -23,6 +23,7 @@
     - **↑ post ↓ get**
     - /admin/user/allUser：获取全部用户
     - /admin/user/deleteUser：删除指定用户
+    - /admin/user/searchUser：搜索用户
 
 /mall：
 - /mall/user：

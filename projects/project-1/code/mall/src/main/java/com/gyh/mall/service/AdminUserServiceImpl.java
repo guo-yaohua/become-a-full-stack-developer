@@ -23,4 +23,9 @@ public class AdminUserServiceImpl implements AdminUserService{
     public void deleteUser(int id) {
         adminUserDao.deleteUser(id);
     }
+
+    @Override
+    public List<User> searchUser(String word) {
+        return adminUserDao.searchUser(word);
+    }
 }

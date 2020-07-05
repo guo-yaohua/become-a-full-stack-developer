@@ -25,6 +25,8 @@ public class AdminUserServlet extends HttpServlet {
         // 解析请求
         String requestURI = request.getRequestURI();
         String action = requestURI.replace("/api/admin/user/", "");
+
+
     }
 
 
@@ -38,7 +40,22 @@ public class AdminUserServlet extends HttpServlet {
             allUser(request, response);
         } else if ("deleteUser".equals(action)) {   // 删除指定用户
             deleteUser(request, response);
+        } else if ("searchUser".equals(action)) {   // 搜索用户
+            searchUser(request, response);
         }
+    }
+
+    /**
+     * 搜索用户
+     * @param request
+     * @param response
+     */
+    private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String word = request.getParameter("word");
+
+        List<User> users = adminUserService.searchUser(word);
+
+        response.getWriter().println(gson.toJson(Result.ok(users)));
     }
 
     /**

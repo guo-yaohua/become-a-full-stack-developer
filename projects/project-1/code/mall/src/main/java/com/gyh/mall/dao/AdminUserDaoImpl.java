@@ -40,4 +40,18 @@ public class AdminUserDaoImpl implements AdminUserDao{
             throwables.printStackTrace();
         }
     }
+
+    @Override
+    public List<User> searchUser(String word) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<User> users = null;
+        try {
+            users = runner.query("select * from user where nickname like ?",
+                    new BeanListHandler<User>(User.class),
+                    "%" + word + "%");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return users;
+    }
 }
