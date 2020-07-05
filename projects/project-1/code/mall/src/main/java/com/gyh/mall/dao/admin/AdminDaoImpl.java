@@ -1,9 +1,8 @@
-package com.gyh.mall.dao;
+package com.gyh.mall.dao.admin;
 
 import com.alibaba.druid.util.StringUtils;
 import com.gyh.mall.model.Admin;
-import com.gyh.mall.model.User;
-import com.gyh.mall.model.bo.AdminChangePwdBo;
+import com.gyh.mall.model.bo.admin.AdminChangePwdBo;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;

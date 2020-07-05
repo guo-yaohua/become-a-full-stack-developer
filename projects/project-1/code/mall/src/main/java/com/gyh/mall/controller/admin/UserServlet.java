@@ -1,11 +1,10 @@
-package com.gyh.mall.controller;
+package com.gyh.mall.controller.admin;
 
 import com.google.gson.Gson;
-import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
 import com.gyh.mall.model.User;
-import com.gyh.mall.service.AdminUserService;
-import com.gyh.mall.service.AdminUserServiceImpl;
+import com.gyh.mall.service.admin.UserService;
+import com.gyh.mall.service.admin.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,10 +15,11 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/api/admin/user/*")
-public class AdminUserServlet extends HttpServlet {
+public class UserServlet extends HttpServlet {
 
-    private AdminUserService adminUserService = new AdminUserServiceImpl();
-    Gson gson = new Gson();
+    private UserService userService = new UserServiceImpl();
+
+    private Gson gson = new Gson();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 解析请求
@@ -53,7 +53,7 @@ public class AdminUserServlet extends HttpServlet {
     private void searchUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String word = request.getParameter("word");
 
-        List<User> users = adminUserService.searchUser(word);
+        List<User> users = userService.searchUser(word);
 
         response.getWriter().println(gson.toJson(Result.ok(users)));
     }
@@ -66,7 +66,7 @@ public class AdminUserServlet extends HttpServlet {
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameter("id"));
 
-        adminUserService.deleteUser(id);
+        userService.deleteUser(id);
         response.getWriter().println(gson.toJson(Result.ok()));
     }
 
@@ -76,7 +76,7 @@ public class AdminUserServlet extends HttpServlet {
      * @param response
      */
     private void allUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<User> users = adminUserService.allUser();
+        List<User> users = userService.allUser();
         response.getWriter().println(gson.toJson(Result.ok(users)));
     }
 }

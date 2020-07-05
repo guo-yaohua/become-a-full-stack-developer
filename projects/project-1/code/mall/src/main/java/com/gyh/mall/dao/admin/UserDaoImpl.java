@@ -1,4 +1,4 @@
-package com.gyh.mall.dao;
+package com.gyh.mall.dao.admin;
 
 import com.gyh.mall.model.User;
 import com.gyh.mall.utils.DruidUtils;
@@ -8,7 +8,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AdminUserDaoImpl implements AdminUserDao{
+public class UserDaoImpl implements UserDao {
 
     /**
      * 获取全部用户

@@ -1,22 +1,12 @@
-package com.gyh.mall.model.bo;
+package com.gyh.mall.model.bo.admin;
 
-public class AdminUpdateBo {
-
-    private Integer id;
+public class AdminAddBo {
 
     private String email;
 
     private String nickname;
 
     private String pwd;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;

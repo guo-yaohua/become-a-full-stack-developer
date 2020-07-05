@@ -1,13 +1,13 @@
-package com.gyh.mall.service;
+package com.gyh.mall.service.mall;
 
-import com.gyh.mall.dao.MallUserDao;
-import com.gyh.mall.dao.MallUserDaoImpl;
+import com.gyh.mall.dao.mall.UserDao;
+import com.gyh.mall.dao.mall.UserDaoImpl;
 import com.gyh.mall.model.User;
-import com.gyh.mall.model.bo.MallUserSignupBo;
+import com.gyh.mall.model.bo.mall.MallUserSignupBo;
 
-public class MallUserServiceImpl implements MallUserService {
+public class UserServiceImpl implements UserService {
 
-    private MallUserDao mallUserDao = new MallUserDaoImpl();
+    private UserDao userDao = new UserDaoImpl();
 
     @Override
     public int signup(MallUserSignupBo signupBo) {
@@ -18,6 +18,6 @@ public class MallUserServiceImpl implements MallUserService {
         user.setRecipient(signupBo.getRecipient());
         user.setAddress(signupBo.getAddress());
         user.setPhone(signupBo.getPhone());
-        return mallUserDao.signup(user);
+        return userDao.signup(user);
     }
 }

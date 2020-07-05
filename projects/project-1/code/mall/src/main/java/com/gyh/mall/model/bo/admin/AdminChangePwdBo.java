@@ -1,4 +1,4 @@
-package com.gyh.mall.model.bo;
+package com.gyh.mall.model.bo.admin;
 
 public class AdminChangePwdBo {
 

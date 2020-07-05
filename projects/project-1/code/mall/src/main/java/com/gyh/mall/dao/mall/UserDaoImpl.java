@@ -1,4 +1,4 @@
-package com.gyh.mall.dao;
+package com.gyh.mall.dao.mall;
 
 import com.gyh.mall.model.User;
 import com.gyh.mall.utils.DruidUtils;
@@ -6,7 +6,7 @@ import org.apache.commons.dbutils.QueryRunner;
 
 import java.sql.SQLException;
 
-public class MallUserDaoImpl implements MallUserDao {
+public class UserDaoImpl implements UserDao {
 
     /**
      * 用户注册

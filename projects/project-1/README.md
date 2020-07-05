@@ -7,8 +7,8 @@
 
 ## 2 已实现功能
 
-/admin：
-- /admin/admin：
+/admin：后台管理
+- /admin/admin：管理管理员
     - /admin/admin/login：管理员登录
     - /admin/admin/addAdminss：添加管理员
     - /admin/admin/updateAdminss：更新管理员信息
@@ -19,14 +19,14 @@
     - /admin/admin/deleteAdmins：删除指定管理员
     - /admin/admin/getAdminsInfo：获取当前管理员信息
 
-- /admin/user：
+- /admin/user：管理用户
     - **↑ post ↓ get**
     - /admin/user/allUser：获取全部用户
     - /admin/user/deleteUser：删除指定用户
     - /admin/user/searchUser：搜索用户
 
-/mall：
-- /mall/user：
+/mall：前台界面
+- /mall/user：用户操作
   - /mall/user/signup：用户注册
   - **↑ post ↓ get**
 

@@ -1,11 +1,11 @@
-package com.gyh.mall.controller;
+package com.gyh.mall.controller.mall;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.bo.MallUserSignupBo;
-import com.gyh.mall.model.vo.MallUserSignupVo;
-import com.gyh.mall.service.MallUserService;
-import com.gyh.mall.service.MallUserServiceImpl;
+import com.gyh.mall.model.bo.mall.MallUserSignupBo;
+import com.gyh.mall.model.vo.mall.MallUserSignupVo;
+import com.gyh.mall.service.mall.UserService;
+import com.gyh.mall.service.mall.UserServiceImpl;
 import com.gyh.mall.utils.HttpUtils;
 
 import javax.servlet.ServletException;
@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/api/mall/user/*")
-public class MallUserServlet extends HttpServlet {
+public class UserServlet extends HttpServlet {
 
-    private MallUserService mallUserService = new MallUserServiceImpl();
+    private UserService userService = new UserServiceImpl();
 
     Gson gson = new Gson();
 
@@ -44,7 +44,7 @@ public class MallUserServlet extends HttpServlet {
 
         MallUserSignupBo signupBo = gson.fromJson(requestBody, MallUserSignupBo.class);
 
-        int code = mallUserService.signup(signupBo);
+        int code = userService.signup(signupBo);
 
         if (code == 0) {
             response.getWriter().println(Result.error("注册失败"));

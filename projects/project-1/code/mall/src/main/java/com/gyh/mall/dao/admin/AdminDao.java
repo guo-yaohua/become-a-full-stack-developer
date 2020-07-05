@@ -1,8 +1,7 @@
-package com.gyh.mall.dao;
+package com.gyh.mall.dao.admin;
 
 import com.gyh.mall.model.Admin;
-import com.gyh.mall.model.User;
-import com.gyh.mall.model.bo.AdminChangePwdBo;
+import com.gyh.mall.model.bo.admin.AdminChangePwdBo;
 
 import java.util.List;
 

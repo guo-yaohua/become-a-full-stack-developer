@@ -1,4 +1,4 @@
-package com.gyh.mall.model.vo;
+package com.gyh.mall.model.vo.mall;
 
 public class MallUserSignupVo {
     private String name;

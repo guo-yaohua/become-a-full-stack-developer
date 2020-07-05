@@ -1,10 +1,9 @@
-package com.gyh.mall.service;
+package com.gyh.mall.service.admin;
 
-import com.gyh.mall.dao.AdminDao;
-import com.gyh.mall.dao.AdminDaoImpl;
+import com.gyh.mall.dao.admin.AdminDao;
+import com.gyh.mall.dao.admin.AdminDaoImpl;
 import com.gyh.mall.model.Admin;
-import com.gyh.mall.model.User;
-import com.gyh.mall.model.bo.*;
+import com.gyh.mall.model.bo.admin.*;
 
 import java.util.List;
 

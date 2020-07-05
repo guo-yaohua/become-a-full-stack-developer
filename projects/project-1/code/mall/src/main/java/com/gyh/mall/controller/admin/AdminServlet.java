@@ -1,14 +1,13 @@
-package com.gyh.mall.controller;
+package com.gyh.mall.controller.admin;
 
-import com.gyh.mall.model.User;
-import com.gyh.mall.model.bo.*;
+import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.vo.AdminLoginVo;
-import com.gyh.mall.service.AdminService;
-import com.gyh.mall.service.AdminServiceImpl;
+import com.gyh.mall.model.vo.admin.AdminLoginVo;
+import com.gyh.mall.service.admin.AdminService;
+import com.gyh.mall.service.admin.AdminServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +22,7 @@ public class AdminServlet extends HttpServlet {
 
     private AdminService adminService = new AdminServiceImpl();
 
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 解析请求
