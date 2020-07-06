@@ -2,8 +2,10 @@ package com.gyh.mall.controller.admin;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
+import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.GoodsAddBO;
+import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -40,6 +42,28 @@ public class GoodsServlet extends HttpServlet {
             addGoods(request, response);
         } else if ("addType".equals(action)) {  // 添加类目
             addType(request, response);
+        } else if ("addSpec".equals(action)) {  // 添加商品规格
+            addSpec(request, response);
+        }
+    }
+
+    /**
+     * 添加商品规格
+     * 注意将 规格名和商品id 组合设为 unique
+     * @param request
+     * @param response
+     */
+    private void addSpec(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        SpecBO specBO = gson.fromJson(requestBody, SpecBO.class);
+
+        int code = goodsService.addSpec(specBO);
+
+        if (code == 0) {
+            response.getWriter().println(gson.toJson(Result.error("规格重复")));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok(specBO)));
         }
     }
 

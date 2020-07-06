@@ -2,6 +2,7 @@ package com.gyh.mall.service.admin;
 
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.GoodsAddBO;
+import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
@@ -18,4 +19,6 @@ public interface GoodsService {
     void addType(TypeBO typeBO);
 
     Map<String, Object> getGoodsInfo(int id);
+
+    int addSpec(SpecBO specBO);
 }

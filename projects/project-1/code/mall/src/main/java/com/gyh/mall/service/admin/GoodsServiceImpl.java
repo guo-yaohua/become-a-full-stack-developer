@@ -77,4 +77,9 @@ public class GoodsServiceImpl implements GoodsService{
     public Map<String, Object> getGoodsInfo(int id) {
         return goodsDao.getGoodsInfo(id);
     }
+
+    @Override
+    public int addSpec(SpecBO specBO) {
+        return goodsDao.addSpec(specBO);
+    }
 }

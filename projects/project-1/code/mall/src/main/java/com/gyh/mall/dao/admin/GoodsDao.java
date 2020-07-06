@@ -3,6 +3,7 @@ package com.gyh.mall.dao.admin;
 import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
+import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -24,4 +25,6 @@ public interface GoodsDao {
     void addType(TypeBO typeBO);
 
     Map<String, Object> getGoodsInfo(int id);
+
+    int addSpec(SpecBO specBO);
 }

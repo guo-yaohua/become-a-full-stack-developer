@@ -3,6 +3,7 @@ package com.gyh.mall.dao.admin;
 import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
+import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.SpecVO;
@@ -127,6 +128,11 @@ public class GoodsDaoImpl implements GoodsDao {
         }
     }
 
+    /**
+     * 返回商品信息
+     * @param id
+     * @return
+     */
     @Override
     public Map<String, Object> getGoodsInfo(int id) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
@@ -149,5 +155,24 @@ public class GoodsDaoImpl implements GoodsDao {
         }
 
         return map;
+    }
+
+    /**
+     * 添加规格
+     * @param specBO
+     */
+    @Override
+    public int addSpec(SpecBO specBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            return runner.update("insert into spec values (null, ?, ?, ?, ?)",
+                    specBO.getSpecName(),
+                    specBO.getStockNum(),
+                    specBO.getUnitPrice(),
+                    specBO.getGoodsId());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
     }
 }
