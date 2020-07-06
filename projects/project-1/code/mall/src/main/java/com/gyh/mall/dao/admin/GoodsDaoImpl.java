@@ -7,6 +7,7 @@ import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.SpecUpdateBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.SpecVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -254,37 +255,37 @@ public class GoodsDaoImpl implements GoodsDao {
     }
 
     /**
-     * 获取某一类目下的所有商品id
+     * 获取某一类目下的所有商品id、img
      * @param typeId
      * @return
      */
     @Override
-    public List<Integer> getGoodsId(int typeId) {
+    public List<GoodsIdAndImgVO> getIdAndImg(int typeId) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
 
-        List<Integer> idList = new ArrayList<>();
+        List<GoodsIdAndImgVO> goodsIdAndImgVOList = new ArrayList<>();
         try {
-            idList = runner.query("select id from goods where typeId = ?",
-                    new BeanListHandler<Integer>(Integer.TYPE),
+            goodsIdAndImgVOList = runner.query("select id, img from goods where typeId = ?",
+                    new BeanListHandler<GoodsIdAndImgVO>(GoodsIdAndImgVO.class),
                     typeId);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return idList;
+        return goodsIdAndImgVOList;
     }
 
     /**
      * 根据 type 返回的 idList，删除 goods 及其规格
-     * @param idList
+     * @param goodsIdAndImgVOList
      */
     @Override
-    public void deleteSpecByType(List<Integer> idList) {
+    public void deleteSpecByType(List<GoodsIdAndImgVO> goodsIdAndImgVOList) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
 
-        for (int id : idList) {
+        for (GoodsIdAndImgVO goodsIdAndImgVO : goodsIdAndImgVOList) {
             try {
-                runner.update("delete from goods where id = ?", id);
-                runner.update("delete from spec where goodsId = ?", id);
+                runner.update("delete from goods where id = ?", goodsIdAndImgVO.getId());
+                runner.update("delete from spec where goodsId = ?", goodsIdAndImgVO.getId());
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

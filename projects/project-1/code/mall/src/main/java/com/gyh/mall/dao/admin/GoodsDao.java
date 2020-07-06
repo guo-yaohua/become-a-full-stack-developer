@@ -7,6 +7,7 @@ import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.SpecUpdateBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
@@ -38,7 +39,7 @@ public interface GoodsDao {
 
     void deleteType(int typeId);
 
-    List<Integer> getGoodsId(int typeId);
+    List<GoodsIdAndImgVO> getIdAndImg(int typeId);
 
-    void deleteSpecByType(List<Integer> idList);
+    void deleteSpecByType(List<GoodsIdAndImgVO> goodsIdAndImgVOList);
 }

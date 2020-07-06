@@ -6,8 +6,10 @@ import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.*;
+import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -120,14 +122,18 @@ public class GoodsServiceImpl implements GoodsService{
     /**
      * 删除指定类目，并删除与其关联的 goods、spec
      * @param typeId
+     * @param domain
      */
     @Override
-    public void deleteType(int typeId) {
+    public void deleteType(int typeId, String domain) {
         goodsDao.deleteType(typeId);
 
-        // 获取该类目下的所有商品 id
-        List<Integer> idList = goodsDao.getGoodsId(typeId);
+        // 获取该类目下的所有商品 id、img
+        List<GoodsIdAndImgVO> goodsIdAndImgVOList = goodsDao.getIdAndImg(typeId);
 
-        goodsDao.deleteSpecByType(idList);
+        // 删除 goods 记录和相关联的 spec
+        goodsDao.deleteSpecByType(goodsIdAndImgVOList);
+
+        // 删除图片
     }
 }

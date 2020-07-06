@@ -175,8 +175,8 @@ public class GoodsServlet extends HttpServlet {
      */
     private void deleteType(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int typeId = Integer.parseInt(request.getParameter("typeId"));
-
-        goodsService.deleteType(typeId);
+        String domain = (String) getServletContext().getAttribute("domain");
+        goodsService.deleteType(typeId, domain);
 
         response.getWriter().println(gson.toJson(Result.ok()));
     }
