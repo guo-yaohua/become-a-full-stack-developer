@@ -1,16 +1,11 @@
 package com.gyh.mall.dao.admin;
 
 import com.gyh.mall.model.Goods;
+import com.gyh.mall.model.Msg;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
-import com.gyh.mall.model.bo.admin.SpecBO;
-import com.gyh.mall.model.bo.admin.SpecDeleteBO;
-import com.gyh.mall.model.bo.admin.SpecUpdateBO;
-import com.gyh.mall.model.bo.admin.TypeBO;
-import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
-import com.gyh.mall.model.vo.admin.GoodsInfoVO;
-import com.gyh.mall.model.vo.admin.SpecVO;
-import com.gyh.mall.model.vo.admin.TypeGoodsVO;
+import com.gyh.mall.model.bo.admin.*;
+import com.gyh.mall.model.vo.admin.*;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -19,10 +14,7 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.math.BigInteger;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GoodsDaoImpl implements GoodsDao {
 
@@ -303,6 +295,94 @@ public class GoodsDaoImpl implements GoodsDao {
         try {
             runner.update("delete from goods where id = ?", id);
             runner.update("delete from spec where goodsId = ?", id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 返回已经回复的留言
+     * @return
+     */
+    @Override
+    public List<MsgReplyVO> repliedMsg() {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<MsgReplyVO> msgReplyVOList = new ArrayList<>();
+        List<Msg> msgList = new ArrayList<>();
+        try {
+            msgList = runner.query("select * from msg where state = 0", new BeanListHandler<Msg>(Msg.class));
+            for (Msg msg : msgList) {
+                GoodsNameVO goods = runner.query("select name from goods where id = ?",
+                        new BeanHandler<GoodsNameVO>(GoodsNameVO.class),
+                        msg.getGoodsId());
+                UserNameVO user = runner.query("select nickname from user where id = ?",
+                        new BeanHandler<UserNameVO>(UserNameVO.class),
+                        msg.getUserId());
+                MsgReplyVO msgReplyVO = new MsgReplyVO(msg.getId(),
+                        msg.getUserId(),
+                        msg.getGoodsId(),
+                        msg.getContent(),
+                        msg.getReplyContent(),
+                        msg.getStatus(),
+                        msg.getCreatetime(),
+                        goods,
+                        user);
+                msgReplyVOList.add(msgReplyVO);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return msgReplyVOList;
+    }
+
+    /**
+     * 返回未得到回复的留言
+     * @return
+     */
+    @Override
+    public List<MsgNoReplyVO> noReplyMsg() {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<MsgNoReplyVO> msgNoReplyVOList = new ArrayList<>();
+        List<Msg> msgList = new ArrayList<>();
+        try {
+            msgList = runner.query("select * from msg where state = 1", new BeanListHandler<Msg>(Msg.class));
+            for (Msg msg : msgList) {
+                GoodsNameVO goods = runner.query("select name from goods where id = ?",
+                        new BeanHandler<GoodsNameVO>(GoodsNameVO.class),
+                        msg.getGoodsId());
+                UserNameVO user = runner.query("select nickname from user where id = ?",
+                        new BeanHandler<UserNameVO>(UserNameVO.class),
+                        msg.getUserId());
+                MsgNoReplyVO msgNoReplyVO = new MsgNoReplyVO(msg.getId(),
+                        msg.getUserId(),
+                        msg.getGoodsId(),
+                        msg.getContent(),
+                        msg.getStatus(),
+                        msg.getCreatetime(),
+                        goods,
+                        user);
+                msgNoReplyVOList.add(msgNoReplyVO);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return msgNoReplyVOList;
+    }
+
+    /**
+     * 回复留言
+     * @param msgReplyBO
+     */
+    @Override
+    public void reply(MsgReplyBO msgReplyBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("update msg set replyContent = ?, state = 0 where id = ?",
+                    msgReplyBO.getContent(),
+                    msgReplyBO.getId());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -3,12 +3,10 @@ package com.gyh.mall.dao.admin;
 import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
-import com.gyh.mall.model.bo.admin.SpecBO;
-import com.gyh.mall.model.bo.admin.SpecDeleteBO;
-import com.gyh.mall.model.bo.admin.SpecUpdateBO;
-import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
-import com.gyh.mall.model.vo.admin.GoodsInfoVO;
+import com.gyh.mall.model.vo.admin.MsgNoReplyVO;
+import com.gyh.mall.model.vo.admin.MsgReplyVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
 import java.util.List;
@@ -44,4 +42,10 @@ public interface GoodsDao {
     void deleteSpecByType(List<GoodsIdAndImgVO> goodsIdAndImgVOList);
 
     void deleteGoods(int id);
+
+    List<MsgReplyVO> repliedMsg();
+
+    List<MsgNoReplyVO> noReplyMsg();
+
+    void reply(MsgReplyBO msgReplyBO);
 }

@@ -38,6 +38,8 @@
   - /admin/goods/getGoodsInfo：获取商品信息
   - /admin/goods/deleteType：删除指定类目，并删除与其关联的 goods、spec
   - /admin/goods/deleteGoods：删除指定商品，及其关联的 spec
+  - /admin/goods/repliedMsg：获取已经回复的消息
+  - /admin/goods/noReplyMsg：获取未得回复的消息
 
 
 /mall：前台界面

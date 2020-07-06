@@ -2,10 +2,10 @@ package com.gyh.mall.controller.admin;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.*;
-import com.gyh.mall.model.vo.admin.GoodsInfoVO;
+import com.gyh.mall.model.vo.admin.MsgNoReplyVO;
+import com.gyh.mall.model.vo.admin.MsgReplyVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 import com.gyh.mall.service.admin.GoodsService;
 import com.gyh.mall.service.admin.GoodsServiceImpl;
@@ -46,7 +46,24 @@ public class GoodsServlet extends HttpServlet {
             deleteSpec(request, response);
         } else if ("updateGoods".equals(action)) {  // 更新商品
             updateGoods(request, response);
+        } else if ("reply".equals(action)) {    // 回复留言
+            reply(request, response);
         }
+    }
+
+    /**
+     * 回复留言
+     * @param request
+     * @param response
+     */
+    private void reply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        MsgReplyBO msgReplyBO = gson.fromJson(requestBody, MsgReplyBO.class);
+
+        goodsService.reply(msgReplyBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -166,7 +183,33 @@ public class GoodsServlet extends HttpServlet {
             deleteType(request, response);
         } else if ("deleteGoods".equals(action)) {  // 删除指定商品，及其关联的 spec
             deleteGoods(request, response);
+        } else if ("repliedMsg".equals(action)) {   // 获取已经回复的消息
+            repliedMsg(request, response);
+        } else if ("noReplyMsg".equals(action)) {   // 获取未得回复的消息
+            noReplyMsg(request, response);
         }
+    }
+
+    /**
+     * 获取未得到回复的消息
+     * @param request
+     * @param response
+     */
+    private void noReplyMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<MsgNoReplyVO> msgNoReplyVOList = goodsService.noReplyMsg();
+
+        response.getWriter().println(gson.toJson(Result.ok(msgNoReplyVOList)));
+    }
+
+    /**
+     * 获取已经回复的消息
+     * @param request
+     * @param response
+     */
+    private void repliedMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<MsgReplyVO> msgReplyVOList = goodsService.repliedMsg();
+
+        response.getWriter().println(gson.toJson(Result.ok(msgReplyVOList)));
     }
 
     /**

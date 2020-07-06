@@ -7,9 +7,10 @@ import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.model.vo.admin.GoodsIdAndImgVO;
+import com.gyh.mall.model.vo.admin.MsgNoReplyVO;
+import com.gyh.mall.model.vo.admin.MsgReplyVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -140,5 +141,20 @@ public class GoodsServiceImpl implements GoodsService{
     @Override
     public void deleteGoods(int id) {
         goodsDao.deleteGoods(id);
+    }
+
+    @Override
+    public List<MsgReplyVO> repliedMsg() {
+        return goodsDao.repliedMsg();
+    }
+
+    @Override
+    public List<MsgNoReplyVO> noReplyMsg() {
+        return goodsDao.noReplyMsg();
+    }
+
+    @Override
+    public void reply(MsgReplyBO msgReplyBO) {
+        goodsDao.reply(msgReplyBO);
     }
 }

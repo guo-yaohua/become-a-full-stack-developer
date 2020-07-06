@@ -2,6 +2,8 @@ package com.gyh.mall.service.admin;
 
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.*;
+import com.gyh.mall.model.vo.admin.MsgNoReplyVO;
+import com.gyh.mall.model.vo.admin.MsgReplyVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
 import java.util.List;
@@ -27,4 +29,10 @@ public interface GoodsService {
     void deleteType(int typeId, String domain);
 
     void deleteGoods(int id);
+
+    List<MsgReplyVO> repliedMsg();
+
+    List<MsgNoReplyVO> noReplyMsg();
+
+    void reply(MsgReplyBO msgReplyBO);
 }
