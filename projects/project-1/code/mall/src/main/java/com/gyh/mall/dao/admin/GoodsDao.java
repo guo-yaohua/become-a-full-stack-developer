@@ -5,6 +5,7 @@ import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.SpecDeleteBO;
+import com.gyh.mall.model.bo.admin.SpecUpdateBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -30,4 +31,14 @@ public interface GoodsDao {
     int addSpec(SpecBO specBO);
 
     void deleteSpec(SpecDeleteBO specDeleteBO);
+
+    void updateGoods(Goods goods);
+
+    void updateSpecs(List<SpecUpdateBO> specList);
+
+    void deleteType(int typeId);
+
+    List<Integer> getGoodsId(int typeId);
+
+    void deleteSpecByType(List<Integer> idList);
 }

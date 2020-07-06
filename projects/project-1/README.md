@@ -31,10 +31,12 @@
   - /admin/goods/addType：添加类目
   - /admin/goods/addSpec：添加规格
   - /admin/goods/deleteSpec：删除规格
+  - /admin/goods/updateGoods：更新商品
   - **↑ post ↓ get**
   - /admin/goods/getType：获取商品种类
   - /admin/goods/getGoodsByType：获取某个分类下的商品信息
   - /admin/goods/getGoodsInfo：获取商品信息
+  - /admin/goods/deleteType：删除指定类目，并删除与其关联的 goods、spec
 
 
 /mall：前台界面
@@ -57,8 +59,11 @@
 
 情形 1：vue 界面显示 `xxx undefined`。
 
-可能情况：服务端的变量名书写有误，导致代码能正常运行，但是数据传输时 vue 找不到对应的 key。  
+可能情况 1：服务端的变量名书写有误，导致代码能正常运行，但是数据传输时 vue 找不到对应的 key。  
 示例 1：服务端的 message 错误书写为 massage。
+
+可能情况 2：list 类型没有指定实现类。  
+示例 1：List<Integer> idList = null;
 
 情形 2：点击功能后显示 `undefined`。  
 

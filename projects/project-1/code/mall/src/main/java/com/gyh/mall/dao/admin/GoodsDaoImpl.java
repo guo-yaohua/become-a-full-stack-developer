@@ -5,6 +5,7 @@ import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.SpecBO;
 import com.gyh.mall.model.bo.admin.SpecDeleteBO;
+import com.gyh.mall.model.bo.admin.SpecUpdateBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.SpecVO;
@@ -191,6 +192,102 @@ public class GoodsDaoImpl implements GoodsDao {
                     specDeleteBO.getGoodsId());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 更新商品
+     * @param goods
+     */
+    @Override
+    public void updateGoods(Goods goods) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("update goods set `desc` = ?, img = ?, name = ?, typeId = ?, price = ?, stockNum = ? where id = ?",
+                    goods.getDesc(),
+                    goods.getImg(),
+                    goods.getName(),
+                    goods.getTypeId(),
+                    goods.getPrice(),
+                    goods.getStockNum(),
+                    goods.getId());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 更新规格
+     * @param specList
+     */
+    @Override
+    public void updateSpecs(List<SpecUpdateBO> specList) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        for (SpecUpdateBO  specUpdateBO : specList) {
+            try {
+                runner.update("update spec set specName = ?, stockNum = ?, unitPrice = ? where id = ?",
+                        specUpdateBO.getSpecName(),
+                        specUpdateBO.getStockNum(),
+                        specUpdateBO.getUnitPrice(),
+                        specUpdateBO.getId());
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 删除类目
+     * @param typeId
+     */
+    @Override
+    public void deleteType(int typeId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("delete from type where id = ?", typeId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取某一类目下的所有商品id
+     * @param typeId
+     * @return
+     */
+    @Override
+    public List<Integer> getGoodsId(int typeId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        List<Integer> idList = new ArrayList<>();
+        try {
+            idList = runner.query("select id from goods where typeId = ?",
+                    new BeanListHandler<Integer>(Integer.TYPE),
+                    typeId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return idList;
+    }
+
+    /**
+     * 根据 type 返回的 idList，删除 goods 及其规格
+     * @param idList
+     */
+    @Override
+    public void deleteSpecByType(List<Integer> idList) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        for (int id : idList) {
+            try {
+                runner.update("delete from goods where id = ?", id);
+                runner.update("delete from spec where goodsId = ?", id);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 }

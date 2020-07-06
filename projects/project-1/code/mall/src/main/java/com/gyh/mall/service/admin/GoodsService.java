@@ -1,10 +1,7 @@
 package com.gyh.mall.service.admin;
 
 import com.gyh.mall.model.Type;
-import com.gyh.mall.model.bo.admin.GoodsAddBO;
-import com.gyh.mall.model.bo.admin.SpecBO;
-import com.gyh.mall.model.bo.admin.SpecDeleteBO;
-import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
 import java.util.List;
@@ -24,4 +21,8 @@ public interface GoodsService {
     int addSpec(SpecBO specBO);
 
     void deleteSpec(SpecDeleteBO specDeleteBO);
+
+    void updateGoods(GoodsUpdateBO goodsUpdateBO);
+
+    void deleteType(int typeId);
 }

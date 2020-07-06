@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
-import com.gyh.mall.model.bo.admin.GoodsAddBO;
-import com.gyh.mall.model.bo.admin.SpecBO;
-import com.gyh.mall.model.bo.admin.SpecDeleteBO;
-import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 import com.gyh.mall.service.admin.GoodsService;
@@ -47,8 +44,26 @@ public class GoodsServlet extends HttpServlet {
             addSpec(request, response);
         } else if ("deleteSpec".equals(action)) {   // 删除规格
             deleteSpec(request, response);
+        } else if ("updateGoods".equals(action)) {  // 更新商品
+            updateGoods(request, response);
         }
     }
+
+    /**
+     * 更新商品
+     * @param request
+     * @param response
+     */
+    private void updateGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        GoodsUpdateBO goodsUpdateBO = gson.fromJson(requestBody, GoodsUpdateBO.class);
+
+        goodsService.updateGoods(goodsUpdateBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
 
     /**
      * 删除规格
@@ -147,7 +162,23 @@ public class GoodsServlet extends HttpServlet {
             getGoodsByType(request, response);
         } else if ("getGoodsInfo".equals(action)) { // 获取商品信息
             getGoodsInfo(request, response);
+        } else if ("deleteType" .equals(action)) {  // 删除指定类目，并删除与其关联的 goods、spec
+            deleteType(request, response);
         }
+    }
+
+    /**
+     * 删除指定类目，并删除与其关联的 goods、spec
+     * 待补充：删除与 gods 关联的 img 文件
+     * @param request
+     * @param response
+     */
+    private void deleteType(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int typeId = Integer.parseInt(request.getParameter("typeId"));
+
+        goodsService.deleteType(typeId);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

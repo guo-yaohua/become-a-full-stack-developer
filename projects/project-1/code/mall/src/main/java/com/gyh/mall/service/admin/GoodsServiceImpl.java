@@ -5,10 +5,7 @@ import com.gyh.mall.dao.admin.GoodsDaoImpl;
 import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
-import com.gyh.mall.model.bo.admin.GoodsAddBO;
-import com.gyh.mall.model.bo.admin.SpecBO;
-import com.gyh.mall.model.bo.admin.SpecDeleteBO;
-import com.gyh.mall.model.bo.admin.TypeBO;
+import com.gyh.mall.model.bo.admin.*;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
 import java.util.ArrayList;
@@ -87,5 +84,50 @@ public class GoodsServiceImpl implements GoodsService{
     @Override
     public void deleteSpec(SpecDeleteBO specDeleteBO) {
         goodsDao.deleteSpec(specDeleteBO);
+    }
+
+    /**
+     * 更新商品，更新规格
+     * @param goodsUpdateBO
+     */
+    @Override
+    public void updateGoods(GoodsUpdateBO goodsUpdateBO) {
+        List<SpecUpdateBO> specList = goodsUpdateBO.getSpecList();
+        double price = specList.get(0).getUnitPrice();
+        int stockNum = specList.get(0).getStockNum();
+
+        for (int i = 0; i < specList.size(); i++) {
+            if (price > specList.get(i).getUnitPrice()) {
+                price = specList.get(i).getUnitPrice();
+            }
+            if (stockNum < specList.get(i).getStockNum()) {
+                stockNum = specList.get(i).getStockNum();
+            }
+        }
+
+        Goods goods = new Goods(goodsUpdateBO.getId(),
+                goodsUpdateBO.getImg(),
+                goodsUpdateBO.getName(),
+                price,
+                goodsUpdateBO.getTypeId(),
+                stockNum,
+                goodsUpdateBO.getDesc());
+        goodsDao.updateGoods(goods);
+
+        goodsDao.updateSpecs(specList);
+    }
+
+    /**
+     * 删除指定类目，并删除与其关联的 goods、spec
+     * @param typeId
+     */
+    @Override
+    public void deleteType(int typeId) {
+        goodsDao.deleteType(typeId);
+
+        // 获取该类目下的所有商品 id
+        List<Integer> idList = goodsDao.getGoodsId(typeId);
+
+        goodsDao.deleteSpecByType(idList);
     }
 }
