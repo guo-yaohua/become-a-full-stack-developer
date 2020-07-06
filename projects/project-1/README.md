@@ -37,8 +37,8 @@
 
 /mall：前台界面
 - /mall/user：用户操作
- - /mall/user/signup：用户注册
- - **↑ post ↓ get**
+  - /mall/user/signup：用户注册
+  - **↑ post ↓ get**
 
 
 
