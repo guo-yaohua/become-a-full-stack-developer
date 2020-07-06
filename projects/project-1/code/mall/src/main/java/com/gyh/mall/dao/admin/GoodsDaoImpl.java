@@ -4,6 +4,7 @@ import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.SpecBO;
+import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.SpecVO;
@@ -174,5 +175,22 @@ public class GoodsDaoImpl implements GoodsDao {
             throwables.printStackTrace();
         }
         return 0;
+    }
+
+    /**
+     * 删除规格
+     * @param specDeleteBO
+     */
+    @Override
+    public void deleteSpec(SpecDeleteBO specDeleteBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("delete from spec where specName = ? and goodsId = ?",
+                    specDeleteBO.getSpecName(),
+                    specDeleteBO.getGoodsId());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

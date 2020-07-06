@@ -7,6 +7,7 @@ import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.GoodsAddBO;
 import com.gyh.mall.model.bo.admin.SpecBO;
+import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
 
@@ -81,5 +82,10 @@ public class GoodsServiceImpl implements GoodsService{
     @Override
     public int addSpec(SpecBO specBO) {
         return goodsDao.addSpec(specBO);
+    }
+
+    @Override
+    public void deleteSpec(SpecDeleteBO specDeleteBO) {
+        goodsDao.deleteSpec(specDeleteBO);
     }
 }

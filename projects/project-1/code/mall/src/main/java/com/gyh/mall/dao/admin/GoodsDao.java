@@ -4,6 +4,7 @@ import com.gyh.mall.model.Goods;
 import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.SpecBO;
+import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -27,4 +28,6 @@ public interface GoodsDao {
     Map<String, Object> getGoodsInfo(int id);
 
     int addSpec(SpecBO specBO);
+
+    void deleteSpec(SpecDeleteBO specDeleteBO);
 }

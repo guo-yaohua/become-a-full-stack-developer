@@ -29,6 +29,8 @@
   - /admin/goods/imgUpload：上传图片
   - /admin/goods/addGoods：新增商品
   - /admin/goods/addType：添加类目
+  - /admin/goods/addSpec：添加规格
+  - /admin/goods/deleteSpec：删除规格
   - **↑ post ↓ get**
   - /admin/goods/getType：获取商品种类
   - /admin/goods/getGoodsByType：获取某个分类下的商品信息

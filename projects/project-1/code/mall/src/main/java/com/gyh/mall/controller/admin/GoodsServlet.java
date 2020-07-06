@@ -6,6 +6,7 @@ import com.gyh.mall.model.Spec;
 import com.gyh.mall.model.Type;
 import com.gyh.mall.model.bo.admin.GoodsAddBO;
 import com.gyh.mall.model.bo.admin.SpecBO;
+import com.gyh.mall.model.bo.admin.SpecDeleteBO;
 import com.gyh.mall.model.bo.admin.TypeBO;
 import com.gyh.mall.model.vo.admin.GoodsInfoVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
@@ -44,7 +45,24 @@ public class GoodsServlet extends HttpServlet {
             addType(request, response);
         } else if ("addSpec".equals(action)) {  // 添加商品规格
             addSpec(request, response);
+        } else if ("deleteSpec".equals(action)) {   // 删除规格
+            deleteSpec(request, response);
         }
+    }
+
+    /**
+     * 删除规格
+     * @param request
+     * @param response
+     */
+    private void deleteSpec(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        SpecDeleteBO specDeleteBO = gson.fromJson(requestBody, SpecDeleteBO.class);
+
+        goodsService.deleteSpec(specDeleteBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
