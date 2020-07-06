@@ -32,6 +32,7 @@
   - /admin/goods/addSpec：添加规格
   - /admin/goods/deleteSpec：删除规格
   - /admin/goods/updateGoods：更新商品
+  - /admin/goods/reply：回复留言
   - **↑ post ↓ get**
   - /admin/goods/getType：获取商品种类
   - /admin/goods/getGoodsByType：获取某个分类下的商品信息
@@ -40,6 +41,7 @@
   - /admin/goods/deleteGoods：删除指定商品，及其关联的 spec
   - /admin/goods/repliedMsg：获取已经回复的消息
   - /admin/goods/noReplyMsg：获取未得回复的消息
+  - 
 
 
 /mall：前台界面
