@@ -1,6 +1,6 @@
 package com.gyh.mall.model.bo.admin;
 
-public class AdminSearchBo {
+public class AdminSearchBO {
 
     private String email;
 

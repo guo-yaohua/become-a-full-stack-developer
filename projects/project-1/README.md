@@ -9,26 +9,36 @@
 
 /admin：后台管理
 - /admin/admin：管理管理员
-    - /admin/admin/login：管理员登录
-    - /admin/admin/addAdminss：添加管理员
-    - /admin/admin/updateAdminss：更新管理员信息
-    - /admin/admin/getSearchAdmins：搜索管理员
-    - /admin/admin/changePwd：修改当前管理员密码
-    - **↑ post ↓ get**
-    - /admin/admin/allAdmins：获取全部管理员
-    - /admin/admin/deleteAdmins：删除指定管理员
-    - /admin/admin/getAdminsInfo：获取当前管理员信息
+  - /admin/admin/login：管理员登录
+  - /admin/admin/addAdminss：添加管理员
+  - /admin/admin/updateAdminss：更新管理员信息
+  - /admin/admin/getSearchAdmins：搜索管理员
+  - /admin/admin/changePwd：修改当前管理员密码
+  - **↑ post ↓ get**
+  - /admin/admin/allAdmins：获取全部管理员
+  - /admin/admin/deleteAdmins：删除指定管理员
+  - /admin/admin/getAdminsInfo：获取当前管理员信息
 
 - /admin/user：管理用户
-    - **↑ post ↓ get**
-    - /admin/user/allUser：获取全部用户
-    - /admin/user/deleteUser：删除指定用户
-    - /admin/user/searchUser：搜索用户
+  - **↑ post ↓ get**
+  - /admin/user/allUser：获取全部用户
+  - /admin/user/deleteUser：删除指定用户
+  - /admin/user/searchUser：搜索用户
+
+- /admin/goods：管理商品
+  - /admin/goods/imgUpload：上传图片
+  - /admin/goods/addGoods：新增商品
+  - /admin/goods/addType：添加类目
+  - **↑ post ↓ get**
+  - /admin/goods/getType：获取商品种类
+  - /admin/goods/getGoodsByType：获取某个分类下的商品信息
+  - /admin/goods/getGoodsInfo：获取商品信息
+
 
 /mall：前台界面
 - /mall/user：用户操作
-  - /mall/user/signup：用户注册
-  - **↑ post ↓ get**
+ - /mall/user/signup：用户注册
+ - **↑ post ↓ get**
 
 
 
@@ -54,3 +64,10 @@
 - 示例 1：将 allUser 功能书写在 /admin/admin/* 此 servlrt 中。
 
 - 示例 2：将应该在 get 请求中的方法写入 post。
+
+### 3.3 Tomcat 启动失败
+
+情形 1：刚调整包结构，再次编译后就不能运行，代码没有报错。
+
+可能情况：调整前生成的 class 文件并没有删除，再次编译后 class 会产生冲突。  
+解决：将 /target/classes 目录删除，再重新编译。

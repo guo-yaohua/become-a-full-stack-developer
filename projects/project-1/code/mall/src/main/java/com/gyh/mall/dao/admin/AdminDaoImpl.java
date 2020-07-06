@@ -2,7 +2,7 @@ package com.gyh.mall.dao.admin;
 
 import com.alibaba.druid.util.StringUtils;
 import com.gyh.mall.model.Admin;
-import com.gyh.mall.model.bo.admin.AdminChangePwdBo;
+import com.gyh.mall.model.bo.admin.AdminChangePwdBO;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -58,18 +58,16 @@ public class AdminDaoImpl implements AdminDao {
      * @return
      */
     @Override
-    public int addAdminss(Admin admin) {
+    public void addAdminss(Admin admin) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
-            int code = runner.update("insert into admin(email, pwd, nickname) values(? , ? , ?)",
+            runner.update("insert into admin(email, pwd, nickname) values(? , ? , ?)",
                     admin.getEmail(),
                     admin.getPwd(),
                     admin.getNickname());
-            return code;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return 0;
     }
 
     /**
@@ -96,19 +94,17 @@ public class AdminDaoImpl implements AdminDao {
      * @return
      */
     @Override
-    public int updateAdminss(Admin admin) {
+    public void updateAdminss(Admin admin) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
-            int code = runner.update("update admin set email = ?, nickname = ?, pwd = ? where id = ?",
+            runner.update("update admin set email = ?, nickname = ?, pwd = ? where id = ?",
                     admin.getEmail(),
                     admin.getNickname(),
                     admin.getPwd(),
                     admin.getId());
-            return code;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return 0;
     }
 
     /**
@@ -153,20 +149,18 @@ public class AdminDaoImpl implements AdminDao {
     /**
      * 修改管理员密码
      * @param changePwdBo
-     * @return
      */
     @Override
-    public int changePwd(AdminChangePwdBo changePwdBo) {
+    public void changePwd(AdminChangePwdBO changePwdBo) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         try {
-            return runner.update("update admin set pwd = ? where nickname = ? and pwd = ?",
+            runner.update("update admin set pwd = ? where nickname = ? and pwd = ?",
                     changePwdBo.getNewPwd(),
                     changePwdBo.getAdminToken(),
                     changePwdBo.getOldPwd());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return 0;
     }
 
     /**

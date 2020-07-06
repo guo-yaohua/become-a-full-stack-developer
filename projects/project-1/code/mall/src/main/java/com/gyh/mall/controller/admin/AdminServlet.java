@@ -5,7 +5,7 @@ import com.gyh.mall.utils.HttpUtils;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.vo.admin.AdminLoginVo;
+import com.gyh.mall.model.vo.admin.AdminLoginVO;
 import com.gyh.mall.service.admin.AdminService;
 import com.gyh.mall.service.admin.AdminServiceImpl;
 
@@ -54,15 +54,11 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminChangePwdBo changePwdBo = gson.fromJson(requestBody, AdminChangePwdBo.class);
+        AdminChangePwdBO changePwdBo = gson.fromJson(requestBody, AdminChangePwdBO.class);
 
-        int code = adminService.changePwd(changePwdBo);
+        adminService.changePwd(changePwdBo);
 
-        if (code == 0) {
-            response.getWriter().println(Result.error("修改失败"));
-        } else {
-            response.getWriter().println(gson.toJson(Result.ok(changePwdBo)));
-        }
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**
@@ -75,7 +71,7 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminSearchBo searchBo = gson.fromJson(requestBody, AdminSearchBo.class);
+        AdminSearchBO searchBo = gson.fromJson(requestBody, AdminSearchBO.class);
 
         List<Admin> admins = adminService.getSearchAdmins(searchBo);
 
@@ -94,14 +90,11 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminUpdateBo updateBo = gson.fromJson(requestBody, AdminUpdateBo.class);
+        AdminUpdateBO updateBo = gson.fromJson(requestBody, AdminUpdateBO.class);
 
-        int code = adminService.updateAdminss(updateBo);
-        if (code == 0) {
-            response.getWriter().println(Result.error("修改失败"));
-        } else {
-            response.getWriter().println(gson.toJson(Result.ok(updateBo)));
-        }
+        adminService.updateAdminss(updateBo);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
 
     }
 
@@ -115,14 +108,11 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminAddBo addBo = gson.fromJson(requestBody, AdminAddBo.class);
+        AdminAddBO addBo = gson.fromJson(requestBody, AdminAddBO.class);
 
-        int code = adminService.addAdminss(addBo);
-        if (code == 0) {
-            response.getWriter().println(Result.error("添加失败"));
-        } else {
-            response.getWriter().println(gson.toJson(Result.ok(addBo)));
-        }
+        adminService.addAdminss(addBo);
+
+        response.getWriter().println(gson.toJson(Result.ok(addBo)));
     }
 
     /**
@@ -138,12 +128,12 @@ public class AdminServlet extends HttpServlet {
         String requestBody = HttpUtils.getRequestBody(request);
 
         // json 转 Java 对象
-        AdminLoginBo loginBo = gson.fromJson(requestBody, AdminLoginBo.class);
+        AdminLoginBO loginBo = gson.fromJson(requestBody, AdminLoginBO.class);
 
         Admin login = adminService.login(loginBo);
 
         if (login != null) {
-            AdminLoginVo loginVo = new AdminLoginVo();
+            AdminLoginVO loginVo = new AdminLoginVO();
             loginVo.setToken(login.getNickname());
             loginVo.setName(login.getNickname());
             response.getWriter().println(gson.toJson(Result.ok(loginVo)));
@@ -207,6 +197,7 @@ public class AdminServlet extends HttpServlet {
      */
     private void allAdmins(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Admin> adminList = adminService.allAdmins();
+
         response.getWriter().println(gson.toJson(Result.ok(adminList)));
     }
 

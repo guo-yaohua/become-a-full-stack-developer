@@ -2,8 +2,8 @@ package com.gyh.mall.controller.mall;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.bo.mall.MallUserSignupBo;
-import com.gyh.mall.model.vo.mall.MallUserSignupVo;
+import com.gyh.mall.model.bo.mall.MallUserSignupBO;
+import com.gyh.mall.model.vo.mall.MallUserSignupVO;
 import com.gyh.mall.service.mall.UserService;
 import com.gyh.mall.service.mall.UserServiceImpl;
 import com.gyh.mall.utils.HttpUtils;
@@ -42,14 +42,14 @@ public class UserServlet extends HttpServlet {
         // 读取请求体，返回 json 字符串
         String requestBody = HttpUtils.getRequestBody(request);
 
-        MallUserSignupBo signupBo = gson.fromJson(requestBody, MallUserSignupBo.class);
+        MallUserSignupBO signupBo = gson.fromJson(requestBody, MallUserSignupBO.class);
 
         int code = userService.signup(signupBo);
 
         if (code == 0) {
             response.getWriter().println(Result.error("注册失败"));
         } else {
-            MallUserSignupVo signupVo = new MallUserSignupVo();
+            MallUserSignupVO signupVo = new MallUserSignupVO();
             signupVo.setName(signupBo.getNickname());
             signupVo.setNickname(signupBo.getNickname());
             response.getWriter().println(gson.toJson(Result.ok(signupVo)));

@@ -11,7 +11,7 @@ public class AdminServiceImpl implements AdminService{
 
     private AdminDao adminDao = new AdminDaoImpl();
     @Override
-    public Admin login(AdminLoginBo loginBo) {
+    public Admin login(AdminLoginBO loginBo) {
         Admin admin = new Admin();
         admin.setEmail(loginBo.getEmail());
         admin.setPwd(loginBo.getPwd());
@@ -25,13 +25,13 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public int addAdminss(AdminAddBo addBo) {
+    public void addAdminss(AdminAddBO addBo) {
         Admin admin = new Admin();
         admin.setEmail(addBo.getEmail());
         admin.setNickname(addBo.getNickname());
         admin.setPwd(addBo.getPwd());
 
-        return adminDao.addAdminss(admin);
+        adminDao.addAdminss(admin);
     }
 
     @Override
@@ -40,14 +40,14 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public int updateAdminss(AdminUpdateBo updateBo) {
+    public void updateAdminss(AdminUpdateBO updateBo) {
         Admin admin = new Admin();
         admin.setId(updateBo.getId());
         admin.setEmail(updateBo.getEmail());
         admin.setNickname(updateBo.getNickname());
         admin.setPwd(updateBo.getPwd());
 
-        return adminDao.updateAdminss(admin);
+        adminDao.updateAdminss(admin);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public List<Admin> getSearchAdmins(AdminSearchBo searchBo) {
+    public List<Admin> getSearchAdmins(AdminSearchBO searchBo) {
         Admin admin = new Admin();
         admin.setNickname(searchBo.getNickname());
         admin.setEmail(searchBo.getEmail());
@@ -64,7 +64,7 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public int changePwd(AdminChangePwdBo changePwdBo) {
-        return adminDao.changePwd(changePwdBo);
+    public void changePwd(AdminChangePwdBO changePwdBo) {
+        adminDao.changePwd(changePwdBo);
     }
 }

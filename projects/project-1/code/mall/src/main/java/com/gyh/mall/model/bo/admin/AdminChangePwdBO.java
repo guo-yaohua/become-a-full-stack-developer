@@ -1,6 +1,6 @@
 package com.gyh.mall.model.bo.admin;
 
-public class AdminChangePwdBo {
+public class AdminChangePwdBO {
 
     private String adminToken;
 

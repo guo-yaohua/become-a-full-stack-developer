@@ -1,6 +1,6 @@
 package com.gyh.mall.model.bo.admin;
 
-public class AdminUpdateBo {
+public class AdminUpdateBO {
 
     private Integer id;
 

@@ -1,6 +1,6 @@
 package com.gyh.mall.model.vo.mall;
 
-public class MallUserSignupVo {
+public class MallUserSignupVO {
     private String name;
 
     private String nickname;

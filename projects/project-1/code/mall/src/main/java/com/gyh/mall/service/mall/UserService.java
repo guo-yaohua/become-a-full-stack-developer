@@ -1,7 +1,7 @@
 package com.gyh.mall.service.mall;
 
-import com.gyh.mall.model.bo.mall.MallUserSignupBo;
+import com.gyh.mall.model.bo.mall.MallUserSignupBO;
 
 public interface UserService {
-    int signup(MallUserSignupBo signupBo);
+    int signup(MallUserSignupBO signupBo);
 }

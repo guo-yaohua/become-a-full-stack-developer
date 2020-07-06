@@ -1,14 +1,10 @@
 package com.gyh.mall.model.bo.admin;
 
-/**
- * bo:business object
- * 请求报文中需要用到的对象
- * vo:view object
- * 响应报文中需要用到的对象
- */
-public class AdminLoginBo {
+public class AdminAddBO {
 
     private String email;
+
+    private String nickname;
 
     private String pwd;
 
@@ -20,19 +16,19 @@ public class AdminLoginBo {
         this.email = email;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public String getPwd() {
         return pwd;
     }
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
-    }
-
-    @Override
-    public String toString() {
-        return "AdminLoginBO{" +
-                "email='" + email + '\'' +
-                ", pwd='" + pwd + '\'' +
-                '}';
     }
 }

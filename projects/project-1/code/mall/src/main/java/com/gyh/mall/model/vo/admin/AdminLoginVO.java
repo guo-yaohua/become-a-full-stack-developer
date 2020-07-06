@@ -1,6 +1,6 @@
 package com.gyh.mall.model.vo.admin;
 
-public class AdminLoginVo {
+public class AdminLoginVO {
 
     private String token;
 
