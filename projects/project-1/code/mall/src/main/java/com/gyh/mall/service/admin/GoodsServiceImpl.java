@@ -136,4 +136,9 @@ public class GoodsServiceImpl implements GoodsService{
 
         // 删除图片
     }
+
+    @Override
+    public void deleteGoods(int id) {
+        goodsDao.deleteGoods(id);
+    }
 }

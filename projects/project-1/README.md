@@ -37,6 +37,7 @@
   - /admin/goods/getGoodsByType：获取某个分类下的商品信息
   - /admin/goods/getGoodsInfo：获取商品信息
   - /admin/goods/deleteType：删除指定类目，并删除与其关联的 goods、spec
+  - /admin/goods/deleteGoods：删除指定商品，及其关联的 spec
 
 
 /mall：前台界面

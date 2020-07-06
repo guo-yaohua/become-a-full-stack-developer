@@ -291,4 +291,20 @@ public class GoodsDaoImpl implements GoodsDao {
             }
         }
     }
+
+    /**
+     * 删除指定商品
+     * @param id
+     */
+    @Override
+    public void deleteGoods(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+
+        try {
+            runner.update("delete from goods where id = ?", id);
+            runner.update("delete from spec where goodsId = ?", id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }

@@ -25,4 +25,6 @@ public interface GoodsService {
     void updateGoods(GoodsUpdateBO goodsUpdateBO);
 
     void deleteType(int typeId, String domain);
+
+    void deleteGoods(int id);
 }

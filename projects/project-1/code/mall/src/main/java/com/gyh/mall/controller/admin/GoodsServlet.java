@@ -164,7 +164,22 @@ public class GoodsServlet extends HttpServlet {
             getGoodsInfo(request, response);
         } else if ("deleteType" .equals(action)) {  // 删除指定类目，并删除与其关联的 goods、spec
             deleteType(request, response);
+        } else if ("deleteGoods".equals(action)) {  // 删除指定商品，及其关联的 spec
+            deleteGoods(request, response);
         }
+    }
+
+    /**
+     * 删除指定商品，及其关联的 spec
+     * @param request
+     * @param response
+     */
+    private void deleteGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        goodsService.deleteGoods(id);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

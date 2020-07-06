@@ -42,4 +42,6 @@ public interface GoodsDao {
     List<GoodsIdAndImgVO> getIdAndImg(int typeId);
 
     void deleteSpecByType(List<GoodsIdAndImgVO> goodsIdAndImgVOList);
+
+    void deleteGoods(int id);
 }
