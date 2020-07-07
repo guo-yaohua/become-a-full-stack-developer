@@ -1,6 +1,6 @@
 package com.gyh.mall.model.vo.admin;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class MsgNoReplyVO {
     private Integer id;
@@ -15,9 +15,9 @@ public class MsgNoReplyVO {
 
     private Date createtime;
 
-    private GoodsNameVO goods;
+    private MsgGoodsVO goods;
 
-    private UserNameVO user;
+    private MsgUserVO user;
 
     public Integer getId() {
         return id;
@@ -67,26 +67,26 @@ public class MsgNoReplyVO {
         this.createtime = createtime;
     }
 
-    public GoodsNameVO getGoods() {
+    public MsgGoodsVO getGoods() {
         return goods;
     }
 
-    public void setGoods(GoodsNameVO goods) {
+    public void setGoods(MsgGoodsVO goods) {
         this.goods = goods;
     }
 
-    public UserNameVO getUser() {
+    public MsgUserVO getUser() {
         return user;
     }
 
-    public void setUser(UserNameVO user) {
+    public void setUser(MsgUserVO user) {
         this.user = user;
     }
 
     public MsgNoReplyVO() {
     }
 
-    public MsgNoReplyVO(Integer id, Integer userId, Integer goodsId, String content, int status, Date createtime, GoodsNameVO goods, UserNameVO user) {
+    public MsgNoReplyVO(Integer id, Integer userId, Integer goodsId, String content, int status, Date createtime, MsgGoodsVO goods, MsgUserVO user) {
         this.id = id;
         this.userId = userId;
         this.goodsId = goodsId;

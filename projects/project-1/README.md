@@ -41,7 +41,13 @@
   - /admin/goods/deleteGoods：删除指定商品，及其关联的 spec
   - /admin/goods/repliedMsg：获取已经回复的消息
   - /admin/goods/noReplyMsg：获取未得回复的消息
-  - 
+
+- /admin/order：管理订单
+  - /admin/order/ordersByPage：分页显示订单
+  - /admin/order/changeOrder：修改订单
+  - **↑ post ↓ get**
+  - /admin/order/order：获取订单详情
+  - /admin/order/deleteOrder：删除订单
 
 
 /mall：前台界面

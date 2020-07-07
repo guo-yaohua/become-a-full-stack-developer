@@ -1,6 +1,6 @@
 package com.gyh.mall.model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Msg {
     private Integer id;

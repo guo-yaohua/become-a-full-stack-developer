@@ -1,6 +1,6 @@
 package com.gyh.mall.model.vo.admin;
 
-public class UserNameVO {
+public class MsgUserVO {
     private String name;
 
     public String getName() {

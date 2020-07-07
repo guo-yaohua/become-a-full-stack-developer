@@ -312,11 +312,11 @@ public class GoodsDaoImpl implements GoodsDao {
         try {
             msgList = runner.query("select * from msg where state = 0", new BeanListHandler<Msg>(Msg.class));
             for (Msg msg : msgList) {
-                GoodsNameVO goods = runner.query("select name from goods where id = ?",
-                        new BeanHandler<GoodsNameVO>(GoodsNameVO.class),
+                MsgGoodsVO goods = runner.query("select name from goods where id = ?",
+                        new BeanHandler<MsgGoodsVO>(MsgGoodsVO.class),
                         msg.getGoodsId());
-                UserNameVO user = runner.query("select nickname from user where id = ?",
-                        new BeanHandler<UserNameVO>(UserNameVO.class),
+                MsgUserVO user = runner.query("select nickname from user where id = ?",
+                        new BeanHandler<MsgUserVO>(MsgUserVO.class),
                         msg.getUserId());
                 MsgReplyVO msgReplyVO = new MsgReplyVO(msg.getId(),
                         msg.getUserId(),
@@ -348,11 +348,11 @@ public class GoodsDaoImpl implements GoodsDao {
         try {
             msgList = runner.query("select * from msg where state = 1", new BeanListHandler<Msg>(Msg.class));
             for (Msg msg : msgList) {
-                GoodsNameVO goods = runner.query("select name from goods where id = ?",
-                        new BeanHandler<GoodsNameVO>(GoodsNameVO.class),
+                MsgGoodsVO goods = runner.query("select name from goods where id = ?",
+                        new BeanHandler<MsgGoodsVO>(MsgGoodsVO.class),
                         msg.getGoodsId());
-                UserNameVO user = runner.query("select nickname from user where id = ?",
-                        new BeanHandler<UserNameVO>(UserNameVO.class),
+                MsgUserVO user = runner.query("select nickname from user where id = ?",
+                        new BeanHandler<MsgUserVO>(MsgUserVO.class),
                         msg.getUserId());
                 MsgNoReplyVO msgNoReplyVO = new MsgNoReplyVO(msg.getId(),
                         msg.getUserId(),
