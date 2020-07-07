@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("/api/admin/*")
-public class AdminFilter implements Filter {
+@WebFilter("/api/mall/*")
+public class MallFilter implements Filter {
     public void destroy() {
     }
 
@@ -36,15 +36,15 @@ public class AdminFilter implements Filter {
             2. 针对需要拦截的，判断有无 session 数据
             3. 如果没用，则拦截
          */
-        if (!request.getMethod().equals("OPTIONS")) {
-            if (auth(requestURI)) {
-                Admin admin = (Admin) request.getSession().getAttribute("admin");
-                if (admin == null) {
-                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
-                    return;
-                }
-            }
-        }
+//        if (!request.getMethod().equals("OPTIONS")) {
+//            if (auth(requestURI)) {
+//                Admin admin = (Admin) request.getSession().getAttribute("admin");
+//                if (admin == null) {
+//                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
+//                    return;
+//                }
+//            }
+//        }
 
         chain.doFilter(request, response);
     }

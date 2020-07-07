@@ -75,6 +75,7 @@ public class GoodsDaoImpl implements GoodsDao {
 
     /**
      * 返回最近更新的 id
+     * @return
      */
     @Override
     public int lastInsertId() {

@@ -55,7 +55,8 @@
   - /mall/user/signup：用户注册
   - **↑ post ↓ get**
 
-
+other：
+- 后台权限管理
 
 
 ## 3 踩过的坑

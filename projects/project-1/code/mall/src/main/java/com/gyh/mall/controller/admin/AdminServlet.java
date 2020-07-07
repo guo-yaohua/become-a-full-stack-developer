@@ -133,6 +133,9 @@ public class AdminServlet extends HttpServlet {
         Admin login = adminService.login(loginBo);
 
         if (login != null) {
+            // 设置权限
+            request.getSession().setAttribute("admin", login);
+
             AdminLoginVO loginVo = new AdminLoginVO();
             loginVo.setToken(login.getNickname());
             loginVo.setName(login.getNickname());
