@@ -61,8 +61,15 @@
   - /mall/order/getOrderByState：查看购物车
 
 - /mall/index：商店页面
-  - /mall/index
+  - **↑ post ↓ get**
+  - /mall/index/getType：获取商品分类
 
+- /mall/goods：商品界面
+  - **↑ post ↓ get**
+  - /mall/goods/getGoodsByType：获取商品列表
+  - /mall/goods/getGoodsInfo：获取商品信息
+  - /mall/goods/getGoodsMsg：获取商品留言
+  - /mall/goods/getGoodsComment：获得商品评价
 
 other：
 - 后台权限管理

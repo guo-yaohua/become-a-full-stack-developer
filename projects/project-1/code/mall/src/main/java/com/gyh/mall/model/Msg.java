@@ -17,6 +17,8 @@ public class Msg {
 
     private Date createtime;
 
+    private Date updatetime;
+
     public Integer getId() {
         return id;
     }
@@ -71,5 +73,13 @@ public class Msg {
 
     public void setCreatetime(Date createtime) {
         this.createtime = createtime;
+    }
+
+    public Date getUpdatetime() {
+        return updatetime;
+    }
+
+    public void setUpdatetime(Date updatetime) {
+        this.updatetime = updatetime;
     }
 }

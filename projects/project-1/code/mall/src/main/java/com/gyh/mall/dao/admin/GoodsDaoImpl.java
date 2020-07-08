@@ -44,9 +44,14 @@ public class GoodsDaoImpl implements GoodsDao {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
         List<TypeGoodsVO> goodsVOS = null;
         try {
-            goodsVOS = runner.query("select id, img, name, price, typeId, stockNum from goods where typeId = ?",
-                    new BeanListHandler<TypeGoodsVO>(TypeGoodsVO.class),
-                    typeId);
+            if (Integer.parseInt(typeId) == -1) {
+                goodsVOS = runner.query("select id, img, name, price, typeId, stockNum from goods",
+                        new BeanListHandler<TypeGoodsVO>(TypeGoodsVO.class));
+            } else {
+                goodsVOS = runner.query("select id, img, name, price, typeId, stockNum from goods where typeId = ?",
+                        new BeanListHandler<TypeGoodsVO>(TypeGoodsVO.class),
+                        typeId);
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
