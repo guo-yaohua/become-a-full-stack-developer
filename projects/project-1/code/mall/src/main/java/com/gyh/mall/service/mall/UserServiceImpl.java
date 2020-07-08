@@ -6,7 +6,6 @@ import com.gyh.mall.model.User;
 import com.gyh.mall.model.bo.mall.UserLoginBO;
 import com.gyh.mall.model.bo.mall.UserSignupBO;
 import com.gyh.mall.model.vo.mall.UserLoginVO;
-import com.gyh.mall.model.vo.mall.UserSignupVO;
 
 public class UserServiceImpl implements UserService {
 

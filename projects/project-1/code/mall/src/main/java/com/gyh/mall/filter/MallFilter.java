@@ -3,6 +3,8 @@ package com.gyh.mall.filter;
 import com.google.gson.Gson;
 import com.gyh.mall.model.Admin;
 import com.gyh.mall.model.Result;
+import com.gyh.mall.model.User;
+import com.gyh.mall.model.vo.mall.UserLoginVO;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -36,15 +38,15 @@ public class MallFilter implements Filter {
             2. 针对需要拦截的，判断有无 session 数据
             3. 如果没用，则拦截
          */
-//        if (!request.getMethod().equals("OPTIONS")) {
-//            if (auth(requestURI)) {
-//                Admin admin = (Admin) request.getSession().getAttribute("admin");
-//                if (admin == null) {
-//                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
-//                    return;
-//                }
-//            }
-//        }
+        if (!request.getMethod().equals("OPTIONS")) {
+            if (auth(requestURI)) {
+                UserLoginVO loginVO = (UserLoginVO) request.getSession().getAttribute("user");
+                if (loginVO == null) {
+                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
+                    return;
+                }
+            }
+        }
 
         chain.doFilter(request, response);
     }
@@ -55,8 +57,9 @@ public class MallFilter implements Filter {
      * @return
      */
     private boolean auth(String requestURI) {
-        if ("/api/admin/admin/login".equals(requestURI) ||
-            "/api/admin/admin/logoutAdmin".equals(requestURI)) {
+        if ("/api/mall/user/login".equals(requestURI) ||
+            "/api/mall/user/logoutAdmin".equals(requestURI) ||
+            "/api/mall/user/signup".equals(requestURI)) {
 
             return false;
         }

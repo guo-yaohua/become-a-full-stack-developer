@@ -54,12 +54,15 @@
 - /mall/user：用户操作
   - /mall/user/signup：用户注册
   - /mall/user/login：用户登录
-  - /mall/user/
-  - /mall/user/
   - **↑ post ↓ get**
-  - /mall/user/
-  - /mall/user/
-  - /mall/user/
+
+- /mall/order：订单操作
+  - **↑ post ↓ get**
+  - /mall/order/getOrderByState：查看购物车
+
+- /mall/index：商店页面
+  - /mall/index
+
 
 other：
 - 后台权限管理

@@ -6,6 +6,8 @@ import com.gyh.mall.model.bo.mall.UserSignupBO;
 import com.gyh.mall.model.bo.mall.UserLoginBO;
 import com.gyh.mall.model.vo.mall.UserLoginVO;
 import com.gyh.mall.model.vo.mall.UserSignupVO;
+import com.gyh.mall.service.admin.GoodsService;
+import com.gyh.mall.service.admin.GoodsServiceImpl;
 import com.gyh.mall.service.mall.UserService;
 import com.gyh.mall.service.mall.UserServiceImpl;
 import com.gyh.mall.utils.HttpUtils;
@@ -21,6 +23,8 @@ import java.io.IOException;
 public class UserServlet extends HttpServlet {
 
     private UserService userService = new UserServiceImpl();
+
+    private GoodsService goodsService = new GoodsServiceImpl();
 
     Gson gson = new Gson();
 
@@ -52,6 +56,9 @@ public class UserServlet extends HttpServlet {
         if (loginVO == null) {
             response.getWriter().println(gson.toJson(Result.error("用户名密码错误")));
         } else {
+            // 设置权限
+            request.getSession().setAttribute("user", loginVO);
+
             response.getWriter().println(gson.toJson(Result.ok(loginVO)));
         }
     }
@@ -80,6 +87,9 @@ public class UserServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 解析请求
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/mall/user/", "");
 
     }
 }
