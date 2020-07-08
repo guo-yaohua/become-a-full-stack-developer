@@ -53,7 +53,13 @@
 /mall：前台界面
 - /mall/user：用户操作
   - /mall/user/signup：用户注册
+  - /mall/user/login：用户登录
+  - /mall/user/
+  - /mall/user/
   - **↑ post ↓ get**
+  - /mall/user/
+  - /mall/user/
+  - /mall/user/
 
 other：
 - 后台权限管理

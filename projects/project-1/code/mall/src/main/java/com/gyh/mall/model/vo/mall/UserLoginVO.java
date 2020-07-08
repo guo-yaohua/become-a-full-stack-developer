@@ -1,9 +1,9 @@
 package com.gyh.mall.model.vo.mall;
 
-public class MallUserSignupVO {
+public class UserLoginVO {
     private String name;
 
-    private String nickname;
+    private String token;
 
     public String getName() {
         return name;
@@ -13,11 +13,11 @@ public class MallUserSignupVO {
         this.name = name;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getToken() {
+        return token;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setToken(String token) {
+        this.token = token;
     }
 }

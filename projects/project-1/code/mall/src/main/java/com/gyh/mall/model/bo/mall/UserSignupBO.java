@@ -1,6 +1,6 @@
 package com.gyh.mall.model.bo.mall;
 
-public class MallUserSignupBO {
+public class UserSignupBO {
 
     private String email;
 

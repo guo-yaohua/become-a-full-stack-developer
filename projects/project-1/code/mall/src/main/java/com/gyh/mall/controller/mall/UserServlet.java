@@ -2,8 +2,10 @@ package com.gyh.mall.controller.mall;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
-import com.gyh.mall.model.bo.mall.MallUserSignupBO;
-import com.gyh.mall.model.vo.mall.MallUserSignupVO;
+import com.gyh.mall.model.bo.mall.UserSignupBO;
+import com.gyh.mall.model.bo.mall.UserLoginBO;
+import com.gyh.mall.model.vo.mall.UserLoginVO;
+import com.gyh.mall.model.vo.mall.UserSignupVO;
 import com.gyh.mall.service.mall.UserService;
 import com.gyh.mall.service.mall.UserServiceImpl;
 import com.gyh.mall.utils.HttpUtils;
@@ -30,6 +32,27 @@ public class UserServlet extends HttpServlet {
         // action
         if ("signup".equals(action)) {  // 注册
             signup(request, response);
+        } else if ("login".equals(action)) {    // 用户登录
+            login(request, response);
+        }
+    }
+
+    /**
+     * 用户登录
+     * @param request
+     * @param response
+     */
+    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        UserLoginBO loginBO = gson.fromJson(requestBody, UserLoginBO.class);
+
+        UserLoginVO loginVO = userService.login(loginBO);
+
+        if (loginVO == null) {
+            response.getWriter().println(gson.toJson(Result.error("用户名密码错误")));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok(loginVO)));
         }
     }
 
@@ -42,17 +65,17 @@ public class UserServlet extends HttpServlet {
         // 读取请求体，返回 json 字符串
         String requestBody = HttpUtils.getRequestBody(request);
 
-        MallUserSignupBO signupBo = gson.fromJson(requestBody, MallUserSignupBO.class);
+        UserSignupBO signupBo = gson.fromJson(requestBody, UserSignupBO.class);
 
         int code = userService.signup(signupBo);
 
         if (code == 0) {
             response.getWriter().println(Result.error("注册失败"));
         } else {
-            MallUserSignupVO signupVo = new MallUserSignupVO();
-            signupVo.setName(signupBo.getNickname());
-            signupVo.setNickname(signupBo.getNickname());
-            response.getWriter().println(gson.toJson(Result.ok(signupVo)));
+            UserSignupVO signupVO = new UserSignupVO();
+            signupVO.setName(signupBo.getNickname());
+            signupVO.setNickname(signupBo.getNickname());
+            response.getWriter().println(gson.toJson(Result.ok(signupVO)));
         }
     }
 
