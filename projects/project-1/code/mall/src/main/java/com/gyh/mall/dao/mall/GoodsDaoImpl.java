@@ -8,6 +8,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GoodsDaoImpl implements GoodsDao {
@@ -58,7 +59,7 @@ public class GoodsDaoImpl implements GoodsDao {
     @Override
     public List<Comment> getGoodsComment(int goodsId) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
-        List<Comment> comments = null;
+        List<Comment> comments = new ArrayList<>();
         try {
             comments = runner.query("select * from comment where goodsId = ?",
                     new BeanListHandler<Comment>(Comment.class),

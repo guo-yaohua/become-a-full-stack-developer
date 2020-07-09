@@ -2,7 +2,7 @@ package com.gyh.mall.service.admin;
 
 import com.gyh.mall.dao.admin.OrderDao;
 import com.gyh.mall.dao.admin.OrderDaoImpl;
-import com.gyh.mall.model.Orders;
+import com.gyh.mall.model.Order;
 import com.gyh.mall.model.bo.admin.OrderChangeBO;
 import com.gyh.mall.model.bo.admin.OrderPageBO;
 import com.gyh.mall.model.enumaration.OrderState;
@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService{
         }
 
         // 获取 order 信息
-        Orders order = orderDao.order(id);
+        Order order = orderDao.order(id);
 
         List<OrderSpecVO> spec = orderDao.getSpecList(order.getGoodsId());
 

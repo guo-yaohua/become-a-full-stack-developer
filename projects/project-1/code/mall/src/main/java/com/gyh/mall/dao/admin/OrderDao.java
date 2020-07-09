@@ -1,9 +1,8 @@
 package com.gyh.mall.dao.admin;
 
-import com.gyh.mall.model.Orders;
+import com.gyh.mall.model.Order;
 import com.gyh.mall.model.bo.admin.OrderChangeBO;
 import com.gyh.mall.model.bo.admin.OrderPageBO;
-import com.gyh.mall.model.vo.admin.OrderInfoVO;
 import com.gyh.mall.model.vo.admin.OrderPageInfoVO;
 import com.gyh.mall.model.vo.admin.OrderSpecVO;
 
@@ -15,7 +14,7 @@ public interface OrderDao {
 
     int getTotalCounts(OrderPageBO orderPageBO);
 
-    Orders order(String id);
+    Order order(String id);
 
     List<OrderSpecVO> getSpecList(Integer goodsId);
 

@@ -18,6 +18,8 @@ public class Comment {
 
     private Integer goodsId;
 
+    private Integer orderId;
+
     public Integer getId() {
         return id;
     }
@@ -72,5 +74,26 @@ public class Comment {
 
     public void setGoodsId(Integer goodsId) {
         this.goodsId = goodsId;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public Comment() {
+    }
+
+    public Comment(Double score, String specName, String comment, Date createtime, Integer userId, Integer goodsId, Integer orderId) {
+        this.score = score;
+        this.specName = specName;
+        this.comment = comment;
+        this.createtime = createtime;
+        this.userId = userId;
+        this.goodsId = goodsId;
+        this.orderId = orderId;
     }
 }

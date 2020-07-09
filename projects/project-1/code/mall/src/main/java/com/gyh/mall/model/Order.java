@@ -2,7 +2,7 @@ package com.gyh.mall.model;
 
 import java.sql.Date;
 
-public class Orders {
+public class Order {
 
     private Integer id;
 
@@ -162,5 +162,24 @@ public class Orders {
 
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public Order() {
+    }
+
+    public Order(Integer userId, String nickname, String name, String address, String phone, String goods, String spec, Integer goodsId, Integer goodsDetailId, Integer num, Double amount, Integer stateId, Date createtime) {
+        this.userId = userId;
+        this.nickname = nickname;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.goods = goods;
+        this.spec = spec;
+        this.goodsId = goodsId;
+        this.goodsDetailId = goodsDetailId;
+        this.num = num;
+        this.amount = amount;
+        this.stateId = stateId;
+        this.createtime = createtime;
     }
 }

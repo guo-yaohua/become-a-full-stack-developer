@@ -1,18 +1,13 @@
 package com.gyh.mall.dao.mall;
 
-import com.gyh.mall.model.Goods;
-import com.gyh.mall.model.Orders;
 import com.gyh.mall.model.User;
 import com.gyh.mall.model.bo.mall.UserLoginBO;
 import com.gyh.mall.model.vo.mall.UserLoginVO;
-import com.gyh.mall.model.vo.mall.UserSignupVO;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class UserDaoImpl implements UserDao {
 

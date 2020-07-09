@@ -57,8 +57,13 @@
   - **↑ post ↓ get**
 
 - /mall/order：订单操作
+  - /mall/order/addOrder：下单
+  - /mall/order/settleAccounts：付款
+  - /mall/order/sendComment：评论
   - **↑ post ↓ get**
   - /mall/order/getOrderByState：查看购物车
+  - /mall/order/confirmReceive：确认收货
+  - /mall/order/deleteOrder：删除订单
 
 - /mall/index：商店页面
   - **↑ post ↓ get**

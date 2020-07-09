@@ -18,7 +18,7 @@ import java.util.List;
 public class IndexServlet extends HttpServlet {
     private Gson gson = new Gson();
 
-    private GoodsService goodsService = new GoodsServiceImpl();
+    private GoodsService adminGoodsService = new GoodsServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -41,7 +41,7 @@ public class IndexServlet extends HttpServlet {
      * @param response
      */
     private void getType(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<Type> type = goodsService.getType();
+        List<Type> type = adminGoodsService.getType();
 
         response.getWriter().println(gson.toJson(Result.ok(type)));
     }

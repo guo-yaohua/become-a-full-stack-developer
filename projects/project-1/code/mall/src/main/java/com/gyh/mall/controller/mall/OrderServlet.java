@@ -1,10 +1,16 @@
 package com.gyh.mall.controller.mall;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import com.gyh.mall.model.Result;
+import com.gyh.mall.model.bo.mall.OrderAddBO;
+import com.gyh.mall.model.bo.mall.OrderCart;
+import com.gyh.mall.model.bo.mall.OrderCommentBO;
 import com.gyh.mall.model.vo.mall.OrderVO;
 import com.gyh.mall.service.mall.OrderService;
 import com.gyh.mall.service.mall.OrderServiceImpl;
+import com.gyh.mall.utils.HttpUtils;
+import org.apache.commons.dbutils.QueryRunner;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/api/mall/order/*")
@@ -21,7 +28,70 @@ public class OrderServlet extends HttpServlet {
     Gson gson = new Gson();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 解析请求
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/mall/order/", "");
 
+        // action
+        if ("addOrder".equals(action)) {    // 下单
+            addOrder(request, response);
+        } else if ("settleAccounts".equals(action)) {   // 付款
+            settleAccounts(request, response);
+        } else if ("sendComment".equals(action)) {  // 评论
+            sendComment(request, response);
+        }
+    }
+
+    /**
+     * 评价
+     * @param request
+     * @param response
+     */
+    private void sendComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        OrderCommentBO commentBO = gson.fromJson(requestBody, OrderCommentBO.class);
+
+        orderService.sendComment(commentBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * 付款
+     * @param request
+     * @param response
+     */
+    private void settleAccounts(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        JsonElement jsonElement = new JsonParser().parse(requestBody);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        List<OrderCart> cartList = new ArrayList<OrderCart>();
+        JsonArray cartBoList = jsonObject.getAsJsonArray("cartList");
+        for (JsonElement element : cartBoList) {
+            OrderCart cart = gson.fromJson(element,OrderCart.class);
+            cartList.add(cart);
+        }
+
+        orderService.settleAccounts(cartList);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * 下单
+     * @param request
+     * @param response
+     */
+    private void addOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        OrderAddBO orderAddBO = gson.fromJson(requestBody, OrderAddBO.class);
+
+        orderService.addOrder(orderAddBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,7 +102,37 @@ public class OrderServlet extends HttpServlet {
         // action
         if ("getOrderByState".equals(action)) { // 查看购物车
             getOrderByState(request, response);
+        } else if ("confirmReceive".equals(action)) {   // 确认收货
+            confirmReceive(request, response);
+        } else if ("deleteOrder".equals(action)) {  // 删除订单
+            deleteOrder(request, response);
         }
+    }
+
+    /**
+     * 删除订单
+     * @param request
+     * @param response
+     */
+    private void deleteOrder(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        orderService.deleteOrder(id);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
+    }
+
+    /**
+     * 确认收货
+     * @param request
+     * @param response
+     */
+    private void confirmReceive(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        orderService.confirmReceive(id);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

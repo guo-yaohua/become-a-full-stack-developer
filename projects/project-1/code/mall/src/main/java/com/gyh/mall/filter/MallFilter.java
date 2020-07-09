@@ -32,7 +32,7 @@ public class MallFilter implements Filter {
         response.setHeader("Access-Control-Allow-Credentials","true");
 
         // 权限管理
-        String requestURI = request.getRequestURI();
+        //String requestURI = request.getRequestURI();
         /*
             1. 需要拦截哪些
             2. 针对需要拦截的，判断有无 session 数据

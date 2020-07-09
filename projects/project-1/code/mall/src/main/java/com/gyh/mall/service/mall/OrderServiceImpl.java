@@ -2,12 +2,15 @@ package com.gyh.mall.service.mall;
 
 import com.gyh.mall.dao.mall.OrderDao;
 import com.gyh.mall.dao.mall.OrderDaoImpl;
-import com.gyh.mall.model.Goods;
-import com.gyh.mall.model.Orders;
+import com.gyh.mall.model.*;
+import com.gyh.mall.model.bo.mall.OrderAddBO;
+import com.gyh.mall.model.bo.mall.OrderCart;
+import com.gyh.mall.model.bo.mall.OrderCommentBO;
 import com.gyh.mall.model.vo.mall.OrderGoodsVO;
 import com.gyh.mall.model.vo.mall.OrderVO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
@@ -22,9 +25,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderVO> getOrderByState(int state, String token) {
         // 获取订单
-        List<Orders> orders = orderDao.getOrders(state, token);
+        List<Order> orders = orderDao.getOrders(state, token);
         List<OrderVO> orderVOList = new ArrayList<>();
-        for (Orders order: orders) {
+        for (Order order: orders) {
             Goods goodsInfo = orderDao.getGoodsInfo(order.getGoodsId());
             OrderGoodsVO goods = new OrderGoodsVO(
                     goodsInfo.getId(),
@@ -47,5 +50,89 @@ public class OrderServiceImpl implements OrderService {
             orderVOList.add(orderVO);
         }
         return orderVOList;
+    }
+
+    /**
+     * 下单
+     * @param orderAddBO
+     */
+    @Override
+    public void addOrder(OrderAddBO orderAddBO) {
+        User user = orderDao.getUserByNickame(orderAddBO.getToken());
+        Spec spec = orderDao.getSepcById(orderAddBO.getGoodsDetailId());
+        Goods goods = orderDao.getGoodsById(spec.getGoodsId());
+        Date date=new Date();
+        Order order = new Order(
+                user.getId(),
+                user.getNickname(),
+                user.getRecipient(),
+                user.getAddress(),
+                user.getPhone(),
+                goods.getName(),
+                spec.getSpecName(),
+                spec.getGoodsId(),
+                spec.getId(),
+                orderAddBO.getNum(),
+                orderAddBO.getAmount(),
+                orderAddBO.getState(),
+                new java.sql.Date(date.getTime())
+        );
+        orderDao.addOrder(order);
+    }
+
+    /**
+     * 付款
+     * @param cartList
+     */
+    @Override
+    public void settleAccounts(List<OrderCart> cartList) {
+        orderDao.settleAccounts(cartList);
+    }
+
+    /**
+     * 确认收货
+     * @param id
+     */
+    @Override
+    public void confirmReceive(int id) {
+        orderDao.confirmReceive(id);
+    }
+
+    /**
+     * 评论
+     * @param commentBO
+     */
+    @Override
+    public void sendComment(OrderCommentBO commentBO) {
+        /*
+                this.score = score;
+        this.specName = specName;
+        this.comment = comment;
+        this.createtime = createtime;
+        this.userId = userId;
+        this.goodsId = goodsId;
+         */
+        Spec spec = orderDao.getSepcById(commentBO.getGoodsDetailId());
+        User user = orderDao.getUserByNickame(commentBO.getToken());
+        Date date=new Date();
+        Comment comment = new Comment(
+                commentBO.getScore(),
+                spec.getSpecName(),
+                commentBO.getContent(),
+                new java.sql.Date(date.getTime()),
+                user.getId(),
+                commentBO.getGoodsId(),
+                commentBO.getOrderId()
+        );
+        orderDao.sendComment(comment);
+    }
+
+    /**
+     * 删除订单
+     * @param id
+     */
+    @Override
+    public void deleteOrder(int id) {
+        orderDao.deleteOrder(id);
     }
 }

@@ -1,21 +1,17 @@
 package com.gyh.mall.dao.admin;
 
 import com.alibaba.druid.util.StringUtils;
-import com.gyh.mall.model.Orders;
-import com.gyh.mall.model.Result;
+import com.gyh.mall.model.Order;
 import com.gyh.mall.model.bo.admin.OrderChangeBO;
 import com.gyh.mall.model.bo.admin.OrderPageBO;
 import com.gyh.mall.model.vo.admin.OrderPageInfoVO;
-import com.gyh.mall.model.vo.admin.OrderPageVO;
 import com.gyh.mall.model.vo.admin.OrderSpecVO;
-import com.gyh.mall.model.vo.admin.OrderStateVO;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
-import javax.xml.stream.events.DTD;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,17 +79,17 @@ public class OrderDaoImpl implements OrderDao{
      * @return
      */
     @Override
-    public Orders order(String id) {
+    public Order order(String id) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
-        Orders orders = null;
+        Order order = null;
         try {
-            orders = runner.query("select * from orders where id = ?",
-                    new BeanHandler<Orders>(Orders.class),
+            order = runner.query("select * from orders where id = ?",
+                    new BeanHandler<Order>(Order.class),
                     id);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-        return orders;
+        return order;
     }
 
     /**
