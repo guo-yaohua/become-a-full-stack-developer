@@ -4,9 +4,12 @@ import com.gyh.mall.dao.mall.GoodsDao;
 import com.gyh.mall.dao.mall.GoodsDaoImpl;
 import com.gyh.mall.model.Comment;
 import com.gyh.mall.model.Msg;
+import com.gyh.mall.model.User;
+import com.gyh.mall.model.bo.mall.GoodsMsgBO;
 import com.gyh.mall.model.vo.mall.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class GoodsServiceImpl implements GoodsService {
@@ -69,5 +72,37 @@ public class GoodsServiceImpl implements GoodsService {
         commentVO.setCommentList(commentList);
         commentVO.setRate(0.0);
         return commentVO;
+    }
+
+    /**
+     * 搜索商品
+     * @param keyword
+     * @return
+     */
+    @Override
+    public List<GoodsSerachVO> searchGoods(String keyword) {
+        return goodsDao.searchGoods(keyword);
+    }
+
+    @Override
+    public void askGoodsMsg(GoodsMsgBO msgBO) {
+        User user = goodsDao.getUserByNickname(msgBO.getToken());
+        Date date = new Date();
+
+        /*
+                this.userId = userId;
+        this.goodsId = goodsId;
+        this.content = content;
+        this.status = status;
+        this.createtime = createtime;
+         */
+        Msg msg = new Msg(
+                user.getId(),
+                Integer.parseInt(msgBO.getGoodsId()),
+                msgBO.getMsg(),
+                1,
+                new java.sql.Date(date.getTime())
+        );
+        goodsDao.askGoodsMsg(msg);
     }
 }

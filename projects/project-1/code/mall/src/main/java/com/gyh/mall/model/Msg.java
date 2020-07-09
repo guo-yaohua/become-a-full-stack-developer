@@ -82,4 +82,15 @@ public class Msg {
     public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
     }
+
+    public Msg() {
+    }
+
+    public Msg(Integer userId, Integer goodsId, String content, int status, Date createtime) {
+        this.userId = userId;
+        this.goodsId = goodsId;
+        this.content = content;
+        this.status = status;
+        this.createtime = createtime;
+    }
 }

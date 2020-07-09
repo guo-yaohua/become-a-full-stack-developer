@@ -2,8 +2,12 @@ package com.gyh.mall.dao.mall;
 
 import com.gyh.mall.model.Comment;
 import com.gyh.mall.model.Msg;
+import com.gyh.mall.model.User;
+import com.gyh.mall.model.bo.mall.GoodsMsgBO;
+import com.gyh.mall.model.vo.mall.GoodsSerachVO;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
 
@@ -69,4 +73,64 @@ public class GoodsDaoImpl implements GoodsDao {
         }
         return comments;
     }
+
+    /**
+     * 搜索商品
+     * @param keyword
+     * @return
+     */
+    @Override
+    public List<GoodsSerachVO> searchGoods(String keyword) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<GoodsSerachVO> serachVOList = new ArrayList<>();
+        try {
+            serachVOList = runner.query("select id, img, name, price, typeId from goods where name like ?",
+                    new BeanListHandler<>(GoodsSerachVO.class),
+                    "%" + keyword + "%");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return serachVOList;
+    }
+
+    /**
+     * 通过nickname 获取 user
+     * @param token
+     * @return
+     */
+    @Override
+    public User getUserByNickname(String token) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        User user = null;
+        try {
+            user = runner.query("select * from user where nickname = ?",
+                    new BeanHandler<>(User.class),
+                    token);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return user;
+    }
+
+    /**
+     * 商品提问
+     * @param msg
+     */
+    @Override
+    public void askGoodsMsg(Msg msg) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("insert into msg (userId, goodsId, content, state, createtime) " +
+                    "values (?, ?, ?, ?, ?)",
+                    msg.getUserId(),
+                    msg.getGoodsId(),
+                    msg.getContent(),
+                    msg.getStatus(),
+                    msg.getCreatetime());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+
 }

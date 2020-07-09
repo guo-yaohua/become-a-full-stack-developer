@@ -2,14 +2,13 @@ package com.gyh.mall.controller.mall;
 
 import com.google.gson.Gson;
 import com.gyh.mall.model.Result;
+import com.gyh.mall.model.bo.mall.GoodsMsgBO;
 import com.gyh.mall.model.vo.admin.SpecVO;
 import com.gyh.mall.model.vo.admin.TypeGoodsVO;
-import com.gyh.mall.model.vo.mall.GoodsCommentInfoVO;
-import com.gyh.mall.model.vo.mall.GoodsCommentVO;
-import com.gyh.mall.model.vo.mall.GoodsInfoVO;
-import com.gyh.mall.model.vo.mall.GoodsMsgVO;
+import com.gyh.mall.model.vo.mall.*;
 import com.gyh.mall.service.admin.GoodsService;
 import com.gyh.mall.service.admin.GoodsServiceImpl;
+import com.gyh.mall.utils.HttpUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +28,28 @@ public class GoodsServlet extends HttpServlet {
     private com.gyh.mall.service.mall.GoodsService goodsService = new com.gyh.mall.service.mall.GoodsServiceImpl();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 解析请求
+        String requestURI = request.getRequestURI();
+        String action = requestURI.replace("/api/mall/goods/", "");
 
+        if ("askGoodsMsg".equals(action)) { // 商品提问
+            askGoodsMsg(request, response);
+        }
+    }
+
+    /**
+     * 商品提问
+     * @param request
+     * @param response
+     */
+    private void askGoodsMsg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String requestBody = HttpUtils.getRequestBody(request);
+
+        GoodsMsgBO msgBO = gson.fromJson(requestBody, GoodsMsgBO.class);
+
+        goodsService.askGoodsMsg(msgBO);
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,7 +65,22 @@ public class GoodsServlet extends HttpServlet {
             getGoodsMsg(request, response);
         } else if ("getGoodsComment".equals(action)) {  // 获取商品评价
             getGoodsComment(request, response);
+        } else if ("searchGoods".equals(action)) {  // 搜索商品
+            searchGoods(request, response);
         }
+    }
+
+    /**
+     * 搜索商品
+     * @param request
+     * @param response
+     */
+    private void searchGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String keyword = request.getParameter("keyword");
+
+        List<GoodsSerachVO> serachVOList = goodsService.searchGoods(keyword);
+
+        response.getWriter().println(gson.toJson(Result.ok(serachVOList)));
     }
 
     /**

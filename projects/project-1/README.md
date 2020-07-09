@@ -70,6 +70,7 @@
   - /mall/index/getType：获取商品分类
 
 - /mall/goods：商品界面
+  - /mall/goods/askGoodsMsg：商品提问
   - **↑ post ↓ get**
   - /mall/goods/getGoodsByType：获取商品列表
   - /mall/goods/getGoodsInfo：获取商品信息
