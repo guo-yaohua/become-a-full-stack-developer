@@ -40,7 +40,19 @@ public class AdminServlet extends HttpServlet {
             getSearchAdmins(request, response);
         } else if ("changePwd".equals(action)) {    // 修改密码
             changePwd(request, response);
+        } else if ("logoutAdmin".equals(action)) { // 管理员退出登录
+            logoutAdmin(request, response);
         }
+    }
+
+    /**
+     * 管理员退出登录
+     * @param request
+     * @param response
+     */
+    private void logoutAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        response.getWriter().println(gson.toJson(Result.ok()));
     }
 
     /**

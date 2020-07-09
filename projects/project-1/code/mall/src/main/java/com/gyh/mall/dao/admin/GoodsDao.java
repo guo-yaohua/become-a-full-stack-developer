@@ -48,4 +48,10 @@ public interface GoodsDao {
     List<MsgNoReplyVO> noReplyMsg();
 
     void reply(MsgReplyBO msgReplyBO);
+
+    List<Goods> getGoodsList();
+
+    List<Spec> getSpecListByGoodsId(int goodsId);
+
+    void goodsRefresh(int goodsId, double price, int stockNum);
 }

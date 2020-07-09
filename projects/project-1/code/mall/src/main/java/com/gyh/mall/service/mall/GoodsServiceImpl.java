@@ -53,6 +53,7 @@ public class GoodsServiceImpl implements GoodsService {
         List<Comment> comments = goodsDao.getGoodsComment(goodsId);
         List<GoodsCommentInfoVO> commentList = new ArrayList<>();
 
+        int goodComment = 0;
         for (Comment comment : comments) {
             GoodsCommentUserVO user = new GoodsCommentUserVO(goodsDao.getUserName(comment.getUserId()));
 
@@ -66,11 +67,16 @@ public class GoodsServiceImpl implements GoodsService {
                     comment.getUserId()
             );
 
+            // 好评数目
+            if (comment.getScore() >= 60) goodComment++;
+
             commentList.add(commentVO);
         }
         GoodsCommentVO commentVO = new GoodsCommentVO();
         commentVO.setCommentList(commentList);
-        commentVO.setRate(0.0);
+
+        double rate = (double) goodComment / comments.size() * 100;
+        commentVO.setRate(rate);
         return commentVO;
     }
 
@@ -89,13 +95,6 @@ public class GoodsServiceImpl implements GoodsService {
         User user = goodsDao.getUserByNickname(msgBO.getToken());
         Date date = new Date();
 
-        /*
-                this.userId = userId;
-        this.goodsId = goodsId;
-        this.content = content;
-        this.status = status;
-        this.createtime = createtime;
-         */
         Msg msg = new Msg(
                 user.getId(),
                 Integer.parseInt(msgBO.getGoodsId()),

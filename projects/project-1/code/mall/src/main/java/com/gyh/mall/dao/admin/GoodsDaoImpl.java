@@ -393,4 +393,59 @@ public class GoodsDaoImpl implements GoodsDao {
             throwables.printStackTrace();
         }
     }
+
+    /**
+     * 返回商品 id list
+     * @return
+     */
+    @Override
+    public List<Goods> getGoodsList() {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<Goods> goodsList = new ArrayList<>();
+        try {
+            goodsList = runner.query("select * from goods",
+                    new BeanListHandler<>(Goods.class));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return goodsList;
+    }
+
+    /**
+     * 获取规格列表
+     * @param goodsId
+     * @return
+     */
+    @Override
+    public List<Spec> getSpecListByGoodsId(int goodsId) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        List<Spec> specList = null;
+        try {
+            specList = runner.query("select * from spec where goodsId = ?",
+                    new BeanListHandler<>(Spec.class),
+                    goodsId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return specList;
+    }
+
+    /**
+     * 刷新商品信息
+     * @param goodsId
+     * @param price
+     * @param stockNum
+     */
+    @Override
+    public void goodsRefresh(int goodsId, double price, int stockNum) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update goods set price = ?, stockNum = ? where id = ?",
+                    price,
+                    stockNum,
+                    goodsId);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }

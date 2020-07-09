@@ -25,7 +25,30 @@ public class GoodsServiceImpl implements GoodsService{
 
     @Override
     public List<TypeGoodsVO> getGoodsByType(String typeId) {
+        goodsRefresh();
         return goodsDao.getGoodsByType(typeId);
+    }
+
+    /**
+     * 刷新商品信息
+     */
+    private void goodsRefresh() {
+        List<Goods> goodsList = goodsDao.getGoodsList();
+        for (Goods goods : goodsList) {
+            List<Spec> specList = goodsDao.getSpecListByGoodsId(goods.getId());
+
+            // 设置商品默认展示规格
+            double price = specList.get(0).getUnitPrice();
+            int stockNum = specList.get(0).getStockNum();
+            for (int i = 1; i < specList.size(); i++) {
+                if ((price > specList.get(i).getUnitPrice() || stockNum == 0) && specList.get(i).getStockNum() > 0) {  // 最便宜且有货的
+                    price = specList.get(i).getUnitPrice();
+                    stockNum = specList.get(i).getStockNum();
+                }
+            }
+
+            goodsDao.goodsRefresh(goods.getId(), price, stockNum);
+        }
     }
 
     /**
@@ -36,16 +59,17 @@ public class GoodsServiceImpl implements GoodsService{
     @Override
     public void addGoods(GoodsAddBO goodsAddBO) {
         List<SpecBO> specList = goodsAddBO.getSpecList();
+
+        // 设置商品默认展示规格
         double price = specList.get(0).getUnitPrice();
         int stockNum = specList.get(0).getStockNum();
         for (int i = 1; i < specList.size(); i++) {
-            if (price > specList.get(i).getUnitPrice()) {
+            if ((price > specList.get(i).getUnitPrice() || stockNum == 0) && specList.get(i).getStockNum() > 0) {  // 最便宜且有货的
                 price = specList.get(i).getUnitPrice();
-            }
-            if (stockNum < specList.get(i).getStockNum()) {
                 stockNum = specList.get(i).getStockNum();
             }
         }
+
         Goods goods = new Goods(null,
                 goodsAddBO.getImg(),
                 goodsAddBO.getName(),

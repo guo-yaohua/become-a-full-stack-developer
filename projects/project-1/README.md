@@ -14,6 +14,7 @@
   - /admin/admin/updateAdminss：更新管理员信息
   - /admin/admin/getSearchAdmins：搜索管理员
   - /admin/admin/changePwd：修改当前管理员密码
+  - /admin/admin/logoutAdmin：管理员退出登录
   - **↑ post ↓ get**
   - /admin/admin/allAdmins：获取全部管理员
   - /admin/admin/deleteAdmins：删除指定管理员
