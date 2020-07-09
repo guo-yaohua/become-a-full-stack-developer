@@ -55,12 +55,14 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 下单
      * @param orderAddBO
+     * @return
      */
     @Override
-    public void addOrder(OrderAddBO orderAddBO) {
+    public int addOrder(OrderAddBO orderAddBO) {
         User user = orderDao.getUserByNickame(orderAddBO.getToken());
         Spec spec = orderDao.getSepcById(orderAddBO.getGoodsDetailId());
         Goods goods = orderDao.getGoodsById(spec.getGoodsId());
+        if (spec.getStockNum() < orderAddBO.getNum()) return 0;
         Date date=new Date();
         Order order = new Order(
                 user.getId(),
@@ -77,16 +79,37 @@ public class OrderServiceImpl implements OrderService {
                 orderAddBO.getState(),
                 new java.sql.Date(date.getTime())
         );
+
         orderDao.addOrder(order);
+
+        return 1;
     }
 
     /**
      * 付款
      * @param cartList
+     * @return
      */
     @Override
-    public void settleAccounts(List<OrderCart> cartList) {
-        orderDao.settleAccounts(cartList);
+    public int settleAccounts(List<OrderCart> cartList) {
+        List<OrderCart> carts = new ArrayList<>();
+        int okCount = 0;
+        // 检查库存
+        for (OrderCart cart : cartList) {
+            Order order = orderDao.getOrderById(cart.getId());
+            Spec spec = orderDao.getSepcById(order.getGoodsDetailId());
+            if (spec.getStockNum() - cart.getGoodsNum() >= 0) { // 库存足够
+                carts.add(cart);
+                okCount++;
+                orderDao.changeStockNum(spec.getId(), spec.getStockNum() - cart.getGoodsNum());
+            }
+        }
+
+
+        // 付款
+        orderDao.settleAccounts(carts);
+
+        return okCount;
     }
 
     /**
@@ -104,14 +127,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void sendComment(OrderCommentBO commentBO) {
-        /*
-                this.score = score;
-        this.specName = specName;
-        this.comment = comment;
-        this.createtime = createtime;
-        this.userId = userId;
-        this.goodsId = goodsId;
-         */
         Spec spec = orderDao.getSepcById(commentBO.getGoodsDetailId());
         User user = orderDao.getUserByNickame(commentBO.getToken());
         Date date=new Date();
@@ -133,6 +148,27 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void deleteOrder(int id) {
+        Order order = orderDao.getOrderById(id);
+        Spec spec = orderDao.getSepcById(order.getGoodsDetailId());
         orderDao.deleteOrder(id);
+        orderDao.changeStockNum(spec.getId(), spec.getStockNum() + order.getNum());
+    }
+
+    /**
+     * 确认付款
+     * @param id
+     * @return
+     */
+    @Override
+    public int pay(int id) {
+        Order order = orderDao.getOrderById(id);
+        Spec spec = orderDao.getSepcById(order.getGoodsDetailId());
+
+        if (spec.getStockNum() < order.getNum()) {
+            return 0;
+        }
+        orderDao.changeStockNum(spec.getId(), spec.getStockNum() - order.getNum());
+        orderDao.pay(id);
+        return 1;
     }
 }

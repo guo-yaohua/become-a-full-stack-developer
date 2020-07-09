@@ -203,6 +203,56 @@ public class OrderDaoImpl implements OrderDao{
         }
     }
 
+    /**
+     * 修改库存
+     * @param id
+     * @param i
+     */
+    @Override
+    public void changeStockNum(Integer id, int i) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update spec set stockNum = ? where id = ?", i, id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取订单信息
+     * @param id
+     * @return
+     */
+    @Override
+    public Order getOrderById(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        Order order = null;
+        try {
+            order = runner.query("select * from orders where id = ?",
+                    new BeanHandler<>(Order.class),
+                    id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return order;
+    }
+
+    /**
+     * 确认付款
+     * @param id
+     */
+    @Override
+    public void pay(int id) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update orders set stateId = ? where id = ?",
+                    1,
+                    id);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
 
     /**
      * 获取商品信息

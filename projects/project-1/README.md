@@ -54,7 +54,10 @@
 - /mall/user：用户操作
   - /mall/user/signup：用户注册
   - /mall/user/login：用户登录
+  - /mall/user/updateUserData：修改用户信息
+  - /mall/user/updatePwd：修改用户密码
   - **↑ post ↓ get**
+  - /mall/user/data：获取用户信息
 
 - /mall/order：订单操作
   - /mall/order/addOrder：下单
@@ -63,6 +66,7 @@
   - **↑ post ↓ get**
   - /mall/order/getOrderByState：查看购物车
   - /mall/order/confirmReceive：确认收货
+  - /mall/order/pay：确认付款
   - /mall/order/deleteOrder：删除订单
 
 - /mall/index：商店页面

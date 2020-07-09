@@ -74,9 +74,13 @@ public class OrderServlet extends HttpServlet {
             cartList.add(cart);
         }
 
-        orderService.settleAccounts(cartList);
+        int code = orderService.settleAccounts(cartList);
 
-        response.getWriter().println(gson.toJson(Result.ok()));
+        if (code != cartBoList.size()) {
+            response.getWriter().println(gson.toJson(Result.error("完成付款！（库存不足的商品，未能完成付款）")));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok()));
+        }
     }
 
     /**
@@ -89,9 +93,13 @@ public class OrderServlet extends HttpServlet {
 
         OrderAddBO orderAddBO = gson.fromJson(requestBody, OrderAddBO.class);
 
-        orderService.addOrder(orderAddBO);
+        int code = orderService.addOrder(orderAddBO);
 
-        response.getWriter().println(gson.toJson(Result.ok()));
+        if (code == 0) {
+            response.getWriter().println(gson.toJson(Result.error("库存不足")));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok()));
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -106,6 +114,25 @@ public class OrderServlet extends HttpServlet {
             confirmReceive(request, response);
         } else if ("deleteOrder".equals(action)) {  // 删除订单
             deleteOrder(request, response);
+        } else if ("pay".equals(action)) {  // 确认付款
+            pay(request, response);
+        }
+    }
+
+    /**
+     * 确认付款
+     * @param request
+     * @param response
+     */
+    private void pay(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id= Integer.parseInt(request.getParameter("id"));
+
+        int code = orderService.pay(id);
+
+        if (code == 0) {
+            response.getWriter().println(gson.toJson(Result.error("库存不足")));
+        } else {
+            response.getWriter().println(gson.toJson(Result.ok()));
         }
     }
 

@@ -1,7 +1,9 @@
 package com.gyh.mall.dao.mall;
 
 import com.gyh.mall.model.User;
+import com.gyh.mall.model.bo.mall.UserDataBO;
 import com.gyh.mall.model.bo.mall.UserLoginBO;
+import com.gyh.mall.model.bo.mall.UserPwdBO;
 import com.gyh.mall.model.vo.mall.UserLoginVO;
 import com.gyh.mall.utils.DruidUtils;
 import org.apache.commons.dbutils.QueryRunner;
@@ -52,5 +54,41 @@ public class UserDaoImpl implements UserDao {
             throwables.printStackTrace();
         }
         return loginVO;
+    }
+
+    /**
+     * 修改用户信息
+     * @param dataBO
+     */
+    @Override
+    public void updateUserData(UserDataBO dataBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update user set address = ?, nickname = ?, phone = ?, recipient = ? where id = ?",
+                    dataBO.getAddress(),
+                    dataBO.getNickname(),
+                    dataBO.getPhone(),
+                    dataBO.getRecipient(),
+                    dataBO.getId());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    /**
+     * 修改用户密码
+     * @param pwdBO
+     */
+    @Override
+    public void updatePwd(UserPwdBO pwdBO) {
+        QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
+        try {
+            runner.update("update user set pwd = ? where id = ? and pwd = ?",
+                    pwdBO.getNewPwd(),
+                    pwdBO.getId(),
+                    pwdBO.getOldPwd());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

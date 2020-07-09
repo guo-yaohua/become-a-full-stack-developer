@@ -26,4 +26,10 @@ public interface OrderDao {
     void sendComment(Comment comment);
 
     void deleteOrder(int id);
+
+    void changeStockNum(Integer id, int i);
+
+    Order getOrderById(int id);
+
+    void pay(int id);
 }

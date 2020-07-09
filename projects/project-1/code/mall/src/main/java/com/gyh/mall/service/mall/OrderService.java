@@ -10,13 +10,15 @@ import java.util.List;
 public interface OrderService {
     List<OrderVO> getOrderByState(int state, String token);
 
-    void addOrder(OrderAddBO orderAddBO);
+    int addOrder(OrderAddBO orderAddBO);
 
-    void settleAccounts(List<OrderCart> cartList);
+    int settleAccounts(List<OrderCart> cartList);
 
     void confirmReceive(int id);
 
     void sendComment(OrderCommentBO commentBO);
 
     void deleteOrder(int id);
+
+    int pay(int id);
 }
