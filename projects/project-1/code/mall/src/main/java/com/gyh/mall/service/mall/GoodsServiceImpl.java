@@ -75,7 +75,10 @@ public class GoodsServiceImpl implements GoodsService {
         GoodsCommentVO commentVO = new GoodsCommentVO();
         commentVO.setCommentList(commentList);
 
-        double rate = (double) goodComment / comments.size() * 100;
+        double rate = 0;
+        if (commentList.size() != 0) {  // 避免除0错误
+            rate = (double) goodComment / comments.size() * 100;
+        }
         commentVO.setRate(rate);
         return commentVO;
     }
