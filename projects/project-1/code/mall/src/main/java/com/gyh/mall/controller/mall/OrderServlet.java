@@ -65,6 +65,7 @@ public class OrderServlet extends HttpServlet {
     private void settleAccounts(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String requestBody = HttpUtils.getRequestBody(request);
 
+        // 购物车订单
         JsonElement jsonElement = new JsonParser().parse(requestBody);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         List<OrderCart> cartList = new ArrayList<OrderCart>();

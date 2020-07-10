@@ -80,6 +80,11 @@ public class OrderServiceImpl implements OrderService {
                 new java.sql.Date(date.getTime())
         );
 
+        // 直接购买
+        if (order.getStateId() == 1) {
+            orderDao.changeStockNum(order.getGoodsDetailId(), spec.getStockNum() - order.getNum());
+        }
+
         orderDao.addOrder(order);
 
         return 1;
@@ -151,7 +156,9 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderDao.getOrderById(id);
         Spec spec = orderDao.getSepcById(order.getGoodsDetailId());
         orderDao.deleteOrder(id);
-        orderDao.changeStockNum(spec.getId(), spec.getStockNum() + order.getNum());
+
+        // 删除购物车不需要添加库存
+        // orderDao.changeStockNum(spec.getId(), spec.getStockNum() + order.getNum());
     }
 
     /**
