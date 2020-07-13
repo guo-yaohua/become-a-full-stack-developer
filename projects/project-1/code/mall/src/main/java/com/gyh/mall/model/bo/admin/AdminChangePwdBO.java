@@ -4,6 +4,8 @@ public class AdminChangePwdBO {
 
     private String adminToken;
 
+    private String confirmPwd;
+
     private String newPwd;
 
     private String oldPwd;
@@ -14,6 +16,14 @@ public class AdminChangePwdBO {
 
     public void setAdminToken(String adminToken) {
         this.adminToken = adminToken;
+    }
+
+    public String getConfirmPwd() {
+        return confirmPwd;
+    }
+
+    public void setConfirmPwd(String confirmPwd) {
+        this.confirmPwd = confirmPwd;
     }
 
     public String getNewPwd() {

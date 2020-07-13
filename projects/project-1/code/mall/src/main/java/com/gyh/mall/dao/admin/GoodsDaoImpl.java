@@ -385,9 +385,12 @@ public class GoodsDaoImpl implements GoodsDao {
     public void reply(MsgReplyBO msgReplyBO) {
         QueryRunner runner = new QueryRunner(DruidUtils.getDataSource());
 
+        Date now = new Date();
         try {
-            runner.update("update msg set replyContent = ?, state = 0 where id = ?",
+            runner.update("update msg set replyContent = ?, state = ?, updatetime = ? where id = ?",
                     msgReplyBO.getContent(),
+                    0,
+                    new java.sql.Date(now.getTime()),
                     msgReplyBO.getId());
         } catch (SQLException throwables) {
             throwables.printStackTrace();

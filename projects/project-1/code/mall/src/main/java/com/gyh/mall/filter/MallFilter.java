@@ -32,21 +32,17 @@ public class MallFilter implements Filter {
         response.setHeader("Access-Control-Allow-Credentials","true");
 
         // 权限管理
-        //String requestURI = request.getRequestURI();
-        /*
-            1. 需要拦截哪些
-            2. 针对需要拦截的，判断有无 session 数据
-            3. 如果没用，则拦截
-         */
-//        if (!request.getMethod().equals("OPTIONS")) {
-//            if (auth(requestURI)) {
-//                UserLoginVO loginVO = (UserLoginVO) request.getSession().getAttribute("user");
-//                if (loginVO == null) {
-//                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
-//                    return;
-//                }
-//            }
-//        }
+        String requestURI = request.getRequestURI();
+
+        if (!request.getMethod().equals("OPTIONS")) {
+            if (auth(requestURI)) {
+                UserLoginVO loginVO = (UserLoginVO) request.getSession().getAttribute("user");
+                if (loginVO == null) {
+                    response.getWriter().println(new Gson().toJson(Result.error("当前接口仅登陆后可以访问")));
+                    return;
+                }
+            }
+        }
 
         chain.doFilter(request, response);
     }

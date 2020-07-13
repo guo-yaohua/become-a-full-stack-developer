@@ -85,6 +85,9 @@ public class UserServlet extends HttpServlet {
      */
     private void logoutClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        // 删除权限
+        request.getSession().setAttribute("user", null);
+
         response.getWriter().println(gson.toJson(Result.ok()));
     }
 
@@ -104,7 +107,7 @@ public class UserServlet extends HttpServlet {
             response.getWriter().println(gson.toJson(Result.error("用户名密码错误")));
         } else {
             // 设置权限
-            // request.getSession().setAttribute("user", loginVO);
+            request.getSession().setAttribute("user", loginVO);
 
             response.getWriter().println(gson.toJson(Result.ok(loginVO)));
         }

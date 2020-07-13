@@ -52,6 +52,10 @@ public class AdminServlet extends HttpServlet {
      */
     private void logoutAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        // 删除权限
+        request.getSession().setAttribute("admin", null);
+
+
         response.getWriter().println(gson.toJson(Result.ok()));
     }
 
@@ -68,9 +72,13 @@ public class AdminServlet extends HttpServlet {
         // json 转 Java 对象
         AdminChangePwdBO changePwdBo = gson.fromJson(requestBody, AdminChangePwdBO.class);
 
-        adminService.changePwd(changePwdBo);
+        if (!changePwdBo.getConfirmPwd().equals(changePwdBo.getNewPwd())) {
+            response.getWriter().println(gson.toJson(Result.error("两次密码不一致")));
+        } else {
+            adminService.changePwd(changePwdBo);
 
-        response.getWriter().println(gson.toJson(Result.ok()));
+            response.getWriter().println(gson.toJson(Result.ok()));
+        }
     }
 
     /**
@@ -153,7 +161,7 @@ public class AdminServlet extends HttpServlet {
             loginVo.setName(login.getNickname());
             response.getWriter().println(gson.toJson(Result.ok(loginVo)));
         } else {
-            response.getWriter().println(Result.error("用户名或者密码错误"));
+            response.getWriter().println(gson.toJson(Result.error("用户名或者密码错误")));
         }
 
     }
