@@ -2,6 +2,21 @@
 
 ## 目录
 
+- [九、SSM 框架](#九ssm-框架)
+  - [目录](#目录)
+  - [1 设计模式](#1-设计模式)
+    - [1.1 软件设计的原则](#11-软件设计的原则)
+    - [1.2 单例](#12-单例)
+    - [1.3 工厂](#13-工厂)
+      - [1.3.1 简单工厂](#131-简单工厂)
+      - [1.3.2 工厂方法](#132-工厂方法)
+    - [1.4 代理](#14-代理)
+      - [1.4.1 静态代理](#141-静态代理)
+      - [1.4.2 动态代理](#142-动态代理)
+    - [1.5 建造者](#15-建造者)
+
+
+
 ## 1 设计模式
 
 设计模式是一套被反复使用的、多数人知晓的、经过分类编目的、代码设计经验的总结。
@@ -19,9 +34,7 @@
 
 - D：依赖倒置原则。先定义要做的事情是什么样子，然后再进行具体的实现。
 
-### 1.2 常见设计模式
-
-#### 1.2.1 单例
+### 1.2 单例
 
 单例：单一实例，全局只有一个。
 
@@ -31,11 +44,11 @@
 - ServletContext
 
 特点：
-- 单例类只能有一个实例。
+- 构造方法私有。
 
-- 单例类必须自己创建自己的唯一实例，即构造方法私有。
+- 包含自己的成员变量。
 
-- 单例类必须给所有其他对象提供这一实例。 
+- 提供静态方法供人调用。 
 
 
 示例：
@@ -126,9 +139,7 @@ public class Singleton4 {
 ```java
 /**
  * 静态内部类实现线程安全的懒加载
- * 1、构造方法私有
- * 2、自己提供实例
- * 3、提供一个静态方法给其他人获得你的实例
+ * 将实例初始化的过程放在静态内部类中
  */
 public class Singleton5 {
     private Singleton5(){}
@@ -147,7 +158,7 @@ public class Singleton5 {
 }
 ```
 
-#### 1.2.2 工厂
+### 1.3 工厂
 
 在工厂模式中，我们在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。
 
@@ -156,7 +167,7 @@ public class Singleton5 {
 
 注：XXXFactory 就是获得 xxx 实例。当看到类型是 XXXFactory 的时候，就要意识到这是一个工厂的设计模式。
 
-**（1）简单工厂**
+#### 1.3.1 简单工厂
 
 通过给工厂的生产方法传入不同的内容，工厂生产的内容就有所区别。
 
@@ -183,7 +194,11 @@ public class AnimalFactory {
 }
 ```
 
-**（2）工厂方法**  
+#### 1.3.2 工厂方法  
+
+**（1）实例工厂**  
+
+先对工厂进行实例化，然后通过工厂对象来调用生产方法。  
 
 当需要新的生产实例的时候，新增对应的工厂实例即可。
 
@@ -192,8 +207,6 @@ public interface CarFactory {
 
     public Car createCar();
 }
-```
-
 ```
 
 ```java
@@ -214,7 +227,11 @@ public class BydCarFactory implements CarFactory{
 }
 ```
 
+**（2）静态工厂**
+
 提供静态方法获得实例的工厂，称为静态工厂。  
+
+工厂中的方法是静态方法，可以直接调用。
 
 ```java
 public class DreamOneCarFactory implements CarFactory{
@@ -229,7 +246,7 @@ public class DreamOneCarFactory implements CarFactory{
 }
 ```
 
-#### 1.2.3 代理
+### 1.4 代理
 
 代理：为某个对象提供一个代理对象以控制对这个对象的访问。
 
@@ -241,9 +258,11 @@ public class DreamOneCarFactory implements CarFactory{
 
 代理的设计模式优点：可以在目标对象实现的基础上，增强额外的功能，扩展目标对象的功能。
 
-**（1）静态代理**  
+#### 1.4.1 静态代理  
 
 静态代理需要我们自己来定义类的代理。  
+
+**（1）委托类成员变量**  
 
 ```java
 public class HouseOwner {
@@ -269,7 +288,8 @@ public class HouseProxy {
 }
 ```
 
-基于继承实现代理：
+**（2）代理类继承委托类**
+
 ```java
 public class HouseProxy2 extends HouseOwner{
 
@@ -280,12 +300,14 @@ public class HouseProxy2 extends HouseOwner{
 }
 ```
 
-**（2）动态代理**  
+#### 1.4.2 动态代理
+
+**（1）JDK 动态代理**
 
 JDK 动态代理:
 - JDK 提供的 API 来获得代理对象（增强对象）。
 
-- JDK 动态代理使用要有接口的实现。
+- JDK 动态代理使用要有接口的实现，并且要用接口来接收。
 
 ```java
 public interface HelloService {
@@ -348,20 +370,23 @@ public class ProxyTest {
                 helloService.getClass().getInterfaces(), new InvocationHandler() {
             
             // invoke 中
-            //1 是要去执行委托类的方法
-            //2 可以去做增强
-            //返回值：Object 对应委托类方法执行的返回值
+            // 1 是要去执行委托类的方法
+            // 2 可以去做增强
+            // 返回值：Object 对应委托类方法执行的返回值
             // 参数：
             // proxy :代理对象
             // method: 委托类方法的 method
             // args: 委托类方法的参数
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                System.out.println("起床");
+                System.out.println("起床"); // 前面的增强
+                
                 // invoke 方法中可以使用反射来执行委托类的方法
                 // 第一个参数是委托类对象，而不是代理对象
                 Object invoke = method.invoke(helloService, args);
-                System.out.println("编程");
+                
+                System.out.println("编程"); // 后面的增强
+
                 return invoke;
             }
         });
@@ -375,12 +400,16 @@ public class ProxyTest {
 ```
 注：JDK 动态代理不能够使用实现类来接收代理对象。
 
+**（2）cglib 动态代理**
 
-cglib 动态代理：不需要有接口的实现。  
+cglib 动态代理：
+- 不需要有接口的实现。  
 
-cglib 基于继承去实现的，proxy 对象是继承委托类对象。
+- 基于继承去实现，proxy 对象是继承委托类对象。
 
-代码写起来基本是一样，获得代理对象的过程使用 api 不同。
+- 可以用接口，也可以用实现类来接收。
+
+- 代码写起来基本是一样，获得代理对象的过程使用 api 不同。
 
 ```java
 /**
@@ -409,11 +438,11 @@ public class CglibProxyTest {
      */
     @Test
     public void mytest1(){
-        //jdk没有提供，导包
+        // jdk 没有提供，导包
         HelloService2 helloService2 = new HelloService2();
-        //第二个参数也是InvocationHandler,和jdk动态代理的InvocationHandler不同
+        // 第二个参数也是 InvocationHandler，和 jdk 动态代理的 InvocationHandler 不同
         HelloService2 helloService2Proxy = (HelloService2) Enhancer.create(HelloService2.class, new InvocationHandler() {
-            //这三个参数和jdk动态代理是一样的
+            // 这三个参数和 jdk 动态代理是一样的
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 long start = System.currentTimeMillis();
@@ -429,9 +458,9 @@ public class CglibProxyTest {
 }
 ```
 
-#### 1.2.4 builder
+### 1.5 建造者
 
-builder 也是生产实例，更侧重参数的设置。
+建造者（builder）也是生产实例，更侧重参数的设置。
 
 ```java
 public class Foot {
