@@ -16,14 +16,21 @@
     - [1.5 建造者](#15-建造者)
   - [2 Spring](#2-spring)
     - [2.1 概述](#21-概述)
-    - [2.2 IOC/DI 入门案例](#22-iocdi-入门案例)
+    - [2.2 IoC/DI 入门案例](#22-iocdi-入门案例)
       - [2.2.1 案例 1](#221-案例-1)
       - [2.2.2 案例 2](#222-案例-2)
-    - [2.3 Spring 核心 API](#23-spring-核心-api)
-    - [2.4 xml 文件中注册 Bean 的方式](#24-xml-文件中注册-bean-的方式)
+    - [2.3 ApplicationContext](#23-applicationcontext)
+    - [2.4 实例化](#24-实例化)
       - [2.4.1 构造方法](#241-构造方法)
       - [2.4.2 工厂](#242-工厂)
     - [2.5 生命周期](#25-生命周期)
+    - [2.6 CollectionBean](#26-collectionbean)
+    - [2.7 注解](#27-注解)
+      - [2.7.1 组件注册类](#271-组件注册类)
+      - [2.7.2 注入类](#272-注入类)
+      - [2.7.3 scope](#273-scope)
+      - [2.7.4 生命周期](#274-生命周期)
+      - [2.7.5 单元测试](#275-单元测试)
 
 
 
@@ -674,11 +681,9 @@ Spring 是一个开源框架，它是于 2003 年兴起的一个轻量级的Java
 
 它是为了解决企业应用开发的复杂性而创建的。框架的主要优势之一就是其分层架构，分层架构允许使用者选择使用哪一个组件，同时为 J2EE 应用程序开发提供集成的框架。  
 
-Spring 是一个分层的 Java SE/EE full-stack（一站式）轻量级开源框架。
+Spring 核心：IoC/DI 和 AOP。
 
-Spring 核心：IOC、DI 和 AOP。
-
-IOC（Inverse of Controll）：控制反转。
+IoC（Inverse of Controll）：控制反转。
 - 控制：实例的生成权。
 
 - 反转：由应用程序反转给 Spring。
@@ -720,7 +725,7 @@ Spring Framework：
 </div>
 
 
-### 2.2 IOC/DI 入门案例
+### 2.2 IoC/DI 入门案例
 
 #### 2.2.1 案例 1
 
@@ -874,11 +879,12 @@ public void myTest1() {
 
 
 案例总结：
-- 控制反转 IoC（Inversion of Control），是一种设计思想，DI（依赖注入）是实现 IoC 的一种方法。
+- 控制反转 IoC（Inversion of Control），是一种设计思想；  
+  DI（依赖注入）是实现 IoC 的一种方法。
 
 - 依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。
 
-### 2.3 Spring 核心 API
+### 2.3 ApplicationContext
 
 ClassPathXmlApplicationContext：加载 classpath 目录下的配置文件。
 
@@ -894,9 +900,17 @@ BeanFactory：容器中所有的组件都是通过这个 Bean 生产出来的。
 <img src="./img/p5.png">
 </div>
 
-### 2.4 xml 文件中注册 Bean 的方式
+BeanFactory：生产所有组件 Bean。
+
+FactoryBean：XXXFactoryBean，factoryBean 对应的特定的 xxx 实例。
+
+
+
+### 2.4 实例化
 
 #### 2.4.1 构造方法
+
+**（1）无参构造**  
 
 默认提供的是无参构造，这个是最常用。
 
@@ -924,6 +938,8 @@ public class NoArgsConstructorBean {
 </bean>
 ```
 
+**（2）有参构造**  
+
 有参构造，要通过 constructor-arg 子标签来调用有参构造方法。  
 
 示例：
@@ -946,7 +962,7 @@ public class HasArgsConstructorBean {
 
 #### 2.4.2 工厂
 
-通常是整合已有代码的时候，可以使用工厂注册组件。
+不常用，通常是整合已有代码的时候，可以使用工厂注册组件。
 
 **（1）静态工厂**
 
@@ -1004,12 +1020,282 @@ Spring 容器中 Bean 的生命周期：
 <img src="./img/p6.png">
 </div>
 
+### 2.6 CollectionBean
+
+注册组件的时候，会遇到组件的成员变量类型为 Array、List、Set 等 Collection 类型。而 value 和 ref 属性不能够满足数组数据的需求，需要在 property 标签下写子标签。  
+- Array、List、Set 只有 property 的子标签不同，其余的写法都是相同的。  
+
+- Map 需要 key 和 value。  
+  key 和 value 可以是字符串、基本类型、包装类、javabean（容器中的组件 id）。
+
+- properties 也需要 key 和 value。  
+  key 和 value 不能是 javabean。
 
 
+示例：
+```java
+@Data
+public class CollectionBean {
+    Object[] arrayParam;
+    List listParam;
+    Set setParam;
+    Map mapParam;
+    Properties properties;
+}
+```
 
+```java
+@Data
+public class User {
+    String username;
+    String password;
+}
+```
 
+```xml
+<bean id="user" class="com.gyh.bean.User">
+    <property name="username" value="zhang3"/>
+    <property name="password" value="123456"/>
+</bean>
 
+<bean class="com.gyh.bean.CollectionBean">
+    <property name="arrayParam">
+        <!--Array 中每一条数据写一个子标签-->
+        <array>
+            <!--string、int-->
+            <value>string</value>
+            <value>100</value>
+            <!--javabean ref（引用容器中的组件） bean（局部组件）-->
+            <ref bean="user"/>
+            <bean class="com.gyh.bean.User">
+                <property name="username" value="li4"/>
+                <property name="password" value="123456"/>
+            </bean>
+        </array>
+    </property>
 
+    <property name="listParam">
+        <list>
+            <!--string、int-->
+            <value>arraydata1</value>
+            <value>234</value>
+            <!--javabean ref（引用容器中的组件） bean（局部组件）-->
+            <ref bean="user"/>
+            <bean class="com.gyh.bean.User">
+                <property name="username" value="li4"/>
+                <property name="password" value="123456"/>
+            </bean>
+        </list>
+    </property>
+
+    <property name="setParam">
+        <set>
+            <!--string、int-->
+            <value>arraydata1</value>
+            <value>234</value>
+            <!--javabean ref（引用容器中的组件） bean（局部组件）-->
+            <ref bean="user"/>
+            <bean class="com.gyh.bean.User">
+                <property name="username" value="li4"/>
+                <property name="password" value="123456"/>
+            </bean>
+        </set>
+    </property>
+
+    <property name="mapParam">
+        <map>
+            <!--Map标签下要写 entry 子标签-->
+            <entry key="key1" value="value1"/>
+            <entry key-ref="user" value-ref="user"/>
+            <entry key="key2">
+                <value>value2</value>
+            </entry>
+            <entry key="user2">
+                <ref bean="user"/>
+            </entry>
+            <entry key="user3">
+                <bean class="com.gyh.bean.User">
+                    <property name="username" value="li4"/>
+                    <property name="password" value="123456"/>
+                </bean>
+            </entry>
+        </map>
+    </property>
+
+    <property name="properties">
+        <!--子标签不是 properties 是 properties 的缩写 props-->
+        <props>
+            <prop key="key1">value1</prop>
+            <prop key="key2">value2</prop>
+        </props>
+    </property>
+</bean>
+```
+
+### 2.7 注解
+
+首先要打开注解扫描开关：
+```xml
+<!--只要包目录包含 base-package 的值，就在扫描范围-->
+<context:component-scan base-package="com.gyh"/>
+```
+
+#### 2.7.1 组件注册类
+
+`@Component`：普通场景。
+
+`@Service`：service 层组件。
+
+`@Repository`：dao 层组件。
+
+`@Controller`：控制层组件（SpringMVC 阶段使用）。
+
+使用注解后组件 id：
+- 可以指定id，示例：`@Service("cat")`。
+
+- 可以使用默认 id：类名首字母小写。
+
+#### 2.7.2 注入类
+
+给容器中的组件的成员变量赋值，或者维护组件之间的关系。
+
+**（1）字符串、基本类型、包装类**  
+
+使用 `@value` 注解，不需要包含set方法。  
+
+示例：
+```java
+@Value("zhang3")
+String username;
+
+@Value("123456")
+String pwd;
+```
+value 中的值也可以引用 properties 配置文件中的 key：
+1. 在 Spring 配置文件中引入 properties 文件；
+
+2. 在 `@value` 注解中引用 key。
+
+示例：
+```properties
+param.username=zhang3
+param.pwd=123456
+```
+
+```xml
+<context:property-placeholder location="classpath:param.properties"/>
+```
+
+```java
+@Value("${param.username}")
+String username;
+
+@Value("${param.pwd}")
+String pwd;
+```
+
+**（2）javabean**
+
+`@Autowired`：类似 `getBean(class)`，要求容器中这个类型的组件只有一个。  
+示例：
+```java
+@Autowired
+UserDao userDao;
+```
+
+`@Autowired` + `@Qualifier`：容器中这个类型的组件不止一个，通过 `@Qualifier` 指定组件 id。  
+示例：
+```java
+@Autowired
+@Qualifier("userDaoImpl")
+UserDao userDao2;
+```
+
+`@Resource`：默认可以按照类型去取，也可以使用 name 属性指定组件 id。  
+示例：
+```java
+@Resource(name = "userDaoImpl2")
+UserDao userDao3;
+```
+
+#### 2.7.3 scope
+
+组件的作用域：singleton（单例）、prototype（原型）。
+- singleton：容器中的组件始终以单例的形式存在。
+
+- prototype：每次从容器中取出组件都是一个新的组件，相当于每一次 new 一个新的。
+
+直接在类名上方使用 `@Scope`。  
+示例：
+```java
+@Service
+@Scope("prototype")
+public class UserService() {}
+```
+
+#### 2.7.4 生命周期
+
+init-method：`@PostConstruct`。
+
+destroy-method：`@PreDestroy`。
+
+示例：
+```java
+@PostConstruct
+public void init(){}
+
+@PreDestroy
+public void destroy(){}
+```
+
+#### 2.7.5 单元测试
+
+之前单元测试都是先去获得 ApplicationContext 对象，如：
+```java
+ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("application.xml");
+
+Cat cat = applicationContext.getBean("cat", Cat.class);
+cat.Miao();
+```
+
+Spring 对单元测试有良好的支持，可以在单元测试类中直接使用注入类的注解从容器中取出组件。
+
+**第一步**：引入依赖。  
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+    <version>5.2.6.RELEASE</version>
+    <scope>test</scope>
+</dependency>
+```
+
+**第二步**：test 类添加注解。  
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(value = "classpath:application.xml")
+```
+
+**第三步**：使用。  
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(value = "classpath:application.xml")
+public class myTest {
+    @Autowired
+    Cat cat;
+    @Autowired
+    Dog dog;
+    @Autowired
+    Tiger tiger;
+    
+    @Test
+    public void myTest1() {
+        cat.Miao();
+        dog.Wang();
+        tiger.Aowu();
+    }
+}
+```
 
 
 
