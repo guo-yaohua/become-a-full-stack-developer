@@ -14,8 +14,8 @@
       - [1.4.1 静态代理](#141-静态代理)
       - [1.4.2 动态代理](#142-动态代理)
     - [1.5 建造者](#15-建造者)
-  - [2 Spring](#2-spring)
-    - [2.1 概述](#21-概述)
+  - [2 Spring-IoC/DI](#2-spring-iocdi)
+    - [2.1 Spring 概述](#21-spring-概述)
     - [2.2 IoC/DI 入门案例](#22-iocdi-入门案例)
       - [2.2.1 案例 1](#221-案例-1)
       - [2.2.2 案例 2](#222-案例-2)
@@ -31,6 +31,16 @@
       - [2.7.3 scope](#273-scope)
       - [2.7.4 生命周期](#274-生命周期)
       - [2.7.5 单元测试](#275-单元测试)
+  - [3 Spring-AOP](#3-spring-aop)
+    - [3.1 AOP 概述](#31-aop-概述)
+    - [3.2 AOP 编程术语](#32-aop-编程术语)
+    - [3.3. AOP 实战](#33-aop-实战)
+      - [3.3.1 SpringAOP（半自动）](#331-springaop半自动)
+      - [3.3.2 AspectJ（全自动）](#332-aspectj全自动)
+    - [3.4 JoinPoJint](#34-joinpojint)
+    - [3.5 注解](#35-注解)
+      - [3.5.1 切面类中使用注解](#351-切面类中使用注解)
+      - [3.5.1 使用自定义注解来指定增强方法](#351-使用自定义注解来指定增强方法)
 
 
 
@@ -673,9 +683,9 @@ public class MyTest {
 ```
 
 
-## 2 Spring
+## 2 Spring-IoC/DI
 
-### 2.1 概述
+### 2.1 Spring 概述
 
 Spring 是一个开源框架，它是于 2003 年兴起的一个轻量级的Java 开发框架，由 Rod Johnson 在其著作《Expert One-On-One J2EE Development and Design》中阐述的部分理念和原型衍生而来。  
 
@@ -1024,9 +1034,22 @@ Spring 容器中 Bean 的生命周期：
 
 注册组件的时候，会遇到组件的成员变量类型为 Array、List、Set 等 Collection 类型。而 value 和 ref 属性不能够满足数组数据的需求，需要在 property 标签下写子标签。  
 - Array、List、Set 只有 property 的子标签不同，其余的写法都是相同的。  
+  - 值类型：value 标签。
+
+  - javabean 类型：bean、ref 标签。
 
 - Map 需要 key 和 value。  
-  key 和 value 可以是字符串、基本类型、包装类、javabean（容器中的组件 id）。
+  key 和 value 可以是字符串、基本类型、包装类、javabean（容器中的组件 id）。  
+  - Map 的 key：
+    - 值类型：key 属性。  
+    
+    - javabean 类型：key-ref 属性。
+
+  - Map 的 value：
+    - 值类型：value属性或value子标签。
+    
+    - javabean 类型：value-ref 属性或 bean、ref 子标签。
+
 
 - properties 也需要 key 和 value。  
   key 和 value 不能是 javabean。
@@ -1161,7 +1184,7 @@ public class User {
 
 **（1）字符串、基本类型、包装类**  
 
-使用 `@value` 注解，不需要包含set方法。  
+使用 `@value` 注解，不需要包含 set 方法。  
 
 示例：
 ```java
@@ -1196,6 +1219,8 @@ String pwd;
 
 **（2）javabean**
 
+从容器中取出组件。
+
 `@Autowired`：类似 `getBean(class)`，要求容器中这个类型的组件只有一个。  
 示例：
 ```java
@@ -1224,6 +1249,11 @@ UserDao userDao3;
 - singleton：容器中的组件始终以单例的形式存在。
 
 - prototype：每次从容器中取出组件都是一个新的组件，相当于每一次 new 一个新的。
+
+scope 也带来生命周期的变化：
+- signleton：容器初始化的时候，开始生命周期。
+
+- prototype：当获得次组件的时候，才开始生命周期，且生命周期没有 destory。
 
 直接在类名上方使用 `@Scope`。  
 示例：
@@ -1298,7 +1328,416 @@ public class myTest {
 ```
 
 
+## 3 Spring-AOP
+
+### 3.1 AOP 概述
+
+面向切面编程是指通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。AOP 是 OOP（面向对象编程）的延续，是软件开发中的一个热点，也是 Spring 框架中的一个重要内容。  
+
+利用 AOP 可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。
+
+AOP 的特点：
+- AOP采取横向抽取机制，取代了传统纵向继承体系重复性代码。
+
+- Spring AOP 使用纯 Java 实现，不需要专门的编译过程和类加载器，在运行期通过代理方式向目标类织入增强代码。
+
+经典应用：事务管理、性能监视、安全检查、缓存 、日志等。  
+这些系统服务通常被称为横切关注点。想象一下如果每个组件都单独去实现这些系统功能：
+- 改变这些关注点的逻辑，修改各个模块当中的实现，方法的调用就会重复出现在各个模块中。
+
+- 组件会因为那些与自身核心业务无关的代码而变得混乱。
+
+未建立切面：
+<div align="center">
+<img src="./img/p7.png">
+</div>
+
+建立切面：
+<div align="center">
+<img src="./img/p8.png"><br>
+<img src="./img/p9.png">
+</div>
+
+### 3.2 AOP 编程术语
+
+| 术语 | 意义 |
+| :-: | :-: |
+| Target | 目标类，需要被代理的类，委托类 |
+| JoinPoint | 连接点，指被代理对象里那些可能会被增强的点 |
+| PointCut | 切入点，已经被增强的连接点 |
+| Advice | 通知（具体的增强的代码），代理对象执行到 Joinpoint 所做的事情 |
+| weaver | 织入（植入）是指把 advice 应用到目标对象来创建新的代理对象的过程 |
+| Proxy | 代理类，动态代理生成的 |
+| Aspect | 切面，是切入点和通知的结合（一个线是一条特殊的面 -> 一个切入点和一个通知组成一个特殊的面） |
+
+### 3.3. AOP 实战
+
+#### 3.3.1 SpringAOP（半自动）
+
+**第一步**：注册一个委托类 target 组件。
+
+```xml
+<context:component-scan base-package="com.gyh"/>
+```
+
+```java
+@Component
+public class HelloService {
+
+    public void sayHello(String name) {
+        System.out.println("Hello " + name);
+    }
+}
+```
+
+**第二步**：通知。
+
+```java
+@Component
+public class CustomAdvice implements MethodInterceptor {
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        System.out.println("before");
+        Object proceed = methodInvocation.proceed();
+        System.out.println("after");
+        return proceed;
+    }
+}
+```
+
+**第三步**：Proxy 增强组件。
+
+```xml
+<!--将目标组件生成一个代理组件-->
+<!--XXXFactoryBean 生成特定的 XXX 组件-->
+<bean id="helloServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target" ref="helloService"/>
+
+    <property name="interceptorNames" value="customAdvice"/>
+</bean>
+```
+
+**第四步**：使用。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class myTest {
+    @Autowired
+    @Qualifier("helloServiceProxy")
+    HelloService helloService;
+
+    @Test
+    public void myTest1() {
+        helloService.sayHello("zhang3");
+    }
+}
+```
+
+不足之处：
+- 哪些方法被增强需要写代码判断。
+
+- 增强的代码有要求，必须实现一些接口。
 
 
 
+#### 3.3.2 AspectJ（全自动）
 
+AspectJ 是基于 Java 语言的 AOP 框架。Spring2.0 之后支持了基于 AspectJ 的切入点表达式的支持。  
+
+AspectJ 扩展了 Java 语言，提供了一个专门的编译器，在编译时提供横向代码的织入，允许直接在 class 里面定义切面类。  
+主要用途：不改动现有代码的前提下自定义开发和植入代码。
+
+**（1）自定义通知**
+
+**第一步**：引入全新依赖。
+
+```xml
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.5</version>
+</dependency>
+```
+
+**第二步**：注册一个委托类 target 组件和创建通知。
+
+```java
+@Component
+public class HelloService {
+
+    public void sayHello(String name) {
+        System.out.println("Hello " + name);
+    }
+    public void sayGoodBye(String name) {
+        System.out.println("GoodBye " + name);
+    }
+}
+```
+
+```java
+@Component
+public class CustomAdvice implements MethodInterceptor {
+    @Override
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+        System.out.println("before");
+        Object proceed = methodInvocation.proceed();
+        System.out.println("after");
+        return proceed;
+    }
+}
+```
+
+**第三步**：advisor（自定义通知）。
+
+首先引入 aop 约束：
+```xml
+xmlns:aop="http://www.springframework.org/schema/aop"
+
+http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd
+```
+
+配置 advisor：
+```xml
+<aop:config>
+    <!--pointcut id 为了方便别人引用他-->
+    <!--expression 切入点表达式 → 匹配方法 → 指定增强方法-->
+    <aop:pointcut id="mypointcut" expression="execution(public void com.gyh.service.HelloService.sayHello(String))"/>
+    <!--pointcut 属性对应切入点表达式-->
+    <aop:advisor advice-ref="customAdvice" pointcut-ref="mypointcut"/>
+</aop:config>
+```
+
+切入点表达式：`execution(修饰符 返回值 包名.类名.方法名(形参))`。
+- 修饰符：private、public 这些修饰符。  
+  可以省略不写，空白代表任意修饰符。
+
+- 返回值。
+  不能省略。  
+  可以使用 `*` 来通配。
+  特殊用法：如果返回值是 javabean 则需要写全类名；如果是基本类型或 java.lang 包目录下的可以直接写。
+
+- 包名、类名和方法名。  
+  可以部分省略。除了头和尾不能省略，中间的部分都可以省略，通过 `..` 来省略中间的部分。  
+  可以通配。头中间尾都可以使用 `*` 来通配。`*` 可以代表一个单词或一个单词的一部分。
+
+- 形参。  
+  可以省略不写，即无参方法。
+  可以通配。`*` 来通配，通配单个返回值。  
+  特殊用法：如果参数是 javabean，则要写全类名；如果是 java.lang 包目录下可以直接写。
+
+**第四步**：使用。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class myTest {
+    @Autowired
+    HelloService helloService;
+
+    @Test
+    public void myTest1() {
+        helloService.sayHello("zhang3");
+        helloService.sayGoodBye("li4");
+    }
+}
+
+/* 运行结果：
+before
+Hello zhang3
+after
+GoodBye li4
+*/
+```
+
+**（2）AspectJ 提供通知**
+
+AspectJ 通知类型：
+- Before：在切入点之前执行。参数类型的校验。前置通知。
+
+- After：在 finally 语句里。不管切入点是否有异常发生都会执行。
+
+- Around：环绕通知，在切入点之前和之后都会执行。  
+  用于增加事务等。  
+  示例：
+    ```java
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("around 的 before");
+        // 类似于 method.invoke 或 methodInvocation.proceed
+        Object proceed = joinPoint.proceed();
+        System.out.println("around 的 after");
+        return proceed;
+    }
+    ```
+
+- AtterReturning：在切入点之后执行。后置通知，可以对结果进行检查。  
+  用于增加 log。  
+  示例：
+  ```xml
+  <!--retuning 属性值对应 after-returning 通知方法的形参名-->
+  <aop:after-returning method="afterReturning" pointcut-ref="mypointcut" returning="returnValue"/>
+  ```
+  ```java
+  // 可以拿到方法执行的返回值，需要在形参中定义 Object
+  public void afterReturning(Object returnValue){
+      System.out.println("返回值为：" + returnValue);
+  }
+  ```
+
+- AfterThrowing：抛出异常的时候执行通知。正常情况下走不到，只有发生异常的情况下才会去通知。  
+  用于记录一些日志。  
+  示例：
+  ```xml
+  <!--throwing 属性值对应 after-throwing 通知方法的形参名-->
+  <aop:after-throwing method="afterThrowing" pointcut-ref="mypointcut" throwing="exception"/>
+  ```
+
+  ```java
+  public void afterThrowing(Exception exception){
+      System.out.println("抛出的异常：" + exception.getMessage());
+  }
+  ```
+
+**第一步**：引入依赖、注册委托类。
+
+**第二步**：创建通知。
+
+```java
+@Component
+public class CustomAdvice {
+
+    public void myBefore() {
+        System.out.println("before");
+    }
+}
+```
+
+**第三步**：aspect（提供通知）。
+
+```xml
+<aop:config>
+    <aop:aspect ref="customAdvice">
+        <aop:before method="myBefore" pointcut="execution(* com..sayHello(*))"/>
+    </aop:aspect>
+</aop:config>
+```
+
+**第四步**：使用。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class myTest {
+    @Autowired
+    HelloService helloService;
+
+    @Test
+    public void myTest1() {
+        helloService.sayHello("zhang3");
+        helloService.sayGoodBye("li4");
+    }
+}
+
+/* 运行结果：
+before
+Hello zhang3
+GoodBye li4
+*/
+```
+
+### 3.4 JoinPoJint
+
+JoinPoJint 可以放在所有通知的形参中。
+
+`Signature getSignature()`：获取封装了署名信息的对象，在该对象中可以获取到目标方法名，所属类的 Class 等信息。  
+示例：
+```java
+@Component
+public class CustomAdvice{
+
+    public void myBefore(JoinPoint joinPoint) {
+        Signature signature = joinPoint.getSignature();
+        System.out.println(signature.getName());
+        System.out.println(signature.getDeclaringTypeName());
+        System.out.println(Arrays.asList(joinPoint.getArgs()));
+        System.out.println(joinPoint.getTarget().getClass());   // 委托类对象
+        System.out.println(joinPoint.getThis().getClass()); // 代理类对象
+
+        System.out.println("before");
+    }
+}
+```
+使用后：
+<div>
+<img src="./img/p10.png">
+</div>
+
+
+`Object[] getArgs()`：获取传入目标方法的参数对象。
+
+`Object getTarget()`：获取被代理的对象。
+
+`Object getThis()`：获取代理对象。
+
+### 3.5 注解
+
+首先开启注解开关：
+```xml
+<aop:aspectj-autoproxy/>
+```
+
+#### 3.5.1 切面类中使用注解
+
+示例：
+```java
+@Component
+@Aspect
+public class CustomAdvice{
+    @Pointcut("execution(* com..sayHello(*))")
+    public void myPointcut() {} // id
+
+    @Before("myPointcut()") // 可以引用切入点表达式
+    public void myBefore(JoinPoint joinPoint) {
+        System.out.println("before");
+    }
+
+    @After("execution(* com..sayHello(*))") // 可以直接写切入点表达式
+    public void MyAfter(){
+        System.out.println("after");
+    }
+
+    @AfterReturning(value = "myPointcut()", returning = "returnValue")
+    public void afterReturning(Object returnValue){
+        System.out.println("返回值为：" + returnValue);
+    }
+}
+```
+
+#### 3.5.1 使用自定义注解来指定增强方法
+
+示例：
+```java
+@Target(ElementType.METHOD) // 注解能够写在方法上
+@Retention(RetentionPolicy.RUNTIME) // 注解在运行时生效
+public @interface CountTime {
+}
+```
+
+```java
+@Component
+@Aspect
+public class CountTimeAspect {
+
+    @Pointcut("@annotation(com.gyh.anno.CountTime)")
+    public void countTimePointcut(){}
+
+    @Around("countTimePointcut()")
+    public Object countTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        Object proceed = joinPoint.proceed();
+        long end = System.currentTimeMillis();
+        System.out.println(joinPoint.getSignature().getName() + "执行的时间是：" + (end - start));
+        return proceed;
+    }
+}
+```
