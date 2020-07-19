@@ -42,6 +42,24 @@
     - [3.6 注解](#36-注解)
       - [3.6.1 切面类中使用注解](#361-切面类中使用注解)
       - [3.6.2 使用自定义注解来指定增强方法](#362-使用自定义注解来指定增强方法)
+  - [4 JdbcTemplate](#4-jdbctemplate)
+    - [4.1 案例](#41-案例)
+      - [4.1.1 SE 项目使用 JdbcTemplate](#411-se-项目使用-jdbctemplate)
+      - [4.1.2 Spring 整合](#412-spring-整合)
+    - [4.2 @Autowired 注解](#42-autowired-注解)
+    - [4.3 jdbcDaoSupport](#43-jdbcdaosupport)
+  - [5 Spring-tx](#5-spring-tx)
+    - [5.1 事务回顾](#51-事务回顾)
+    - [5.2 Spring 事务管理](#52-spring-事务管理)
+      - [5.2.1 PlatFormTransactionManager](#521-platformtransactionmanager)
+      - [5.2.2 TransactionStatus](#522-transactionstatus)
+      - [5.2.3 TransactionDefinition](#523-transactiondefinition)
+    - [5.3 Spring 事务案例](#53-spring-事务案例)
+      - [5.3.1 TransactionTemplate（手动实现业务）](#531-transactiontemplate手动实现业务)
+      - [5.3.2 事务代理对象](#532-事务代理对象)
+      - [5.3.3 事务通知](#533-事务通知)
+      - [5.3.4 注解方式](#534-注解方式)
+  - [6 Javaconfig](#6-javaconfig)
 
 
 
@@ -1425,7 +1443,7 @@ public class CustomAdvice implements MethodInterceptor {
 @ContextConfiguration("classpath:application.xml")
 public class myTest {
     @Autowired
-    @Qualifier("helloServiceProxy")
+    @Qualifier("helloServiceProxy") // 从容器中通过指定 id 取出代理组件 
     HelloService helloService;
 
     @Test
@@ -1439,7 +1457,6 @@ public class myTest {
 - 哪些方法被增强需要写代码判断。
 
 - 增强的代码有要求，必须实现一些接口。
-
 
 
 #### 3.3.2 AspectJ（全自动）
@@ -1637,16 +1654,16 @@ GoodBye li4
 - 返回值。  
   不能省略。  
   可以使用 `*` 来通配。  
-  特殊用法：如果返回值是 javabean 则需要写全类名；如果是基本类型或 java.lang 包目录下的可以直接写。
+  特殊用法：如果返回值是 javabean 需要写全类名；如果是基本类型或 java.lang 包目录下的可以直接写。
 
 - 包名、类名和方法名。  
   可以部分省略。除了头和尾不能省略，中间的部分都可以省略，通过 `..` 来省略中间的部分。  
   可以通配。头中间尾都可以使用 `*` 来通配。`*` 可以代表一个单词或一个单词的一部分。
 
 - 形参。  
-  可以省略不写，即无参方法。  
-  可以通配。`*` 来通配，通配单个返回值。  
-  特殊用法：如果参数是 javabean，则要写全类名；如果是 java.lang 包目录下可以直接写。
+  可以省略，即无参方法。  
+  可以通配。`*` 来通配，通配单个返回值。使用 `..` 来代表任意数量的任意类型的参数。    
+  特殊用法：如果参数是 javabean，要写全类名；如果是 java.lang 包目录下可以直接写。
 
 ### 3.5 JoinPoJint
 
@@ -1741,6 +1758,707 @@ public class CountTimeAspect {
         long end = System.currentTimeMillis();
         System.out.println(joinPoint.getSignature().getName() + "执行的时间是：" + (end - start));
         return proceed;
+    }
+}
+```
+
+
+## 4 JdbcTemplate
+
+JdbcTemplate 是 Spring 利用 AOP 思想封装的 JDBC 操作工具。  
+
+JDBCTemplate 也要依赖于数据源。
+
+### 4.1 案例
+
+#### 4.1.1 SE 项目使用 JdbcTemplate
+
+第一步：引入依赖。
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>5.2.6.RELEASE</version>
+    </dependency>
+
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.47</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>1.1.22</version>
+    </dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+第二步：使用 JdbcTemplate。
+
+```java
+@Test
+public void myTest() {
+    DruidDataSource dataSource = new DruidDataSource();
+    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+    dataSource.setUrl("jdbc:mysql://localhost:3306/user_db?useUnicode=true&characterEncoding=utf-8");
+    dataSource.setUsername("root");
+    dataSource.setPassword("123456");
+
+    JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    jdbcTemplate.setDataSource(dataSource); // 依赖数据源
+
+    String sql = "select username from user_tb where id = ?";
+    String username = jdbcTemplate.queryForObject(sql, String.class, 1);
+    System.out.println("id 为 1 的 用户名：" + username);
+}
+```
+
+#### 4.1.2 Spring 整合
+
+第一步：新增依赖。
+
+```xml
+<!--Spring 支持和单元测试-->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.2.6.RELEASE</version>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-test</artifactId>
+    <version>5.2.6.RELEASE</version>
+</dependency>
+```
+
+第二步：Spring 配置文件。
+
+```xml
+<context:component-scan base-package="com.gyh"/>
+<!--datasource-->
+<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/user_db?useUnicode=true&amp;characterEncoding=utf-8"/>
+    <property name="username" value="root"/>
+    <property name="password" value="123456"/>
+</bean>
+<!--JdbcTemplate-->
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+```
+
+
+> xml 常见转义字符：  
+> - `&`：`&amp;`  
+> - 空格：`&nbsp;`  
+> - `>`：`&gt;`  
+> - `<`：`&lt;`  
+
+
+第三步：转账应用。
+
+```java
+@Service
+public class AccountServiceImpl implements AccountService {
+    @Autowired
+    AccountDao accountDao;
+
+    @Override
+    public boolean transfer(Integer fromId, Integer destId, Integer money) {
+        Integer fromMoney = accountDao.selectMoneyById(fromId);
+        Integer destMoney = accountDao.selectMoneyById(destId);
+
+        fromMoney -= money;
+        destMoney += money;
+
+        accountDao.updateMoneyById(fromMoney, fromId);
+        accountDao.updateMoneyById(destMoney, destId);
+
+        return true;
+    }
+}
+```
+
+```java
+@Repository
+public class AccountDaoImpl implements AccountDao {
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Integer selectMoneyById(Integer id) {
+        String sql = "select money from account_tb where id = ?";
+        Integer money = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return money;
+    }
+
+    @Override
+    public Integer updateMoneyById(Integer money, Integer id) {
+        String sql = "update account_tb set money = ? where id = ?";
+        int update = jdbcTemplate.update(sql, money, id);
+        return update;
+    }
+}
+```
+
+第四步：测试用例。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class JdbcTemplateTest {
+
+    @Autowired
+    AccountService accountService;
+
+    @Test
+    public void myTest() {
+        accountService.transfer(1, 2, 100);
+    }
+}
+```
+
+### 4.2 @Autowired 注解
+
+`@Autowired` 注解的另一个使用方式：注解放在方法上，在组件初始化的时候，会执行到该方法。  
+形参会从容器中取出对应的组件，
+- 如果该类的组件在容器中只有一个可以直接取出。
+- 如果容器中该类型的组件不止一个，可以使用 `@Qualifier` 来指定组件 id。
+
+示例：
+```java
+@Repository
+public class AccountDaoImpl implements AccountDao{
+
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public void setJdbcTemplate(@Qualifier("jdbcTemplate") JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+}
+```
+
+### 4.3 jdbcDaoSupport
+
+示例：
+```java
+// 首先在 Spring 配置文件中删除 JdbcTemplate 配置
+@Repository
+public class AccountDaoImpl extends JdbcDaoSupport implements AccountDao {
+
+    // 继承 JdbcDaoSupport，并重写父类方法
+    @Autowired
+    public void setJdbcDatasource(DataSource datasource) {
+        setDataSource(datasource);
+    }
+    private JdbcTemplate jdbcTemplate = getJdbcTemplate();
+}
+```
+
+## 5 Spring-tx
+
+### 5.1 事务回顾
+
+事务特点（ACID）：
+- 原子性（Atomicity）
+
+- 一致性（Consistency）
+
+- 隔离性（Isolation）
+
+- 持久性（Durability）
+
+所有这些事务特性，不管其内部如何关联，仅仅是保证从事务开始到事务完成，不管事务成功与否，都能正确地管理事务涉及的数据。当事务处理系统创建事务时，将确保事务有某些特性。组件的开发者们假设事务的特性应该是一些不需要他们亲自管理的特性。这些特性称为 ACID 特性。
+
+事务并发引起的问题：
+- 脏读：一个事务读取到另一个事务还未提交的数据。
+
+- 不可重复读：一个事务读到另外一个事务已经的提交的数据（侧重修改操作）。
+
+- 幻读（虚读）：一个事务读到另外一个事务已经的提交的数据（侧重增删操作）。
+
+数据库的隔离级别：  
+| | 脏读 | 不可重复读 | 虚（幻）读 |
+| :-: | :-: | :-: | :-: |
+| 读未提交 | × | × | × |
+| 读已提交 | √ | × | × |
+| 可重复读 | √ | √ | × |
+| 序列化 | √ | √ | √ |
+
+MySQL 默认的隔离级别：可重复读，但不会导致虚读问题。
+
+### 5.2 Spring 事务管理
+
+Spring事务管理常用对象：
+- PlatformTransactionManager：平台事务管理器。
+
+- TransactionStatus：事务状态
+
+- TransactionDefinition：事务定义
+
+<div align="center">
+<img src="./img/p11.png">
+</div>
+
+#### 5.2.1 PlatFormTransactionManager
+
+组件依赖数据源。
+
+平台事务管理器，Spring 要管理事务，必须使用事务管理器。进行事务配置时，必须配置事务管理器。
+
+有多种实现，通过实现此接口，Spring 可以管理任何实现了这些接口的事务。开发人员可以使用统一的编程模型来控制管理事务。
+
+常见的事务管理器的实现：
+- DataSourceTransactionManager：jdbc 开发时事务管理器，采用 JdbcTemplate、mybatis。
+
+- HibernateTransactionManager：hibernate 开发时事务管理器，整合 hibernate。
+
+常用 API：
+- `TransactionStatus getTransaction(TransactionDefinition definition)`：事务管理器。通过事务详情，获得事务状态，从而管理事务。获取事务状态后，Spring 根据传播行为来决定如何开启事务。
+
+- `void commit(TransactionStatus status)`：根据状态提交。
+
+- `void rollback(TransactionStatus status)`：根据状态回滚。
+
+
+#### 5.2.2 TransactionStatus
+
+这个接口的作用就是获取事务的状态（回滚点、是否完成、是否新事务、是否回滚）属性。
+
+常用 API：
+- `boolean isNewTransaction()`：是否是新的事务。
+
+- `boolean hasSavepoint()`：是否有保存点。
+
+- `void setRollbackOnly()`：设置回滚。
+
+- `boolean isRollbackOnly()`：是否回滚。
+
+- `void flush()`：刷新。
+
+- `boolean isCompleted()`：是否完成。
+
+#### 5.2.3 TransactionDefinition
+
+这个接口的作用就是定义事务的名称、隔离级别、传播行为、超时时间长短、只读属性等。
+
+事务的隔离级别：
+- TransactionDefinition.ISOLATION_DEFAULT：使用底层数据库默认隔离级别。
+
+- TransactionDefinition.ISOLATION_READ_UNCOMMITION：读未提交。
+
+- TransactionDefinition.ISOLATION_READ_COMMITION：读已提交。
+
+- TransactionDefinition.ISOLATION_REPETABLE_READ：可重复读。
+
+- TransactionDefinition.ISOLATION_SERIALIZABLE：可串行化。
+
+传播行为：包含事务的方法之间产生互相调用。
+
+示例：
+```java
+class ServiceA{
+    void methodA(){
+    }
+}
+
+class ServiceB{
+    void methodB(){
+        serviceA.methodA()
+    }
+}
+```
+
+常用传播行为：
+- TransactionDefinition.PROPAGATION_REQUIRED：默认的方式。把多个事务看成是同一个事务来操作。支持现有的事务，如果没有则新建一个事务  
+  特点：要么一起提交事务，要么一起回滚。
+
+- TransactionDefinition.PROPAGATION_REQUIRED_NEW：总是发起一个新的事务（methodA 作为一个单独的新事务）。  
+  特点：外围不影响里面，里面影响外围。示例：  
+  - 如果 methodB 发生异常：B 回滚，A 不回滚。  
+  - 如果 methodA 发生异常：A、B都回滚。
+
+- TransactionDefinition.PROPAGATION_NESTED：以嵌套事务的方式运行。  
+  特点：里面发生的错误不会影响外围，外围发生的错误会影响里面。示例：
+  - 如果 methodB 发生异常：A、B 都回滚。  
+  - 如果 methodA 发生异常：A 回滚，B 不回滚。  
+  
+  TransactionDefinition.PROPAGATION_NESTED 示例：在用户注册时，发放优惠券。如果发放优惠券的时候发生错误，用户注册没有问题。只想让发放优惠券回滚，用户注册留下。
+
+- TransactionDefinition.PROPAGATION_SUPPORT：支持现有事务。如果没有则以非事务状态运行。
+
+- TransactionDefinition.PROPAGATION_MANDATORY：支持现有事务，如果没有则抛出异常。
+
+- TransactionDefinition.PROPAGATION_NOT_SUPPORT：不支持事务，总是以非事务状态运行，如果当前存在一个事务，则将其挂起。
+
+- TransactionDefinition.PROPAGATION_NEVER：不支持事务，总是以非事务状态运行，如果当前存在一个事务，则抛出异常。
+
+### 5.3 Spring 事务案例
+
+#### 5.3.1 TransactionTemplate（手动实现业务）
+
+第一步：导入依赖。
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.2.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.22</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!--Spring 支持和单元测试-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>5.2.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.2.6.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+```
+
+第二步：Spring 配置。
+
+```xml
+<!--datasource-->
+<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/user_db?useUnicode=true&amp;characterEncoding=utf-8"/>
+    <property name="username" value="root"/>
+    <property name="password" value="123456"/>
+</bean>
+<!--TransactionManager-->
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<!--TransactionTemplate-->
+<bean class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager" ref="transactionManager"/>
+</bean>
+```
+
+第三步：service 层和 dao 层代码。
+
+service：
+```java
+@Service
+public class AccountServiceImpl implements AccountService {
+    @Autowired
+    AccountDao accountDao;
+
+    @Autowired
+    TransactionTemplate transactionTemplate;
+
+    @Override
+    public boolean transfer(Integer fromId, Integer destId, Integer money) {
+        Integer fromMoney = accountDao.selectMoneyById(fromId);
+        Integer destMoney = accountDao.selectMoneyById(destId);
+
+        fromMoney -= money;
+        destMoney += money;
+
+        Integer finalFromMoney = fromMoney;
+        Integer finalDestMoney = destMoney;
+        Integer execute = transactionTemplate.execute(new TransactionCallback<Integer>() {
+            // doInTransaction 方法中增加需要事务的这部分代码即可
+            // 如果你这部分代码需要返回值，TransactionCallback<Object> 中的 Object 定义成需要的返回值类型
+            @Override
+            public Integer doInTransaction(TransactionStatus transactionStatus) {
+                Integer update1 = accountDao.updateMoneyById(finalFromMoney, fromId);
+                // int i = 1 / 0;
+                Integer update2 = accountDao.updateMoneyById(finalDestMoney, destId);
+
+                return update1 + update2;
+            }
+        });
+        System.out.println("update1 + update2 = " + execute);
+
+        return true;
+    }
+}
+```
+
+dao：
+```java
+@Repository
+public class AccountDaoImpl extends JdbcDaoSupport implements AccountDao {
+
+    @Autowired
+    public void setJdbcDatasource(DataSource datasource) {
+        setDataSource(datasource);
+    }
+
+
+    @Override
+    public Integer selectMoneyById(Integer id) {
+        String sql = "select money from account_tb where id = ?";
+        JdbcTemplate jdbcTemplate = getJdbcTemplate();
+        Integer money = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return money;
+    }
+
+    @Override
+    public Integer updateMoneyById(Integer money, Integer id) {
+        String sql = "update account_tb set money = ? where id = ?";
+        int update = getJdbcTemplate().update(sql, money, id);
+        return update;
+    }
+}
+```
+
+第四步：测试。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class TransactionTemplateTest {
+
+    @Autowired
+    AccountService accountService;
+
+    @Test
+    public void myTest() {
+        accountService.transfer(1, 2, 100);
+    }
+}
+```
+
+#### 5.3.2 事务代理对象
+
+类似 Spring AOP，通过委托类组件生成代理组件。
+
+第一步：修改 Spring 配置。
+
+```xml
+<bean id="accountServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <!--target 要去增强的组件-->
+    <property name="target" ref="accountServiceImpl"/>
+    <!--transactionManager-->
+    <property name="transactionManager" ref="transactionManager"/>
+    <!--transactionAttributes → definition-->
+    <!--参数类型是 properties 类型，可以使用 collectionBean-->
+    <property name="transactionAttributes">
+        <props>
+            <!--key 是方法名 value 就是事务的定义-->
+            <!--
+                传播行为：PROPAGATION_xxx
+                隔离级别：ISOLATION_xxx REPEATABLE_READ、DEFAULT
+                只读：readonly
+                超时：timeout_数字 单位是秒
+                rollbackFor：-XXXException
+                noRollbackFor：+XXXException
+            -->
+            <prop key="transfer">PROPAGATION_REQUIRED, ISOLATION_DEFAULT</prop>
+        </props>
+    </property>
+</bean>
+```
+
+第二步：service 组件。
+
+```java
+@Service
+public class AccountServiceImpl implements AccountService {
+    @Autowired
+    AccountDao accountDao;
+
+    @Override
+    public boolean transfer(Integer fromId, Integer destId, Integer money) {
+        Integer fromMoney = accountDao.selectMoneyById(fromId);
+        Integer destMoney = accountDao.selectMoneyById(destId);
+
+        fromMoney -= money;
+        destMoney += money;
+
+        accountDao.updateMoneyById(fromMoney, fromId);
+        // int i = 1 / 0;
+        accountDao.updateMoneyById(destMoney, destId);
+
+        return true;
+    }
+}
+```
+
+第三步：测试。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class TransactionProxyBeanTest {
+
+    @Autowired
+    @Qualifier("accountServiceProxy")
+    AccountService accountService;
+
+    @Test
+    public void mytest(){
+        accountService.transfer(1,2,100);
+    }
+}
+```
+
+#### 5.3.3 事务通知
+
+第一步：新增依赖。
+
+```xml
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.5</version>
+</dependency>
+```
+
+第二步：修改 Spring 配置。
+
+首先新增 tx 约束。
+```xml
+xmlns:tx="http://www.springframework.org/schema/tx"
+
+xsi:schemaLocation="http://www.springframework.org/schema/tx https://www.springframework.org/schema/tx/spring-tx.xsd"
+```
+
+修改配置：
+```xml
+<aop:config>
+    <aop:pointcut id="txPointcut" expression="execution(* com.gyh.service..*(..))"/>
+    <aop:advisor advice-ref="transactionAdvice" pointcut-ref="txPointcut"/>
+</aop:config>
+
+<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+        <!--name 是方法名-->
+        <!--definition 在 tx：method 标签的属性中-->
+        <tx:method name="transfer" isolation="DEFAULT" propagation="REQUIRED" />
+    </tx:attributes>
+</tx:advice>
+```
+
+第三步：测试。
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:application.xml")
+public class TransactionTemplateTest {
+
+    @Autowired
+    AccountService accountService;
+
+    @Test
+    public void myTest() {
+        accountService.transfer(1, 2, 100);
+    }
+}
+```
+
+#### 5.3.4 注解方式
+
+第一步：Spring 配置里打开注解开关。
+
+```xml
+<tx:annotation-driven transaction-manager="transactionManager"/>
+<aop:aspectj-autoproxy/>
+
+<context:property-placeholder location="classpath:param.properties"/>
+```
+
+第二步：添加注解。
+
+添加注解 `@Transactional`。
+- 给类添加，当前类下的所有方法都增加对应事务。
+
+- 给方法添加，就是只给当前方法添加。
+
+示例：
+```java
+@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.DEFAULT)
+```
+
+第三步：测试。
+
+
+## 6 Javaconfig
+
+使用配置类的方法来注册组件。
+
+示例：
+```java
+@Configuration  // 增加注解之后，组件就可以在配置类上注册了，同时配置类也是容器中的组件
+@ComponentScan(basePackages = "com.gyh")
+@EnableTransactionManagement
+@EnableAspectJAutoProxy
+@PropertySource(value = "classpath:param.properties")
+public class ApplicationConfiguration {
+
+
+    /**
+     * @Bean：value 属性指定组件 id
+     * 返回值：可以写组件的class或者其接口
+     * 方法名：如果没有指定组件id，使用方法名作为组件id
+     */
+    @Bean("datasource")
+    public DruidDataSource druidDataSource(){
+        //在方法体里，使用se的代码形式完成一个类对象的实例化
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/j22_db?useUnicode=true&characterEncoding=utf-8");
+        dataSource.setUsername("root");
+        dataSource.setPassword("123456");
+        return dataSource;
+    }
+
+    /**
+     * 形参：会从容器中取出对应的组件；
+     *      如果该类型的组件只有一个，可以直接取出
+     *      如果该类型的组件不止一个，需要使用@Qualifier指定id取出
+     */
+    @Bean
+    public DataSourceTransactionManager dataSourceTransactionManager(@Qualifier("datasource") DataSource dataSource){
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource);
+        return transactionManager;
+
     }
 }
 ```
