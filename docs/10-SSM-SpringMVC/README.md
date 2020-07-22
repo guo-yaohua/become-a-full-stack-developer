@@ -41,6 +41,10 @@
     - [1.8 异常处理](#18-异常处理)
       - [1.8.1 统一的异常处理器](#181-统一的异常处理器)
       - [1.8.2 针对异常 handler 处理](#182-针对异常-handler-处理)
+  - [2 HandlerInterceptor](#2-handlerinterceptor)
+    - [2.1 Spring MVC 拦截器概述](#21-spring-mvc-拦截器概述)
+    - [2.2 入门案例](#22-入门案例)
+  - [3 Locale 处理](#3-locale-处理)
 
 ## 1 SpringMVC
 
@@ -565,7 +569,7 @@ public class ParameterController {
     用户：<input type="text" name="username"><br>
     密码：<input type="text" name="password"><br>
     <input type="submit">
-</form><hr>
+</form>
 ```
 
 ```java
@@ -625,7 +629,26 @@ public User javabean(User user){
 
 converter：请求参数的类型转换。
 
-第一步：自定义 converter。
+若使用日期：SpringMVC 不能够直接转换 date，但是呢可以通过 `@DateTimeFormat` 注解，指定 date 日期的格式来转换。  
+示例：
+```java
+@RestController
+public class ParameterController {
+
+    @Autowired
+    ConfigurableConversionService conversionService;
+
+    @RequestMapping("parameter/date")
+    public String data(@DateTimeFormat(pattern = "yyyy-mm-dd") Date birthday){
+        System.out.println(birthday);
+        return "ok";
+    }
+}
+```
+
+对于不能转换的，就需要自定义 converter。  
+
+**第一步**：自定义 converter。
 
 把不能自动封装的数据转换成形参中（或 javabean 成员变量）接收的数据类型。
 
@@ -646,7 +669,7 @@ public class String2DateConverter implements Converter<String, Date> {
 }
 ```
 
-第二步：配置。
+**第二步**：配置。
 
 ```java
 <mvc:annotation-driven conversion-service="conversionService"/>
@@ -660,7 +683,7 @@ public class String2DateConverter implements Converter<String, Date> {
 </bean>
 ```
 
-第三步：使用。
+**第三步**：使用。
 
 ```java
 @RestController
@@ -677,7 +700,7 @@ public class ParameterController {
 
 File 也可以直接在形参中接收。
 
-第一步：导包。
+**第一步**：导包。
 
 ```xml
 <dependency>
@@ -687,7 +710,7 @@ File 也可以直接在形参中接收。
 </dependency>
 ```
 
-第二步：注册组件。
+**第二步**：注册组件。
 
 ```xml
 <!--id 为指定值，不能修改为其他值-->
@@ -696,7 +719,7 @@ File 也可以直接在形参中接收。
 </bean>
 ```
 
-第三步：使用。
+**第三步**：使用。
 
 ```jsp
 <h1>单文件上传</h1>
@@ -820,7 +843,7 @@ public BaseRespVo login(@RequestBody User user){
 }
 ```
 
- `@RequestBody` 注解除了以 javabean 来接收 json 数据，还可以以通过 map 来接收。
+`@RequestBody` 注解除了以 javabean 来接收 json 数据，还可以以通过 map 来接收。
 
 ```java
 @RequestMapping("login")
@@ -1060,3 +1083,97 @@ public BaseRespVo json(int id) throws Exception {
     return BaseRespVo.ok();
 }
 ```
+
+## 2 HandlerInterceptor
+
+### 2.1 Spring MVC 拦截器概述
+
+SpringMVC 的处理器拦截器类似于 Servlet 开发中的过滤器 Filter，用于对处理器进行预处理和后处理。
+
+常见使用场景
+- 日志记录：记录请求信息的日志，以便进行信息监控、信息统计、计算 PV（Page View）等。
+
+- 权限检查：如登录检测，进入处理器检测检测是否登录，如果没有直接返回到登录页面。
+
+- 性能监控：有时候系统在某段时间莫名其妙的慢，可以通过拦截器在进入处理器之前记录开始时间，在处理完后记录结束时间，从而得到该请求的处理时间 ；
+
+- 通用行为：读取cookie得到用户信息并将用户对象放入请求，从而方便后续流程使用，还有如提取 Locale、Theme 信息等，只要是多个处理器都需要的即可使用拦截器实现。
+
+- OpenSessionInView：如 Hibernate，在进入处理器打开 Session，在完成后关闭 Session。
+
+
+HandlerInterceptor 接口中提供了 3 个方法：
+- `public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)`：预处理。  
+  通过 request 可以拿到参数、cookie、session，还可以拿到 requestDispather 实现页面跳转。
+
+- `public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView)`：后处理。
+
+- `public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable  Exception ex)`：收尾。  
+- 当前的 intercepter 的 preHandler 返回值为 true 时，它类似 `finally`。
+
+注：多个 interceptor 执行情况先进后出，类似 `123 321 321`。
+
+
+### 2.2 入门案例
+
+第一步：注册组件。
+
+```java
+@Component
+public class CustomHandlerInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("prehandle");
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                           Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle");
+        // 可以修改 handler 方法返回的 ModelAndView
+        // modelAndView.setViewName("/WEB-INF/post.jsp");
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                                Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion");
+    }
+}
+```
+
+第二步：Spring 配置。
+
+```xml
+<mvc:interceptors>
+    <!--默认作用范围是 DispatcherServlet 的范围，即 /-->
+
+    <!--mvc:mapping 标签中 path 属性，配置 interceptor 的作用范围 → 写法和 mvc：resources 标签中 mapping 类似-->
+    <!--* 代表一级任意目录 ** 代表多级任意目录-->
+    <mvc:interceptor>
+        <mvc:mapping path="/hello/**"/>
+        <ref bean="customHandlerInterceptor"/>
+    </mvc:interceptor>
+</mvc:interceptors>
+```
+
+## 3 Locale 处理
+
+语言处理，国际化基础。
+
+注册组件：
+```xml
+<!--CookieLocaleResolver 和 SessionLocaleResolver 通常 2 选 1 → 通常使用的是 cookieLocaleResolver-->
+<!--需要指定 id 为 localeResolver，不能够修改为其他的值-->
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+    <property name="cookieName" value="language"/>
+    <property name="defaultLocale" value="zh_CN"/>
+</bean>
+<!--<bean class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>-->
+```
+
+
+
