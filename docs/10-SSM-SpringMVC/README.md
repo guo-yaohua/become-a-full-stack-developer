@@ -44,7 +44,31 @@
   - [2 HandlerInterceptor](#2-handlerinterceptor)
     - [2.1 Spring MVC 拦截器概述](#21-spring-mvc-拦截器概述)
     - [2.2 入门案例](#22-入门案例)
-  - [3 Locale 处理](#3-locale-处理)
+  - [3 国际化](#3-国际化)
+    - [3.1 Locale](#31-locale)
+    - [3.2 MessageSource](#32-messagesource)
+    - [3.3 i18n](#33-i18n)
+    - [3.4 getMessag](#34-getmessag)
+  - [4 Hibernate-Validator](#4-hibernate-validator)
+    - [4.1 入门案例](#41-入门案例)
+    - [4.2 常见注解](#42-常见注解)
+  - [5 整合 Spring 和 SpringMVC](#5-整合-spring-和-springmvc)
+    - [5.1 Spring 容器和 SpringMVC 容器的分家](#51-spring-容器和-springmvc-容器的分家)
+    - [5.2 使用 javaconfig 来使用 SpringMVC](#52-使用-javaconfig-来使用-springmvc)
+      - [5.2.1 web.xml 启动类](#521-webxml-启动类)
+      - [5.2.2 Spring 配置类](#522-spring-配置类)
+      - [5.2.3 SpringMVC 配置类](#523-springmvc-配置类)
+    - [5.3 SpringMVC 的组件](#53-springmvc-的组件)
+      - [5.3.1 characterEncodingFilter](#531-characterencodingfilter)
+      - [5.3.2 静态资源映射](#532-静态资源映射)
+      - [5.3.3 interceptor 过滤器](#533-interceptor-过滤器)
+      - [5.3.4 converter](#534-converter)
+      - [5.3.5 multipartResolver](#535-multipartresolver)
+      - [5.3.6 localeResolver](#536-localeresolver)
+      - [5.3.7 MessageSource](#537-messagesource)
+      - [5.3.8 validator](#538-validator)
+      - [5.3.9 viewResolver](#539-viewresolver)
+      - [5.3.10 HandlerExceptionResolver](#5310-handlerexceptionresolver)
 
 ## 1 SpringMVC
 
@@ -1160,7 +1184,9 @@ public class CustomHandlerInterceptor implements HandlerInterceptor {
 </mvc:interceptors>
 ```
 
-## 3 Locale 处理
+## 3 国际化
+
+### 3.1 Locale
 
 语言处理，国际化基础。
 
@@ -1175,5 +1201,498 @@ public class CustomHandlerInterceptor implements HandlerInterceptor {
 <!--<bean class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>-->
 ```
 
+### 3.2 MessageSource
+
+是通过 key 从配置文件中取出值，利用 MessageSource 组件。
+
+注册组件：
+```xml
+<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <!--basename: 加载的配置文件的-->
+    <property name="basename" value="classpath:param"/>
+    <!--如果配置文件中有中文，编码要写的和你配置文件的编码一致-->
+    <property name="defaultEncoding" value="utf-8"/>
+    <!--如果没有对应的 key，是否选择 key 作为对应的 value-->
+    <property name="useCodeAsDefaultMessage" value="true"/>
+</bean>
+```
+
+param.properties：
+```properties
+userz.username=zhang3
+userz.password=123456
+```
+
+使用：
+```java
+@Autowired
+MessageSource messageSource;
+
+@RequestMapping("hello/{key}")
+public BaseRespVo hello(@PathVariable("key") String key){
+    key = "userz." + key;
+    String message = messageSource.getMessage(key, null, Locale.getDefault());
+
+    return BaseRespVo.ok(null, message);
+}
+```
+
+<div>
+<img src="./img/p4.png">
+</div>
+
+### 3.3 i18n
+
+利用 MessageSource 和 localeResolver 来做 i18n。
+
+**第一步**：注册组件。
+
+```xml
+<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+
+    <property name="basename" value="classpath:param"/>
+    <property name="defaultEncoding" value="utf-8"/>
+    <property name="useCodeAsDefaultMessage" value="true"/>
+</bean>
+
+<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+    <property name="cookieName" value="language"/>
+    <property name="defaultLocale" value="zh_CN"/>
+</bean>
+```
+
+**第二步**：创建国际化的 message 配置文件。
+
+<div>
+<img src="./img/p5.png">
+</div>
+
+**第三步**：使用国际化获取 message。
+
+```java
+@RequestMapping("i18n/{key}")
+public BaseRespVo i18n(@PathVariable("key") String key,Locale locale){
+
+    String message = messageSource.getMessage(key, null, locale);
+
+    return BaseRespVo.ok(null, message);
+}
+```
+
+**第四步**：测试。
+
+<div>
+<img src="./img/p6.png"><br>
+<img src="./img/p7.png">
+</div>
+
+### 3.4 getMessag
+
+MessageSource 源代码：
+```java
+public interface MessageSource {
+    @Nullable
+    String getMessage(String var1, @Nullable Object[] var2, @Nullable String var3, Locale var4);
+
+    String getMessage(String var1, @Nullable Object[] var2, Locale var3) throws NoSuchMessageException;
+
+    String getMessage(MessageSourceResolvable var1, Locale var2) throws NoSuchMessageException;
+}
+```
+
+`getMessage`：
+- `String var1`：key。
+- `@Nullable Object[] var2`：给配置文件中的 message 赋值，作占位符。
+- `Locale var3`：地区语言信息。
 
 
+`@Nullable Object[] var2` 使用：
+<div>
+<img src="./img/p8.png">
+</div>
+
+```java
+@RequestMapping("i18n2/{param0}/{param1}")
+public BaseRespVo i18n2(@PathVariable("param0") String param0,
+                        @PathVariable("param1") String param1,
+                        Locale locale){
+
+    Object[] objects = {param0, param1};
+    String message = messageSource.getMessage("hello", objects, locale);
+
+    return BaseRespVo.ok(null, message);
+}
+```
+
+<div>
+<img src="./img/p9.png">
+</div>
+
+
+## 4 Hibernate-Validator
+
+将参数校验的逻辑，绑定在 javabean 上，校验 javabean 的成员变量。该 javabean 作为 handler 方法的形参来使用。
+
+### 4.1 入门案例
+
+**第一步**：新增依赖。
+
+```xml
+<!--hibernate-validator-->
+<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>6.0.18.Final</version>
+</dependency>
+```
+
+**第二步**：注册 validator 组件。
+
+```xml
+<!--引用 validator 组件-->
+<mvc:annotation-driven validator="validator"/>
+
+<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    <!--配置 HibernateValidator-->
+    <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+    <property name="validationMessageSource" ref="messageSource"/>
+</bean>
+```
+
+**第三步**：配置 messageSource。
+
+```properties
+valid.username=username must between 6 and 8
+valid.password=password must between 6 and 8
+valid.age=age must between 18 and 150
+valid.married=married must be false
+```
+
+```properties
+valid.username=用户名长度为 6 到 8
+valid.password=密码长度为 6 到 8
+valid.age=年龄必须小于 150，必须大于 18
+valid.married=必须为 false
+```
+
+**第四步**：使用。
+
+```java
+@Data
+public class User {
+    // 整合了 MessageSource 之后，可以直接在注解的 message 属性中引用 key
+    @Size(min = 6, max = 8, message = "{valid.username}")
+    String username;
+    @Size(min = 6, max = 8, message = "{valid.password}")
+    String password;
+    @Min(value = 18 message = "{valid.age}")
+    @Max(value = 150, message = "{valid.age}")
+    int age;
+    @AssertFalse(message = "{valid.married}")
+    boolean married;
+}
+```
+```java
+// 在形参上增加 @Valid 或 @Validated
+// handler 方法中增加一个参数 bindingResult，拿到校验过程的结果
+@RequestMapping("register")
+public BaseRespVo register(@Validated User user, BindingResult bindingResult){
+
+    if (bindingResult.hasFieldErrors()){
+        // 发生参数校验错误的成员变量
+        FieldError fieldError = bindingResult.getFieldError();
+        // 发生错误的成员变量名
+        String field = fieldError.getField();
+        // 拿到默认的 message 信息，和校验注解相关的
+        String message = fieldError.getDefaultMessage();
+        return BaseRespVo.fail(message);
+    }
+    return BaseRespVo.ok();
+}
+```
+
+**第五步**：测试。
+
+<div>
+<img src="./img/p10.png"><br>
+<img src="./img/p11.png">
+</div>
+
+
+### 4.2 常见注解
+
+常见的注解 （Bean Validation 中内置的 constraint）：  
+| 注解 | 功能 |
+| :- | :- |
+| @Null | 被注释的元素必须为 null |
+| @NotNull | 被注释的元素必须不为 null |
+| @Size(max=, min=) | 被注释的元素的大小必须在指定的范围内 |
+| @AssertTrue | 被注释的元素必须为 true |
+| @AssertFalse | 被注释的元素必须为 false |
+| @Min(value) | 被注释的元素必须是一个数字，其值必须大于等于指定的最小值 |
+| @Max(value) | 被注释的元素必须是一个数字，其值必须小于等于指定的最大值 |
+| @DecimalMin(value) | 被注释的元素必须是一个数字，其值必须大于等于指定的最小值 |
+| @DecimalMax(value) | 被注释的元素必须是一个数字，其值必须小于等于指定的最大值 |
+| @Digits (integer, fraction) | 被注释的元素必须是一个数字，其值必须在可接受的范围内 |
+| @Past | 被注释的元素必须是一个过去的日期 Date |
+| @Future | 被注释的元素必须是一个将来的日期 |
+| @Pattern(regex=, flag=) | 被注释的元素必须符合指定的正则表达式 |
+
+
+Hibernate Validator 附加的 constraint：  
+| 注解 | 功能 |
+| :- | :- |
+| @NotBlank(message =) | 验证字符串非null，且长度必须大于0 |
+| @Email | 被注释的元素必须是电子邮箱地址 |
+| @Length(min=, max=) | 被注释的字符串的大小必须在指定的范围内 |
+| @NotEmpty | 被注释的字符串的必须非空 |
+| @Range(min=, max=, message=) | 被注释的元素必须在合适的范围内 |
+
+
+## 5 整合 Spring 和 SpringMVC
+
+### 5.1 Spring 容器和 SpringMVC 容器的分家
+
+<div>
+<img src="./img/p12.png">
+</div>
+
+**第一步**：在 web.xml 中加载配置文件。
+
+```xml
+<!--利用 listener 在 spring-mvc 配置文件加载之前加载 spring 配置文件-->
+<listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:application.xml</param-value>
+</context-param>
+
+<servlet>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:application-mvc.xml</param-value>
+    </init-param>
+</servlet>
+<servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+</servlet-mapping>
+```
+
+**第二步**：Spring 配置文件和 SpringMVC 配置文件。
+
+application.xml：
+```xml
+<context:component-scan base-package="com.gyh">
+    <!--排除掉扫描范围-->
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+```
+
+application-mvc.xml：
+```xml
+<context:component-scan base-package="com.gyh">
+    <!--扫描范围-->
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+
+<mvc:annotation-driven/>
+```
+
+### 5.2 使用 javaconfig 来使用 SpringMVC
+
+web.xml：启动类。  
+application.xml：配置类。  
+application-mvc.xml：配置类。  
+
+#### 5.2.1 web.xml 启动类
+
+```java
+public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+    /**
+     * 加载 Spring 的启动类
+     */
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[]{SpringConfiguration.class};
+    }
+    /**
+     * 加载 SpringMvc 的启动类
+     */
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[]{WebConfiguration.class};
+    }
+    /**
+     * 配置DispatcherServlet的url-pattern /
+     */
+    @Override
+    protected String[] getServletMappings() {
+        return new String[]{"/"};
+    }
+}
+```
+
+#### 5.2.2 Spring 配置类
+
+```java
+@Configuration
+@ComponentScan(value = "com.gyh", 
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, 
+                value = {Controller.class, EnableWebMvc.class}))
+public class SpringConfiguration {
+
+}
+```
+
+#### 5.2.3 SpringMVC 配置类
+
+```java
+@EnableWebMvc
+@ComponentScan(value = "com.gyh.controller",
+        includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Controller.class))
+public class WebConfiguration implements WebMvcConfigurer {
+
+}
+```
+
+### 5.3 SpringMVC 的组件
+
+#### 5.3.1 characterEncodingFilter
+
+web.xml 启动类中：
+```java
+@Override
+protected Filter[] getServletFilters() {
+    CharacterEncodingFilter filter = new CharacterEncodingFilter();
+    filter.setForceEncoding(true);
+    filter.setEncoding("utf-8");
+    return new Filter[]{filter};
+}
+```
+
+#### 5.3.2 静态资源映射
+
+```java
+@Override
+public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    registry.addResourceHandler("/pic1/**").addResourceLocations("/");  // web 根目录
+    registry.addResourceHandler("/pic2/**").addResourceLocations("classpath:/");    // classpath 目录
+    registry.addResourceHandler("/pic3/**").addResourceLocations("file:d:/spring/");    // 文件目录
+}
+```
+
+#### 5.3.3 interceptor 过滤器
+
+```java
+@Override
+public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new CustomInterceptor());
+    registry.addInterceptor(new CustomInterceptor2()).addPathPatterns("/hello/**");
+}
+```
+
+#### 5.3.4 converter
+
+步骤：
+1. 拿到 conversionService；
+
+2. 增加定义的 converter；
+
+3. conversionService 放回去。
+
+```java
+// 取出
+@Autowired
+ConfigurableConversionService conversionService;
+
+// 新增
+@PostConstruct
+public void addCustomConverter(){
+    conversionService.addConverter(new String2DateConverter());
+}
+
+// 放回去
+@Bean
+@Primary
+public ConfigurableConversionService conversionService(){
+    return conversionService;
+}
+```
+
+#### 5.3.5 multipartResolver
+
+```java
+@Bean
+public CommonsMultipartResolver multipartResolver(){
+    CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+    return commonsMultipartResolver;
+}
+```
+
+#### 5.3.6 localeResolver
+
+```java
+@Bean
+public CookieLocaleResolver localeResolver(){
+    CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+    cookieLocaleResolver.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+    cookieLocaleResolver.setCookieName("language");
+    return cookieLocaleResolver;
+}
+```
+
+#### 5.3.7 MessageSource
+
+```java
+@Bean
+public MessageSource messageSource(){
+    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    messageSource.setBasename("classpath:message");
+    messageSource.setDefaultEncoding("utf-8");
+    messageSource.setUseCodeAsDefaultMessage(true);
+    return messageSource;
+}
+```
+
+#### 5.3.8 validator
+
+```java
+@Bean
+public Validator localValidatorFactoryBean(@Qualifier("messageSource") MessageSource messageSource){
+    LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+    validator.setProviderClass(HibernateValidator.class);
+    validator.setValidationMessageSource(messageSource);
+    return validator;
+}
+
+@Override
+public Validator getValidator() {
+    return localValidatorFactoryBean(messageSource());
+}
+```
+
+#### 5.3.9 viewResolver
+
+```java
+@Bean
+public InternalResourceViewResolver viewResolver(){
+    InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+    viewResolver.setPrefix("/WEB-INF/view/");
+    viewResolver.setSuffix(".jsp");
+    return viewResolver;
+}
+```
+
+#### 5.3.10 HandlerExceptionResolver
+
+```java
+@Bean
+public HandlerExceptionResolver handlerExceptionResolver(){
+    return new CustomHandlerExceptionResolver();
+}
+```
