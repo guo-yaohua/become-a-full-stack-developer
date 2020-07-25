@@ -2,7 +2,9 @@
 
 ## 前言
 
-记录成为一个 Javaer 的过程，笔记内容从 HelloWorld 到 SSM。 
+经常使用框架开发，导致遗忘了很多基础底层知识。本仓库作为个人笔记，也是一个字典，记录成为一个 Javaer 的过程，方便自己回顾基础，强化底层知识。
+
+笔记内容从 HelloWorld 到 SSM。 
 
 ## 目录
 
@@ -26,8 +28,24 @@
 
 - [九、SSM](./docs/09-SSM/README.md)
 
+## 参考
+
+参考书籍：  
+- 《第一行代码 Java》  
+- 《Java核心技术 第10版》 第一卷  
+- 《深入理解Java虚拟机：JVM高级特性》  
+- 《Spring实战 第5版》
+
+参考文档：
+- [JDK 8 API 文档](https://docs.oracle.com/javase/8/docs/api/index.html)
+- [Spring 文档](https://spring.io/projects)
+- [MyBatis 配置文档](https://mybatis.org/mybatis-3/zh/configuration.html)
+- 以及其它优秀的博客和 Github 仓库
+
+文档格式参考：
+- [中文文档排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines)
+- [中文技术文档的写作规范（阮一峰）](https://github.com/ruanyf/document-style-guide)。  
+
 ## 其它
 
-文档格式参考 [中文文档排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines) 和 [中文技术文档的写作规范（阮一峰）](https://github.com/ruanyf/document-style-guide)。  
-
-不使用 `![]()` 这种方式来引用图片，而是用 `<img>` 标签。一方面是为了能够控制图片以合适的大小显示，另一方面是因为 GFM 不支持 `<center> ![]() </center>` 这种方法让图片居中显示，只能使用 `<div align="center"> <img src=""/> </div>` 达到居中的效果。
+引用图片不使用 `![]()` ，而是使用 `<img>` 标签。这样可以通过 `<div align="center"> <img src=""/> </div>` 达到居中的效果。
