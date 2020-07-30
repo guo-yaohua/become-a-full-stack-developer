@@ -431,8 +431,7 @@ public class UserDetailTypehandler extends BaseTypeHandler<UserDetail>{
     // 输入映射的过程 UserDetail → String
     @SneakyThrows
     @Override
-    public void setNonNullParameter(PreparedStatement preparedStatement, int index, UserDetail userDetail,
-                                    JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement preparedStatement, int index, UserDetail userDetail, JdbcType jdbcType) throws SQLException {
         String value = objectMapper.writeValueAsString(userDetail);
         preparedStatement.setString(index,value);
     }
@@ -1690,7 +1689,7 @@ public MapperScannerConfigurer mapperScannerConfigurer(){
 注：
 - 不要已有的项目上使用逆向工程，会覆盖文件。
 - javabean、接口、映射文件文件的 package 配置和已有的项目的包目录一致。 
-- 逆向工程生成过文件，重新生成时删除掉已有的文件，映射文件中会存在相同id的表，因为做的是增量更新。
+- 逆向工程生成过文件，重新生成时删除掉已有的文件，映射文件中会存在相同 id 的表，因为做的是增量更新。
 
 
 
