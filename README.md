@@ -4,7 +4,7 @@
 
 经常使用框架开发，导致遗忘了很多基础底层知识。本仓库作为个人笔记，也是一个字典，记录成为一个 Javaer 的过程，方便自己回顾基础，强化底层知识。
 
-笔记内容从 HelloWorld 到 SSM。 
+笔记内容从 HelloWorld 到 SpringBoot。 
 
 ## 目录
 
@@ -26,7 +26,13 @@
 
 - [八、JavaWeb](./docs/08-JavaWeb2/README.md)
 
-- [九、SSM](./docs/09-SSM/README.md)
+- [九、SSM-Spring](./docs/09-SSM-Spring/README.md)
+
+- [十、SSM-SpringMVC](./docs/09-SSM-SpringMVC/README.md)
+
+- [十一、SSM-MyBatis](./docs/09-SSM-MyBatis/README.md)
+
+- [十二、SSM-SpringBoot](./docs/09-SSM-SpringBoot/README.md)
 
 ## 参考
 

@@ -475,8 +475,6 @@ public class UserDetailTypehandler extends BaseTypeHandler<UserDetail>{
 ```
 
 
-
-
 #### 1.3.5 mappers
 
 **（1）逐项配置**  
