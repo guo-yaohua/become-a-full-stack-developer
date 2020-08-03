@@ -32,7 +32,7 @@
 
 - [十一、SSM-MyBatis](./docs/09-SSM-MyBatis/README.md)
 
-- [十二、SSM-SpringBoot](./docs/09-SSM-SpringBoot/README.md)
+- [十二、SpringBoot](./docs/09-SpringBoot/README.md)
 
 ## 参考
 
