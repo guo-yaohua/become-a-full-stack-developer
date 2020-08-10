@@ -36,6 +36,9 @@
       - [2.4 建立在通用模型下的权限管理](#24-建立在通用模型下的权限管理)
     - [2.2 Shiro](#22-shiro)
       - [2.2.1 Shiro 概述](#221-shiro-概述)
+      - [2.2.2 入门案例 1](#222-入门案例-1)
+      - [2.2.3 入门案例 2](#223-入门案例-2)
+      - [2.2.4 SpringBoot 中使用 Shiro](#224-springboot-中使用-shiro)
   - [3 项目常用](#3-项目常用)
     - [3.1 跨域](#31-跨域)
     - [3.2 分页](#32-分页)
@@ -628,7 +631,7 @@ spring:
 
 所以把模型优化成如下的 case：  
 <div align="center">
-<img src="./img/p13.png">
+<img src="./img/p14.png">
 </div>
 
 上图常被称为权限管理的通用模型，不过企业在开发中根据系统自身的特点还会对上图进行修改，但是用户、角色、权限、用户角色关系、角色权限关系是需要去理解的。
@@ -702,16 +705,330 @@ Shiro 不依赖于 Spring，Shiro 不仅可以实现 Web 应用的权限管理�
 使用 Shiro 实现系统的权限管理，有效提高开发效率，从而降低开发成本。
 
 基本架构：
+<div align="center">
+<img src="./img/p15.png">
+</div>
+
+subject：主体，可以是用户也可以是程序，主体要访问系统，系统需要对主体进行认证、授权。  
+
+**securityManager**：安全管理器，主体进行认证和授权都 是通过 securityManager 进行。
+
+**authenticator**：认证器，主体进行认证最终通过 authenticator 进行的。
+
+**authorizer**：授权器，主体进行授权最终通过authorizer进行的。
+
+sessionManager：Web 应用中一般是用 Web 容器对 session 进行管理，Shiro 也提供一套 session 管理的方式。
+
+SessionDao：通过 SessionDao 管理 session 数据，针对个性化的 session 数据存储需要使用 sessionDao。
+
+cache Manager：缓存管理器，主要对 session 和授权数据进行缓存，比如将授权数据通过 cacheManager 进行缓存管理，和 ehcache 整合对缓存数据进行管理。
+
+**realm**：域，领域，相当于数据源，通过 realm 存取认证、授权相关数据。
+
+cryptography：密码管理，提供了一套加密 / 解密的组件，方便开发。比如提供常用的散列、加 / 解密等功能。
 
 
+#### 2.2.2 入门案例 1
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-core</artifactId>
+    <version>1.4.0</version>
+</dependency>
+<dependency>
+    <groupId>commons-logging</groupId>
+    <artifactId>commons-logging</artifactId>
+    <version>1.2</version>
+</dependency>
+``` 
+
+**第二步**：使用。
+
+first.int：
+```int
+[users]
+zhang3=123456, role1
+li4=654321, role2
+
+[roles]
+role1=user:query, user:update
+role2=user:delete, user:insert
+```
 
 
+```java
+@Test
+public void Mytest() {
+    // 首先获得 SecurityManager
+    IniSecurityManagerFactory securityManagerFactory = new IniSecurityManagerFactory("classpath:first.ini");
+    SecurityManager securityManager = securityManagerFactory.getInstance();
+    // 获得subject
+    SecurityUtils.setSecurityManager(securityManager);
+    Subject subject = SecurityUtils.getSubject();
+    
+    // subject执行认证（login）
+
+    // 提供执行认证的用户名和密码信息，放入到 token 中
+    UsernamePasswordToken authenticationToken = new UsernamePasswordToken("zhang3","123456");
+
+    subject.login(authenticationToken); // 通过认证器去执行认证 Authenticator
+
+    boolean authenticated = subject.isAuthenticated(); // 判断是否认证通过
+    System.out.println(authenticated);
+
+    // IniRealm → CustomRealm
+    // 如果认证不通过，则无法授权
+    // 基于角色的授权
+    //authorBaseRole(subject);
+
+    // 基于权限的授权
+    authorBasePermmison(subject);
+}
+
+// 基于角色的授权
+private void authorBaseRole(Subject subject) {
+    boolean role1 = subject.hasRole("role1");
+    System.out.println("是否拥有role1的角色：" + role1);
+
+    ArrayList<String> roleList = new ArrayList<>();
+    roleList.add("role1");
+    roleList.add("role2");
+    boolean[] hasRoles = subject.hasRoles(roleList);
+    System.out.println("对 role1、2 分别拥有的角色：" + Arrays.toString(hasRoles));
+
+    boolean hasAllRoles = subject.hasAllRoles(roleList);  // 判断 list 里的权限是否全部拥有
+    System.out.println("是否拥有全部角色：" + hasAllRoles);
+}
+
+// 基于权限的授权
+private void authorBasePermmison(Subject subject) {
+    String insertPermission = "user:insert";
+    String deletePermission = "user:delete";
+    String updatePermission = "user:update";
+    String queryPermission = "user:query";
+    boolean[] permitteds = subject.isPermitted(insertPermission, deletePermission, updatePermission, queryPermission);
+    System.out.println("增删改查多个的权限：" + Arrays.toString(permitteds));
+
+    boolean permitted1 = subject.isPermitted(queryPermission);
+    System.out.println("单个权限：" + permitted1);
+
+    boolean permittedAll = subject.isPermittedAll(insertPermission, deletePermission, updatePermission, queryPermission);
+    System.out.println("是否拥有全部权限：" + permittedAll);
+}
+```
+
+#### 2.2.3 入门案例 2
+
+**第一步**：添加依赖。
+
+**第二步**：自定义 realm。
+
+CustomRealm.ini：
+```ini
+customRealm=com.gyh.realm.CustomRealm
+securityManager.realm=$customRealm
+```
+
+```java
+public class CustomRealm extends AuthorizingRealm {
+
+//    UserMapper userMapper;
+
+    // 处理认证信息
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        // 通过 token 获得用户名信息（token 中的信息就是认证的时传入的信息）
+        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+        // 这个 username 是接下来要去执行查询的条件 -> 查询当前用户在系统中的密码
+        String username = token.getUsername();
+
+        // 通过 name 信息去获得存在于系统或数据库的真实的密码（凭证）信息
+        String passwordFromDb = queryPasswordByUsername(username);
+
+        // 第一个参数，是想要存储在系统中的 user 信息 Admin、User、Map、String，是接下来通过 subject 能够获得的用户信息
+        User user = new User(username, passwordFromDb);
+        // 第二个参数，是用户正确的密码（系统维护的密码）
+        // 第三个参数，是 realm 的名字
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user, passwordFromDb, this.getName());
+        return authenticationInfo;
+    }
 
 
+    // 查询当前用户（已经认证通过的用户）的授权信息
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        // 就是 SimpleAuthenticationInfo 的第一个参数
+        User primaryPrincipal = (User) principalCollection.getPrimaryPrincipal();
+        // user role permission
+        List<String> permissions = queryPermissionByUser(primaryPrincipal.getUsername());
+
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.addRole("role1");
+        authorizationInfo.addStringPermissions(permissions);
+        return authorizationInfo;
+    }
+
+    private List<String> queryPermissionByUser(String username) {
+        ArrayList<String> perms = new ArrayList<>();
+        perms.add("user:insert");
+        perms.add("user:delete");
+        return perms;
+    }
 
 
+    private String queryPasswordByUsername(String username) {
+        if ("zhang3".equals(username)){
+            return "123456";
+        } else {
+            return "654321";
+        }
+    }
 
 
+}
+```
+
+**第三步**：测试。
+
+```java
+public class CustomRealmTest {
+
+    @Test
+    public void test1(){
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory("classpath:custom.ini");
+        SecurityManager securityManager = factory.getInstance();
+        SecurityUtils.setSecurityManager(securityManager);
+        Subject subject = SecurityUtils.getSubject();
+
+        subject.login(new UsernamePasswordToken("zhang3","123456"));
+
+        boolean authenticated = subject.isAuthenticated();
+        System.out.println(authenticated);
+
+        boolean role1 = subject.hasRole("role1");
+
+        boolean[] permitted = subject.isPermitted("user:insert", "user:delete", "user:query", "user:update");
+        System.out.println(Arrays.toString(permitted));
+    }
+}
+```
+
+#### 2.2.4 SpringBoot 中使用 Shiro
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.apache.shiro</groupId>
+    <artifactId>shiro-spring</artifactId>
+    <version>1.4.1</version>
+</dependency>
+```
+
+**第二步**：注册组件。
+
+
+```java
+@Configuration
+public class ShiroConfig {
+
+    @Bean
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(DefaultWebSecurityManager securityManagerz){
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        // 认证失败后重定向的 url
+        shiroFilterFactoryBean.setLoginUrl("/unAuthc");
+        shiroFilterFactoryBean.setSecurityManager(securityManagerz);
+        // 最重要的事情
+        // 对请求过滤 filter
+        // key 对应请求 url，value 对应的是过滤器
+        LinkedHashMap<String, String> filterMap = new LinkedHashMap<>();
+        //login(username,password) success
+        //失败则重新登录
+
+        filterMap.put("/auth/login","anon");
+        filterMap.put("/unAuthc","anon");
+        filterMap.put("/index","anon");
+        //当你分配了perm1的权限时才能访问need/perm这请求
+        //filterMap.put("/need/perm","perms[perm1]");
+        //优选的方式是声明式
+        //filterMap.put("/auth/logout","logout");
+        filterMap.put("/**","authc");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
+
+        return shiroFilterFactoryBean;
+    }
+    //shiro核心组件 SecurityManager
+
+    @Bean
+    public DefaultWebSecurityManager securityManagerz(CustomRealm customRealm,DefaultWebSessionManager webSessionManager){
+        DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        defaultWebSecurityManager.setRealm(customRealm);
+//        defaultWebSecurityManager.setSessionManager(webSessionManager());
+        defaultWebSecurityManager.setSessionManager(webSessionManager);
+        return defaultWebSecurityManager;
+    }
+
+    /*
+    * 声明式鉴权 注解需要的组件
+    * */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(DefaultWebSecurityManager securityManagerz){
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManagerz);
+        return authorizationAttributeSourceAdvisor;
+    }
+
+    /*使用映射处理异常：key为异常全类名 value为异常处理的请求*/
+    /*@Bean
+    public SimpleMappingExceptionResolver simpleMappingExceptionResolver(){
+        SimpleMappingExceptionResolver simpleMappingExceptionResolver = new SimpleMappingExceptionResolver();
+        Properties mappings = new Properties();
+        mappings.put("org.apache.shiro.authz.AuthorizationException","/noperm");
+        simpleMappingExceptionResolver.setExceptionMappings(mappings);
+        return simpleMappingExceptionResolver;
+    }*/
+
+    @Bean
+    public DefaultWebSessionManager webSessionManager(){
+        CustomSessionManager customSessionManager = new CustomSessionManager();
+        return customSessionManager;
+    }
+}
+```
+
+```java
+@Component
+public class CustomRealm extends AuthorizingRealm {
+
+    @Autowired
+    UserMapper userMapper;
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+
+        String username = token.getUsername();
+        List<String> strings = userMapper.selectPasswordByName(username);
+        String credential =  strings.size() >= 1?strings.get(0):null;
+
+        SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, credential, this.getName());
+        return authenticationInfo;
+    }
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        String username = (String) principalCollection.getPrimaryPrincipal();
+        List<String> permissions = userMapper.selectPermissionByUsername(username);
+
+        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+        authorizationInfo.addStringPermissions(permissions);
+
+
+        return authorizationInfo;
+    }
+}
+```
 
 
 
@@ -802,7 +1119,7 @@ public class CORSConfiguration extends WebMvcConfigurerAdapter {
 
 ```java
 // 生日格式约束
-@JsonFormat(pattern = "yyyy-mm-dd")
+@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT-8")
 private Date birthday;
 ```
 
