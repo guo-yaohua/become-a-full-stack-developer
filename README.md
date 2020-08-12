@@ -34,6 +34,9 @@
 
 - [十二、SpringBoot](./docs/09-SpringBoot/README.md)
 
+- [十三、微服务](./docs/13-Microservices/README.md)
+
+
 ## 参考
 
 参考书籍：  
@@ -46,6 +49,7 @@
 - [JDK 8 API 文档](https://docs.oracle.com/javase/8/docs/api/index.html)
 - [Spring 文档](https://spring.io/projects)
 - [MyBatis 配置文档](https://mybatis.org/mybatis-3/zh/configuration.html)
+- [Dubbo 官方文档](http://dubbo.apache.org/zh-cn/docs/user/quick-start.html)
 - 以及其它优秀的博客和 Github 仓库
 
 文档格式参考：
