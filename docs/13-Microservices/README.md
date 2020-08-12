@@ -25,6 +25,22 @@
       - [2.2.2 Nginx 常用命令](#222-nginx-常用命令)
       - [2.2.3 Nginx 配置⽂件](#223-nginx-配置件)
       - [2.2.4 Nginx 核心功能](#224-nginx-核心功能)
+  - [3 微服务架构](#3-微服务架构)
+    - [3.1 单体架构](#31-单体架构)
+    - [3.2 微服务架构介绍](#32-微服务架构介绍)
+    - [3.3 微服务拆分思路](#33-微服务拆分思路)
+      - [3.3.1 横向拆分](#331-横向拆分)
+      - [3.3.2 纵向拆分](#332-纵向拆分)
+    - [3.4 微服务的选择](#34-微服务的选择)
+      - [3.4.1 Dubbo（RPC）（zookeeper）](#341-dubborpczookeeper)
+      - [3.4.2 Spring Cloud（HTTP）](#342-spring-cloudhttp)
+    - [3.5 Dubbo](#35-dubbo)
+      - [3.5.1 Spring 和 Dubbo 整合案例](#351-spring-和-dubbo-整合案例)
+      - [3.5.2 SpringBoot 和 Dubbo 整合案例](#352-springboot-和-dubbo-整合案例)
+      - [3.5.3 Dubbo 2.7.0](#353-dubbo-270)
+    - [3.6 Zookeeper](#36-zookeeper)
+      - [3.6.1 下载 Zookeeper](#361-下载-zookeeper)
+      - [3.6.2 SpringBoot + Dubbo 整合 zookeeper](#362-springboot--dubbo-整合-zookeeper)
 
 
 ## 1 Linux 基础
@@ -762,3 +778,592 @@ http{
     }
 }
 ```
+
+
+## 3 微服务架构
+
+### 3.1 单体架构
+
+单体架构：  
+
+<div align="center">
+<img src="./img/p7.png">
+<img src="./img/p8.png">
+</div>
+
+优点：
+1. 功能划分清楚；
+2. 层次关系良好；
+3. 每一层独立；
+4. 部署简单；
+5. 技术单一；
+6. 用人成本低。
+
+缺点：
+1. 功能依然太大；
+2. 升级风险高；
+3. 维护成本增加；
+4. 交付周期变长；
+5. 可伸缩性差；
+6. 监控困难。
+
+### 3.2 微服务架构介绍
+
+微服务是指开发一个单个小型的但有业务功能的服务，每个服务都有自己的处理和轻量通讯机制，可以部署在单个或多个服务器上。  
+微服务也指一种种松耦合的、有一定的有界上下文的面向服务架构。也就是说，如果每个服务都要同时修改，那么它们就不是微服务，因为它们紧耦合在一起；如果你需要掌握一个服务太多的上下文场景使用条件，那么它就是一个有上下文边界的服务。
+
+架构图：  
+<div align="center">
+<img src="./img/p9.png"><br>
+<img src="./img/p10.png">
+</div>
+
+微服务架构设计原则：
+- 拆分足够小。
+
+- 服务之间轻量级通信。
+
+微服务的优点：
+1. 相对于单体架构，它的主要特点是组件化、松耦合、自治、去中心化，体现在以下几个方面：一组小的服务，服务粒度要小，而每个服务是针对一个单一职责的业务能力的封装，专注做好一件事情。
+
+2. 独立部署运行和扩展。  
+   每个服务能够独立被部署并运行在一个进程内。这种运行和部署方式能够赋予系统灵活的代码组织方式和发布节奏，使得快速交付和应对变化成为可能。
+
+3. 独立开发和演化。  
+   技术选型灵活，不受遗留系统技术约束。合适的业务问题选择合适的技术可以独立演化。服务与服务之间采取与语言无关的 API 进行集成。相对单体架构，微服务架构是更面向业务创新的一种架构模式。
+
+4. 独立团队和自治。  
+   团队对服务的整个生命周期负责，工作在独立的上下文中，自己决策自己治理，而不需要统一的指挥中心。团队和团队之间通过松散的社区部落进行衔接。
+
+
+微服务的缺点：
+1. 服务拆分微服务架构可能带来过多的操作。
+
+2. 分布式系统可能复杂难以管理。因为分布部署跟踪问题难。
+
+3. 分布式事务比较难处理。当服务数量增加，管理复杂性增加。
+
+
+###  3.3 微服务拆分思路
+
+#### 3.3.1 横向拆分
+
+根据业务来拆分：
+<div align="center">
+<img src="./img/p11.png">
+</div>
+
+#### 3.3.2 纵向拆分
+
+根据层次来拆分：
+<div align="center">
+<img src="./img/p12.png">
+</div>
+
+### 3.4 微服务的选择
+
+#### 3.4.1 Dubbo（RPC）（zookeeper）
+
+Dubbo 是阿里集团开源的一个极为出名的 RPC（Remote process call）框架，在很多互联网公司和企业应用中广泛使用。协议和序列化框架都可以插拔是及其鲜明的特色。同样的远程接口是基于 Java Interface，并且依托于 Spring 框架（管理 Bean 生命周期）方便开发。可以方便的打包成单一文件，独立进程运行，和现在的微服务概念一致。所以目前 Dubbo 是一种广泛使用的微服务架构框架。
+
+RPC（Remote Process Call）：跨进程调用。RPC 的本质是提供了一种轻量无感知的跨进程通信的方式，在分布式机器上调用其他方法与本地调用无异（远程调用的过程是透明的，你并不知道这个调用的方法是部署在哪里，通过 PRC 能够解耦服务）。RPC 是根据语言的 API 来定义的，而不是基于网络的应用来定义的，调用更方便，协议私密更安全、内容更小效率更高。
+
+<div align="center">
+<img src="./img/p13.png">
+</div>
+
+- 客户端（Client）：服务的调用方。  
+
+- 服务端（Server）：真正的服务提供者。  
+
+- 客户端存根：存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。
+
+- 服务端存根：接收客户端发送过来的消息，将消息解包，并调用本地的方法。
+
+基于 TCP/IP 协议，速度快。
+<div align="center">
+<img src="./img/p14.png">
+</div>
+
+#### 3.4.2 Spring Cloud（HTTP）
+
+Spring Cloud 来源于 Spring，利用 Spring Boot 进行快捷开发。 Spring Cloud 基本上都是使用了现有的开源框架进行的集成，学习的难度和部署的门槛就比较低，对于中小型企业来说，更易于使用和落地。  
+
+Spring Cloud 核心组件 Eureka 是 Netflix 开源的一款提供服务注册和发现的产品，它提供了完整的 Service Registry 和 Service Discovery 实现。也是 Spring Cloud 体系中最重要最核心的组件之一。 
+
+HTTP：应用层协议。HTTP 接口是在接口不多、系统与系统交互较少的情况下，解决信息孤岛初期常使用的一种通信手段；优点就是简单、直接、开发方便。
+
+使用 HTTP 协议的微服务，通常返回 json 数据，然后把 json 转换为对象。
+
+
+RPC 服务和 HTTP 服务还是存在很多的不同点的，一般来说，RPC 服务主要是针对大型企业的，而 HTTP 服务主要是针对小企业的，因为 RPC 效率更高，而 HTTP 服务开发迭代会更快。
+
+
+### 3.5 Dubbo
+
+[Dubbo 官方文档](http://dubbo.apache.org/zh-cn/docs/user/quick-start.html)。
+
+#### 3.5.1 Spring 和 Dubbo 整合案例
+
+[官方参考文档](https://dubbo.gitbooks.io/dubbo-user-book/content/quick-start.html)。
+
+**第一步**：创建一个 Maven 项目，项目中创建两个 Module。  
+
+<div align="center">
+<img src="./img/p15.png">
+</div>
+
+**第二步**：两个 Module 添加依赖。
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.101tec</groupId>
+        <artifactId>zkclient</artifactId>
+        <version>0.9</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>3.4.9</version>
+        <type>pom</type>
+    </dependency>
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>dubbo</artifactId>
+        <version>2.5.3</version>
+    </dependency>
+    <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>4.1.6.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.21.0-GA</version>
+    </dependency>
+    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+    </dependency>
+    <!-- spring 相关 -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-expression</artifactId>
+        <version>4.3.3.RELEASE</version>
+    </dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+
+</dependencies>
+```
+
+**第三步**：两个 Module 添加配置。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+		"
+>
+
+</beans>
+```
+
+**第四步**：配置 provider。
+
+创建服务：
+```java
+public interface DemoService {
+    String getDetail(String name);
+}
+```
+
+```java
+public class DemoServiceImpl implements DemoService {
+    @Override
+    public String getDetail(String name) {
+        System.out.println("收到 name：" + name);
+        return name + " 消息已送达";
+    }
+}
+```
+
+配置启动类：
+```java
+public class Provider {
+    public static void main(String[] args) {
+        // 获取 Spring 容器对象
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("application-context.xml");
+
+        // 启动容器
+        applicationContext.start();
+
+        // 保持容器处于启动状态
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+配置文件：
+```xml
+<dubbo:application name="provider"/>
+
+<dubbo:protocol name="dubbo" port="20880"/>
+
+<dubbo:service interface="com.gyh.service.DemoService" ref="demoServiceImpl" registry="N/A"/>
+
+<bean id="demoServiceImpl" class="com.gyh.service.DemoServiceImpl"/>
+```
+
+**第五步**：配置 consumer。
+
+需要配置全类名相同的接口：
+```java
+public interface DemoService {
+    String getDetail(String name);
+}
+```
+
+配置文件：
+```xml
+<dubbo:application name="consumer"/>
+
+<dubbo:reference id="demoService" interface="com.gyh.service.DemoService"
+                    url="dubbo://127.0.0.1:20880"/>
+```
+
+配置启动类：
+```java
+public class Consumer {
+    public static void main(String[] args) {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("application-context.xml");
+
+        applicationContext.start();
+
+        // 这个实例对象不是真正的 DemoServiceImpl 对象，而是一个代理对象。
+        // 代理对象是一个 DemoService 的实例，这个代理对象里面放的是真正提供服务的对象的 url 的地址
+        DemoService demoService = (DemoService) applicationContext.getBean("demoService");
+
+        // (dubbo://127.0.0.1:20880).getDetail
+        String response = demoService.getDetail("zhang3");
+
+        System.out.println(response);
+    }
+}
+```
+
+**第六步**：运行。
+
+<div align="center">
+<img src="./img/p16.png">
+</div>
+
+#### 3.5.2 SpringBoot 和 Dubbo 整合案例
+
+[官方参考文档](https://github.com/alibaba/dubbo-spring-boot-starter)。
+
+**第一步**：创建 springboot-dubbo 项目，创建两个 Module。
+
+<div align="center">
+<img src="./img/p17.png">
+</div>
+
+**第二步**：两个 Module 添加依赖。
+
+```xml
+<!--dubbo 2.6.0-->
+<dependency>
+    <groupId>com.alibaba.spring.boot</groupId>
+    <artifactId>dubbo-spring-boot-starter</artifactId>
+    <version>2.0.0</version>
+</dependency>
+
+<!--dubbo 2.7.1-->
+<!--<dependency>-->
+<!--    <groupId>org.apache.dubbo</groupId>-->
+<!--    <artifactId>dubbo-spring-boot-starter</artifactId>-->
+<!--    <version>2.7.1</version>-->
+<!--</dependency>-->
+```
+
+
+**第三步**：配置 provider。
+
+创建服务：
+```java
+public interface DemoService {
+    String getDetail(String name);
+}
+```
+
+```java
+import com.alibaba.dubbo.config.annotation.Service;
+import org.springframework.stereotype.Component;
+
+@Component
+@Service(interfaceClass = DemoService.class)
+public class DemoServiceImpl implements DemoService {
+    @Override
+    public String getDetail(String name) {
+        System.out.println("收到 name：" + name);
+        return name + " 消息已送达";
+    }
+}
+
+```
+
+配置：
+```properties
+spring.application.name=provider
+spring.dubbo.protocol.name=dubbo
+spring.dubbo.protocol.port=20880
+spring.dubbp.server=true
+spring.dubbo.registry=N/A
+```
+
+启动类：
+```java
+@SpringBootApplication
+@EnableDubboConfiguration   // dubbo 2.6.0 版本需要添加次注解
+public class ProviderApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ProviderApplication.class, args);
+
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**第四步**：配置 consumer。
+
+需要配置全类名相同的接口：
+```java
+public interface DemoService {
+    String getDetail(String name);
+}
+```
+
+配置：
+```properties
+spring.application.name=consumer
+```
+
+工具类：
+```java
+import com.alibaba.dubbo.config.annotation.Reference;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ThirdService {
+
+    @Reference(interfaceClass = DemoService.class, url = "dubbo://127.0.0.1:20880")
+    private DemoService demoService;
+
+    public String say(String name) {
+        String detail = demoService.getDetail(name);
+        return detail;
+    }
+}
+```
+
+启动类：
+```java
+@EnableDubboConfiguration
+public class ConsumerApplication {
+
+    public static void main(String[] args) {
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(ConsumerApplication.class, args);
+        applicationContext.start();
+
+        ThirdService thirdService = applicationContext.getBean(ThirdService.class);
+
+        String response = thirdService.say("li4");
+        System.out.println(response);
+    }
+
+}
+```
+
+**第五步**：运行。
+
+<div align="center">
+<img src="./img/p18.png">
+</div>
+
+#### 3.5.3 Dubbo 2.7.0
+
+将通信所用的接口提取出来，放在 common Module 中
+。
+
+**第一步**：新建 common Module。
+
+添加依赖：
+```xml
+<dependency>
+    <groupId>com.101tec</groupId>
+    <artifactId>zkclient</artifactId>
+    <version>0.10</version>
+</dependency>
+
+
+<dependency>
+    <groupId>org.apache.curator</groupId>
+    <artifactId>curator-recipes</artifactId>
+    <version>2.13.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.curator</groupId>
+    <artifactId>curator-framework</artifactId>
+    <version>2.12.0</version>
+</dependency>
+```
+
+**第二步**：需要通信的 Module，引入 common 依赖。
+
+```xml
+<dependency>
+    <groupId>com.gyh</groupId>
+    <artifactId>common</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+**第三步**：修改 provider 配置。
+
+```properties
+dubbo.application.name=provider
+dubbo.protocol.name=dubbo
+dubbo.protocol.port=20880
+dubbo.registry.address=zookeeper://localhost:2181
+dubbo.scan.base-packages=com.gyh.provider.demo
+```
+
+**第四步**：更改 `com.alibaba..` 的依赖为 `org.apache..`。
+
+**第五步**：修改 consumer 配置。
+
+```xml
+dubbo.application.name=consumer
+dubbo.registry.address=zookeeper://localhost:2181
+```
+
+```xml
+<dependency>
+    <groupId>org.apache.curator</groupId>
+    <artifactId>curator-recipes</artifactId>
+    <version>2.13.0</version>
+</dependency>
+
+<dependency>
+    <groupId>org.apache.curator</groupId>
+    <artifactId>curator-framework</artifactId>
+    <version>2.12.0</version>
+</dependency>
+```
+
+### 3.6 Zookeeper
+
+#### 3.6.1 下载 Zookeeper
+
+ZooKeeper 是一个中间件，负责为分布式系统提供协调服务。服务注册和服务发现。
+
+[官方下载地址](https://www.apache.org/dyn/closer.cgi/zookeeper/)。
+
+
+下载解压之后，修改其中的一个文件的文件名：`/conf/zoo_sample.cfg` -> `/conf/zoo.cfg`。
+
+
+#### 3.6.2 SpringBoot + Dubbo 整合 zookeeper
+
+**第一步**：新增依赖。
+
+```xml
+<dependency>
+    <groupId>com.101tec</groupId>
+    <artifactId>zkclient</artifactId>
+    <version>0.10</version>
+</dependency>
+```
+
+**第二步**：修改 provider 配置。
+
+```properties
+# spring.dubbo.registry=N/A
+spring.dubbo.registry=zookeeper://localhost:2181
+```
+
+**第三步**：修改 consumer。
+
+添加配置：
+```properties
+spring.dubbo.registry=zookeeper://localhost:2181
+```
+
+修改注解：
+```java
+@Reference(interfaceClass = DemoService.class)
+```
+
