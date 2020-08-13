@@ -18,6 +18,7 @@
       - [1.2.5 权限管理](#125-权限管理)
       - [1.2.6 进程管理](#126-进程管理)
       - [1.2.7 网络管理](#127-网络管理)
+      - [1.2.8 更换国内源](#128-更换国内源)
   - [2 Nginx](#2-nginx)
     - [2.1 Nginx 介绍](#21-nginx-介绍)
     - [2.2 Nginx 使用](#22-nginx-使用)
@@ -40,7 +41,7 @@
       - [3.5.3 Dubbo 2.7.0](#353-dubbo-270)
     - [3.6 Zookeeper](#36-zookeeper)
       - [3.6.1 下载 Zookeeper](#361-下载-zookeeper)
-      - [3.6.2 SpringBoot + Dubbo 整合 zookeeper](#362-springboot--dubbo-整合-zookeeper)
+      - [3.6.2 SpringBoot + Dubbo 整合 Zookeeper](#362-springboot--dubbo-整合-zookeeper)
 
 
 ## 1 Linux 基础
@@ -500,8 +501,84 @@ lsof -i: 端⼝号
 
 查看⽹络是否正常：
 ```
-ping ⽬的 ip 或者域名
+ping ⽬的ip 或者域名
 ```
+
+#### 1.2.8 更换国内源
+
+**第一步**：备份。
+
+```
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+```
+
+**第二步**：赋予权限。
+
+```
+sudo chmod 777 /etc/apt/sources.list
+```
+
+**第三步**：修改。
+
+```
+sudo vim /etc/apt/sources.list
+```
+
+然后删除原来的内容，新增以下任意源都行。
+
+阿里源：
+```list
+deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse
+
+deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
+
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse
+
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse
+
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse
+
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse
+
+deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
+```
+
+清华源：
+```list
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic main restricted universe multiverse
+
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+
+deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+```
+
+**第四步**：更新。
+
+```
+sudo apt update
+```
+
+
 
 ## 2 Nginx
 
@@ -1336,7 +1413,7 @@ ZooKeeper 是一个中间件，负责为分布式系统提供协调服务。服�
 下载解压之后，修改其中的一个文件的文件名：`/conf/zoo_sample.cfg` -> `/conf/zoo.cfg`。
 
 
-#### 3.6.2 SpringBoot + Dubbo 整合 zookeeper
+#### 3.6.2 SpringBoot + Dubbo 整合 Zookeeper
 
 **第一步**：新增依赖。
 
