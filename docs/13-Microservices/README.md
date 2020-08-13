@@ -19,6 +19,7 @@
       - [1.2.6 进程管理](#126-进程管理)
       - [1.2.7 网络管理](#127-网络管理)
       - [1.2.8 更换国内源](#128-更换国内源)
+    - [1.3 远程连接 Linux 服务器](#13-远程连接-linux-服务器)
   - [2 Nginx](#2-nginx)
     - [2.1 Nginx 介绍](#21-nginx-介绍)
     - [2.2 Nginx 使用](#22-nginx-使用)
@@ -42,6 +43,29 @@
     - [3.6 Zookeeper](#36-zookeeper)
       - [3.6.1 下载 Zookeeper](#361-下载-zookeeper)
       - [3.6.2 SpringBoot + Dubbo 整合 Zookeeper](#362-springboot--dubbo-整合-zookeeper)
+  - [4 Redis](#4-redis)
+    - [4.1 Redis 介绍](#41-redis-介绍)
+    - [4.2 Redis 安装](#42-redis-安装)
+      - [4.2.1 Linux 安装 Redis](#421-linux-安装-redis)
+      - [4.2.2 Windows 安装 Redis](#422-windows-安装-redis)
+    - [4.3 Redis 启动](#43-redis-启动)
+      - [4.3.1 Linxu 启动 Redis](#431-linxu-启动-redis)
+      - [4.3.1 Windows 启动 Redis](#431-windows-启动-redis)
+    - [4.4 核心配置文件 Redis.conf](#44-核心配置文件-redisconf)
+    - [4.5 Redis 持久化](#45-redis-持久化)
+      - [4.5.1 RDB](#451-rdb)
+      - [4.5.2 AOF](#452-aof)
+    - [4.6 Redis 常⽤数据类型以及应⽤场景](#46-redis-常数据类型以及应场景)
+      - [4.6.1 String](#461-string)
+      - [4.6.2 List](#462-list)
+      - [4.6.3 Hashes](#463-hashes)
+      - [4.6.4 Sets](#464-sets)
+      - [4.6.5 Sorted Sets](#465-sorted-sets)
+    - [4.7 Redis 的整合](#47-redis-的整合)
+      - [4.7.1 Jedis 案例](#471-jedis-案例)
+      - [4.7.2 RedisTemplate 案例](#472-redistemplate-案例)
+      - [4.7.3 Redisson 案例](#473-redisson-案例)
+    - [4.8 内存淘汰策略](#48-内存淘汰策略)
 
 
 ## 1 Linux 基础
@@ -578,7 +602,40 @@ deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ bionic-proposed main restri
 sudo apt update
 ```
 
+### 1.3 远程连接 Linux 服务器
 
+通过 SSH 协议远程连接 Linux 服务器。
+
+> SSH 为 Secure Shell 的缩写，由 IETF 的⽹络⼯作⼩组（Network Working Group）所制定；SSH 为建⽴在应⽤层和传输层基础之上的安全协议。SSH 是⽬前较可靠，专为远程登录会话和其他⽹络服务提供安全性的协议。
+
+**第一步**：在⽬标服务器上安装 SSH 服务（Ubuntu 16 默认⾃带了这个服务）。
+
+```bash
+# 查看ssh服务是否启动
+ps aux|grep ssh
+
+# 如果出现 sshd 进程则表示已经启动，如果没有出现那么执⾏下⾯的命令
+#更新apt源
+sudo apt update
+
+# 安装 ssh
+sudo apt install openssh-server
+
+# 安装完之后再次查看 sshd 是否已经启动，如果没有启动的话执⾏以下命令启动
+sudo service ssh restart
+```
+
+**第二步**：连接。
+
+```bash
+# 执⾏命令
+ssh [username]@[ip]
+```
+
+示例：
+```
+ssh gyh@192.168.0.1
+```
 
 ## 2 Nginx
 
@@ -1444,3 +1501,625 @@ spring.dubbo.registry=zookeeper://localhost:2181
 @Reference(interfaceClass = DemoService.class)
 ```
 
+
+## 4 Redis
+
+### 4.1 Redis 介绍
+
+Redis 是完全开源免费的，遵守 BSD 协议，是⼀个⾼性能（NOSQL）的 Key-Value 数据库。Redis 是⼀个开源的使⽤ ANSI C 语⾔编写、⽀持⽹络、可基于内存亦可持久化的⽇志型、Key-Value 数据库，并提供多种语⾔的 API。
+
+> Nosql（Not-only SQL）泛指⾮关系型数据库，作为关系型数据库的良好补充。随着互联⽹的兴起，⾮关系型数据库现在成为了⼀个极其热⻔的新领域，⾮关系型数据库产品的发展⾮常迅速。
+
+> BSD（Berkeley Software Distribution）开源协议是⼀个给与使⽤者很⼤⾃由的协议。可以⾃由的使⽤，修改源代码，也可以将修改后的代码作为开源或者专有软件再发布。
+> BSD 由于允许使⽤者修改或者重新发布代码，也允许使⽤或在 BSD 代码上开发商业软件发布和销售，因此是对商业集成很友好的协议。
+
+### 4.2 Redis 安装
+
+官网只提供 Linux 版本：
+- [官⽅⽹站](http://redis.io)。  
+
+- [中⽂官⽹](http://redis.cn)。
+
+#### 4.2.1 Linux 安装 Redis
+
+Redis 是 C 语⾔开发，安装 Redis 需要先将官⽹下载的源码进⾏编译，编译依赖 GCC 环境，如果没有 GCC 环境，需要安装 GCC。
+
+
+**第一步**：获取 Redis 资源。
+```bash
+wget http://download.redis.io/releases/redis-5.0.5.tar.gz
+```
+
+**第二步**：解压。
+```bash
+tar xzf redis-5.0.5.tar.gz
+```
+
+**第三步**：安装。
+```bash
+cd redis-5.0.5
+
+sudo make
+
+cd src
+
+sudo make install PREFIX=/usr/local/redis
+```
+
+**第四步**：移动配置文件到安装目录下。
+```bash
+cd ..
+
+sudo mkdir /usr/local/redis/etc
+
+sudo mv redis.conf /usr/local/redis/etc
+```
+
+**第五步**：将 redis-cli、redis-server 拷贝到 bin 下，让 redis-cli 指令可以在任意目录下直接使用
+
+```bash
+cp /usr/local/redis/bin/redis-server /usr/local/bin/
+
+cp /usr/local/redis/bin/redis-cli /usr/local/bin/
+```
+
+#### 4.2.2 Windows 安装 Redis
+
+Windows 版本：<a href="./file/Redis-x64-3.2.100.zip" download="Redis-x64-3.2.100.zip"> Redis-x64-3.2.100.zip </a>
+
+下载后直接解压即可。
+
+建议 Redis 安装的⽬录增加到环境变量。
+
+### 4.3 Redis 启动
+
+#### 4.3.1 Linxu 启动 Redis
+
+
+Linux 启动 Redis 服务端：
+```bash
+# 进⼊对应的安装⽬录
+cd /usr/local/redis
+
+# 执行命令
+./bin/redis-server
+```
+
+Linux 启动 Redis 客户端：
+```bash
+# 进⼊对应的安装⽬录
+cd /usr/local/redis
+
+# 执行命令
+./bin/redis-cli
+```
+
+#### 4.3.1 Windows 启动 Redis
+
+Windows 启动 Redis 服务端：进⼊对应的安装⽬录，打开命令窗⼝。执⾏命令。
+```bash
+redis-server redis.window.conf
+```
+
+Windows 启动 Redis 客户端：进⼊对应的安装⽬录，打开命令窗⼝。执⾏命令。
+```bash
+redis-cli
+```
+
+### 4.4 核心配置文件 Redis.conf
+
+**配置 1**：Redis 默认不是以守护进程的⽅式运⾏，可以通过该配置项修改，使⽤ yes 启动守护进程。（Windows 不支持）
+```conf
+daemonize no
+```
+
+**配置 2**：当客户端闲置多⻓时间后关闭连接(单位是秒)
+```conf
+timeout 300
+```
+
+**配置 3**：指定 Redis 监听端⼝，默认端⼝为 6379。  
+> 作者在⼀⽚博⽂中解释了为什么选⽤ 6379 作为默认端⼝，因为 6379 在⼿机按键上 MERZ 对应的号码，⽽ MERZ 取⾃意⼤利歌⼿ Alessia Merz 的名字。
+```conf
+port 6379
+```
+
+**配置 4**：绑定的主机地址。
+```conf
+bind 127.0.0.1
+```
+
+如果连接其它主机还需要关闭保护模式。
+```conf
+protected-mode no
+```
+
+**配置 5**：指定⽇志记录级别，Redis 共⽀持四个级别：debug、verbose、notice、warning。
+```conf
+loglevel verbose
+```
+
+**配置 6**：数据库数量（单机环境下），默认数据库为 0，可以使⽤ `select <dbid>` 命令在连接上指定数据库 id。
+```conf
+databases 16
+```
+
+**配置 7**：设置 Redis 连接密码，如果配置了连接密码，客户端在连接 Redis 的时候需要通过 `AUTH <password>` 命令提供密码，默认关闭。
+```conf
+requirepass foobared
+```
+
+### 4.5 Redis 持久化
+
+#### 4.5.1 RDB 
+
+RDB：是 Redis 默认的持久化机制。RDB 相当于照快照，保存的是⼀种状态。  
+⼏⼗ GB 的数据可以保存为⼏ KB 的快照。
+
+快照是默认的持久化⽅式，这种⽅式是就是将内存中数据以快照的⽅式写⼊到⼆进制⽂件中，默认的⽂件名为 `dump.rdb`。
+
+优缺点：
+- 优点：快照保存数据极快、还原数据极快适⽤于容灾备份。
+
+- 缺点：⼩内存机器不适合使⽤，RDB 机制符合要求就会照快照，可能会丢失数据。
+
+快照条件：
+- 服务器正常关闭时。
+
+- key 满⾜⼀定条件，进⾏快照。
+
+**配置 1**：RDB 持久化策略，指定在多⻓时间内，有多少次更新操作，就将数据同步到数据⽂件，可以多个条件配合。
+```conf
+save <seconds> <changes>
+```
+
+Redis 默认配置⽂件提供了三个条件。
+```conf
+save 900 1
+save 300 10
+save 60 10000
+```
+
+**配置 2**：持久化⽂件名。
+```conf
+dbfilename dump.rdb
+```
+
+持久化文件保存路径。
+```conf
+dir /redis
+```
+
+**配置 3**：指定存储⾄本地数据库时是否压缩数据，默认为 yes，Redis 采⽤ LZF（压缩算法）压缩，如果为了节省 CPU 时间，可以关闭该选项，但会导致数据库⽂件变得巨⼤。
+```conf
+rdbcompression yes
+```
+
+#### 4.5.2 AOF
+
+AOF：由于快照⽅式是在⼀定时间间隔内做⼀次的，那么如果 Redis 意外 down 掉的话，就会丢失最后⼀次快照后的所有修改。如果应⽤要求不能丢失任何修改的话，可以采取 AOF 持久化⽅式。
+
+AOF（Append-only file）⽐快照⽅式有更好的持久化性，是由于在使⽤ AOF 持久化⽅式时，Redis 会将每⼀
+个收到的写命令都通过 write 函数追加到⽂件中（默认是 appendonly.AOF）。当 Redis 重启时会通过执⾏
+⽂件中保存的写命令来在内存中重建整个数据库的内容。
+
+有三种⽅式如下（默认每秒⼀次）：
+- `appendonly yes`：启⽤ AOF 持久化⽅式。
+
+- `appendsync always`：收到写命令就⽴即写⼊磁盘，最慢，但是保证完全的持久化。  
+  appendsync 每秒钟写⼊磁盘⼀次，在性能和持久化⽅⾯做了很好的折中。
+
+- `appendsync no`：完全依赖 os，性能最好，持久化没有保证。
+
+**配置 1**：指定是否在每次操作后进⾏⽇志记录，Redis 在默认情况下是关闭的。
+```conf
+appendonly no
+```
+
+**配置 2**：AOF ⽂件的名字。
+```conf
+appendfilename "appendonly.aof"
+```
+
+**配置 3**：AOF 策略。
+```conf
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+```
+
+
+### 4.6 Redis 常⽤数据类型以及应⽤场景
+
+Redis ⽀持五种数据类型：String（字符串），hash（哈希），list（列表），set（集合）以及 zset（sorted set：有序集合）等。
+
+[官方命令文档](http://redis.cn/commands.html)。
+
+#### 4.6.1 String
+
+String 是 Redis 最基本的类型，⼀个 Key 对应⼀个 Value，⼀个键最⼤能存储 512MB。Value 是字符串。
+
+String 类型是⼆进制安全的。Redis 的 String 可以包含任何数据，⽐如 JPG 图⽚或者序列化对象。
+
+⼆进制安全是指，在传输数据时，保证⼆进制数据的信息安全，也就是不被篡改、破译等，如果有被攻击，能够及时检测出来。
+
+操作跟 Map ⾮常类似：
+- `SET key value`。
+
+- `GET key`。
+
+- `INCR key`：对应的 key 的数值（整型的数值）加⼀。
+
+- `INCRBY key Integer`：对应的 key 的数值加 Integer。
+
+- `SETEX key seconds value`：设置过期时间。
+
+- `SETNX not exist key`：不存在的时候再去赋值。
+
+应⽤场景：很常⻅的场景⽤于统计⽹站访问数量 pv（Page view），当前在线⼈数等。
+
+#### 4.6.2 List
+
+Redis 的列表允许⽤户从序列的两端推⼊或者弹出元素，列表由多个字符串值组成的有序可重复的序列，是链表结构，所以向列表两端添加元素的时间复杂度为 o(1)，获取越接近两端的元素速度就越快。  
+
+这意味着即使是⼀个有⼏千万个元素的列表，获取头部或尾部的 10 条记录也是极快的。  
+
+List 中可以包含的最⼤元素数量是 4294967295。
+
+操作命令：
+- `LPUSH key value [value ...]`：将所有指定的值插入到存于 key 的列表的头部。如果 key 不存在，那么在进行 push 操作前会创建一个空列表。 
+
+- `LPOP key`：移除并且返回 key 对应的 list 的第一个元素。
+
+- `LLEN key`：返回存储在 key 里的 list 的长度。
+
+- `LINDEX key index`：返回列表里的元素的索引，index 存储在 key 里面。下标从 0 开始。负数索引用于指定从列表尾部开始索引的元素。在这种方法下，-1 表示最后一个元素，-2 表示倒数第二个元素，并以此往前推。
+
+- `LINSERT key BEFORE|AFTER pivot value`：把 value 插入存于 key 的列表中在基准值 pivot 的前面或后面。
+
+- `LPUSHX key value`：只有当 key 已经存在并且存着一个 list 的时候，在这个 key 下面的 list 的头部插入 value。
+
+- `LRANGE key start stop`：返回存储在 key 的列表里指定范围内的元素。 start 和 end 偏移量都是基于 0 的下标，即 list 的第一个元素下标是 0（list 的表头），第二个元素下标是 1，以此类推。
+
+- `LREM key count value`：从存于 key 的列表里移除前 count 次出现的值为 value 的元素。这个 count 参数通过下面几种方式影响这个操作：
+  - count > 0: 从头往尾移除值为 value 的元素。
+  - count < 0: 从尾往头移除值为 value 的元素。
+  - count = 0: 移除所有值为 value 的元素。
+
+- `LSET key index value`：设置 index 位置的 list 元素的值为 value。
+
+应⽤场景：
+- 最新消息排⾏榜。
+
+- 消息队列，以完成多程序之间的消息交换。可以⽤ push 操作将任务存在 list 中（⽣产者），然后线程再⽤ pop 操作将任务取出进⾏执⾏（消费者）。
+
+
+#### 4.6.3 Hashes
+
+Redis 中的散列可以看成具有 String key 和 String value 的 Map 容器，可以将多个 key-value 存储到⼀个 key 中。
+
+每⼀个 Hash 可以存储 4294967295 个键值对。
+
+操作：
+- `HSET key field value`：设置 key 指定的哈希集中指定字段的值。  
+  如果 key 指定的哈希集不存在，会创建一个新的哈希集并与 key 关联。如果字段在哈希集中存在，它将被重写。
+
+- `HGET key field`：返回 key 指定的哈希集中该字段所关联的值。
+
+- `HEXISTS key field`：返回 hash 里面 field 是否存在。
+
+- `HGETALL key`：返回 key 指定的哈希集中所有的字段和值。  
+  返回值中，每个字段名的下一个是它的值，所以返回值的长度是哈希集大小的两倍。
+
+- `HKEYS key`：返回 key 指定的哈希集中所有字段的名字。
+
+- `HLEN key`：返回 key 指定的哈希集包含的字段的数量。
+
+- `HVALS key`：返回 key 指定的哈希集中所有字段的值。
+
+- `HINCRBY key field increment`：增加 key 指定的哈希集中指定字段的数值。如果 key 不存在，会创建一个新的哈希集并与 key 关联。如果字段不存在，则字段的值在该操作执行前被设置为 0。
+
+- `HMGET key field [field ...]`：返回 key 指定的哈希集中指定字段的值。
+
+- `HMSET key field value [field value ...]`：设置 key 指定的哈希集中指定字段的值。该命令将重写所有在哈希集中存在的字段。如果 key 指定的哈希集不存在，会创建一个新的哈希集并与 key 关联。
+
+- `HSETNX key field value`：只在 key 指定的哈希集中不存在指定的字段时，设置字段的值。如果 key 指定的哈希集不存在，会创建一个新的哈希集并与 key 关联。如果字段已存在，该操作无效果。
+
+应⽤场景：例如存储、读取、修改⽤户属性（name，age，pwd 等）。
+
+#### 4.6.4 Sets
+
+无序集合。
+
+操作命令：
+- `SADD key member [member ...]`：添加一个或多个指定的 member 元素到集合的 key 中。指定的一个或者多个元素member 如果已经在集合key中存在则忽略。如果集合 key 不存在，则新建集合 key，并添加 member 元素到集合key中。
+
+- `SMEMBERS key`：返回 key 集合所有的元素。该命令的作用与使用一个参数的 SINTER 命令作用相同。
+
+- `SISMEMBER key member`：返回成员 member 是否是存储的集合 key 的成员。
+
+- `SCARD key`：返回集合存储的 key 的基数 (集合元素的数量)。
+
+- `SPOP key [count]`：从存储在 key 的集合中移除并返回一个或多个随机元素。  
+  此操作与 SRANDMEMBER 类似，它从一个集合中返回一个或多个随机元素，但不删除元素。
+
+- `SRANDMEMBER key [count]`：仅提供 key 参数，那么随机返回 key 集合中的一个元素。
+
+- `SINTER key [key ...]`：返回指定所有的集合的成员的交集。
+
+- `SINTERSTORE destination key [key ...]`：这个命令与 SINTER 命令类似, 但是它并不是直接返回结果集，而是将结果保存在 destination 集合中。如果 destination 集合存在, 则会被重写。
+
+- `SUNION key [key ...]`：返回给定的多个集合的并集中的所有成员。
+
+- `SDIFF key [key ...]`：返回一个集合与给定集合的差集的元素。
+
+- `SDIFFSTORE destination key [key ...]`：该命令类似于 SDIFF, 不同之处在于该命令不返回结果集，而是将结果存放在 destination 集合中。如果 destination 已经存在, 则将其覆盖重写。
+
+- `SMOVE source destination member`：将 member 从 source 集合移动到 destination 集合中。对于其他的客户端，在特定的时间元素将会作为 source 或者 destination 集合的成员出现。
+
+- `SREM key member [member ...]`：在 key 集合中移除指定的元素. 如果指定的元素不是 key 集合中的元素则忽略 如果 key 集合不存在则被视为一个空的集合，该命令返回 0。
+
+应⽤场景：
+- 利⽤交集求共同好友。
+
+- 利⽤唯⼀性，可以统计访问⽹站的所有独⽴ IP。
+
+- 好友推荐的时候根据 tag 求交集，⼤于某个 threshold（临界值的）就可以推荐。
+
+#### 4.6.5 Sorted Sets
+
+有序集合。
+
+操作命令：
+- `ZADD key [NX|XX] [CH] [INCR] score member [score member ...]`：将所有指定成员添加到键为 key 有序集合（sorted set）里面。添加时可以指定多个分数 / 成员（score/member）对。 如果指定添加的成员已经是有序集合里面的成员，则会更新改成员的分数（scrore）并更新到正确的排序位置。
+
+- `ZCARD key`：返回 key 的有序集元素个数。
+
+- `ZSCORE key member`：返回有序集 key 中，成员 member 的 score 值。
+
+- `ZCOUNT key min max`：返回有序集 key 中，score 值在 min 和 max 之间（默认包括 score 值等于 min 或 max）的成员。
+
+- `ZINCRBY key increment member`：为有序集 key 的成员 member 的 score 值加上增量 increment。
+
+- `ZRANGE key start stop [WITHSCORES]`：返回存储在有序集合 key 中的指定范围的元素。返回的元素可以认为是按得分从最低到最高排列。如果得分相同，将按字典排序。
+
+- `ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]`：返回 key 的有序集合中的分数在 min 和 max 之间的所有元素（包括分数等于 max 或者 min 的元素）。元素被认为是从低分到高分排序的。
+
+- `ZRANK key member`：返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增（从小到大）顺序排列。排名以 0 为底，也就是说，score 值最小的成员排名为 0。
+
+- `ZREVRANGE key start stop [WITHSCORES]`：返回有序集 key 中，指定区间内的成员。其中成员的位置按 score 值递减（从大到小）来排列。具有相同 score 值的成员按字典序的反序排列。
+
+- `ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]`： 返回有序集合中指定分数区间内的成员，分数由高到低排序。
+
+- `ZREVRANK key member`：返回有序集 key 中成员 member 的排名，其中有序集成员按 score 值从大到小排列。排名以 0 为底，也就是说，score 值最大的成员排名为 0。
+
+- `ZREM key member [member ...]`：当 key 存在，但是其不是有序集合类型，就返回一个错误。
+
+- `ZREMRANGEBYRANK key start stop`：移除有序集 key 中，指定排名（rank）区间内的所有成员。
+
+- `ZREMRANGEBYSCORE key min max`：移除有序集 key 中，所有 score 值介于 min 和 max 之间（包括等于 min 或 max）的成员。
+
+应⽤场景：可以⽤于⼀个⼤型在线游戏的积分排⾏榜，每当玩家的分数发⽣变化时，可以执⾏ zadd 更新玩家分数（score），此后再通过 zrange 获取⼏分 top ten 的⽤户信息。
+
+### 4.7 Redis 的整合
+
+#### 4.7.1 Jedis 案例
+
+Jedis：Java for Redis。
+
+**第一步**：创建 Spring 项目，添加依赖。
+
+```xml
+<dependency>
+    <groupId>redis.clients</groupId>
+    <artifactId>jedis</artifactId>
+    <version>2.9.0</version>
+</dependency>
+```
+
+**第二步**：配置类。
+
+```java
+@Configuration
+public class RedisConfig {
+
+    @Bean
+    public Jedis jedis(){
+        Jedis jedis = new Jedis("localhost", 6379);
+        return jedis;
+    }
+}
+```
+
+**第三步**：测试使用。
+
+```java
+@Autowired
+private Jedis jedis;
+
+@Test
+public void myTest() {
+    jedis.set("zhang3", "123456");
+
+    System.out.println(jedis.get("zhang3"));
+}
+```
+
+#### 4.7.2 RedisTemplate 案例
+
+SpringBoot 对 Redis 进⾏了⼀层模板化的封装，⽅便我们对对象进⾏操作。底层在 SpringBoot1.x 的时候使⽤的是 Jedis，在 Springboot2.x 后使⽤的是 lettuce。
+
+**第一步**：创建 SpringBoot 项目，添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+
+<!-- 序列化 -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-core</artifactId>
+    <version>2.10.0</version>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.10.0</version>
+</dependency>
+```
+
+**第二步**：添加配置。
+
+```yml
+spring:
+  redis:
+    host: localhost
+    port: 6379
+```
+
+**第三步**：配置类。
+
+```java
+@Configuration
+public class RedisConfig {
+    @Bean
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate redisTemplate = new RedisTemplate();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+
+        // 设置 key String 的序列号方式
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        redisTemplate.setKeySerializer(stringRedisSerializer);
+
+        // 设置 value JackSon 序列化⽅式
+        Jackson2JsonRedisSerializer jsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        // 对于不是基本类型的变量显示全类名
+        objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        // 设置值的属性可⻅
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        jsonRedisSerializer.setObjectMapper(objectMapper);
+        redisTemplate.setValueSerializer(jsonRedisSerializer);
+
+        return redisTemplate;
+    }
+}
+```
+
+**第四步**：测试使用。
+
+```java
+@Autowired
+private RedisTemplate redisTemplate;
+
+@Test
+public void myTest() {
+
+    redisTemplate.opsForValue().set("height","200");
+
+}
+```
+
+#### 4.7.3 Redisson 案例
+
+Redisson 是⼀个在 Redis 的基础上实现的 Java 驻内存数据⽹格（In-Memory Data Grid）。  
+
+[开源地址](https://github.com/redisson/redisson)。
+
+它不仅提供了⼀系列的分布式的 Java 常⽤对象，还提供了许多分布式服务。其中包括（BitSet，Set，Multimap，SortedSet，Map，List，Queue，BlockingQueue，Deque，BlockingDeque，Semaphore，Lock，AtomicLong，CountDownLatch，Publish / Subscribe，Bloom filter，Remote service，Spring cache，Executor service，Live Object service，Scheduler service）。  
+
+Redisson 提供了使⽤ Redis 的最简单和最便捷的⽅法。Redisson 的宗旨是促进使⽤者对 Redis的关注分（Separation of Concern），从⽽让使⽤者能够将精⼒更集中地放在处理业务逻辑上。
+
+**第一步**：创建 SpringBoot 项目，添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.redisson</groupId>
+    <artifactId>redisson</artifactId>
+    <version>3.5.7</version>
+</dependency>
+```
+
+**第二步**：配置类。
+
+```java
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RedisConfig {
+
+    @Bean
+    public RedissonClient redissonClient() {
+
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://localhost:6379");
+
+        RedissonClient redissonClient = Redisson.create(config);
+
+        return redissonClient;
+    }
+}
+```
+
+**第三步**：测试使用。
+
+```java
+@Autowired
+private RedissonClient redissonClient;
+
+
+// 存
+@Test
+public void myTest1() {
+
+    RBucket<Object> bucket = redissonClient.getBucket("zhang3");
+
+    bucket.set("123456");
+}
+
+// 取
+@Test
+public void myTest2() {
+    RBucket<Object> bucket = redissonClient.getBucket("zhang3");
+
+    String value = (String) bucket.get();
+
+    System.out.println(value);
+}
+```
+
+### 4.8 内存淘汰策略
+
+Redis 官⽅给的警告，当内存不⾜时，Redis 会根据配置的缓存策略淘汰部分的 Keys，以保证写⼊成功。  
+
+当⽆淘汰策略时或者没有找到适合淘汰的 Key 时，Redis 直接返回 out of memory 错误。
+
+在 Redis 中，允许⽤户设置的最⼤使⽤内存⼤⼩。
+```conf
+maxmemory 512G
+```
+
+Redis 提供 8 种（5.0 以后）数据淘汰策略：
+- volatile-lru：从已设置过期时间的数据集中挑选最近最少使⽤的数据淘汰。
+
+- volatile-lfu：从已设置过期的 Keys 中，删除⼀段时间内使⽤次数最少使⽤的 Key。
+
+- volatile-ttl：从已设置过期时间的数据集中挑选最近将要过期的数据进⾏淘汰。
+
+- volatile-random：从已设置过期时间的数据集中随机选择数据淘汰。
+
+- allkeys-lru：从数据集中挑选最近最少使⽤的数据淘汰。
+
+- allkeys-lfu：从所有的 Keys 中，删除⼀段时间内使⽤次数最少的 Key。
+
+- allkeys-random：从数据集中随机选择数据淘汰。
+
+- no-enviction：禁⽌驱逐数据（不采⽤任何淘汰策略，默认即此配置）。内存不⾜时，针对写操作，返回错误信息。
+
+建议：了解 Redis 的淘汰策略，在平时使⽤时应尽量主动设置 / 更新 Key 的 expire 时间，主动剔除不活跃的旧数据，有助于提升查询性能。
