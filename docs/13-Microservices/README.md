@@ -66,6 +66,19 @@
       - [4.7.2 RedisTemplate 案例](#472-redistemplate-案例)
       - [4.7.3 Redisson 案例](#473-redisson-案例)
     - [4.8 内存淘汰策略](#48-内存淘汰策略)
+  - [5 HandlerInterceptorAdapter](#5-handlerinterceptoradapter)
+    - [5.1 HandlerInterceptorAdapter 介绍](#51-handlerinterceptoradapter-介绍)
+    - [5.2 HandlerInterceptorAdapter 源码](#52-handlerinterceptoradapter-源码)
+    - [5.3 HandlerInterceptorAdapter 案例](#53-handlerinterceptoradapter-案例)
+  - [6 Tk-Mybatis](#6-tk-mybatis)
+    - [6.1 Tk-Mybatis 介绍](#61-tk-mybatis-介绍)
+    - [6.2 入门案例](#62-入门案例)
+  - [7 MapStruct](#7-mapstruct)
+    - [7.1 MapStruct 介绍](#71-mapstruct-介绍)
+    - [7.2 MapStruct 案例](#72-mapstruct-案例)
+  - [8 SPI](#8-spi)
+    - [8.1 SPI 介绍](#81-spi-介绍)
+    - [8.2 入门案例](#82-入门案例)
 
 
 ## 1 Linux 基础
@@ -2123,3 +2136,396 @@ Redis 提供 8 种（5.0 以后）数据淘汰策略：
 - no-enviction：禁⽌驱逐数据（不采⽤任何淘汰策略，默认即此配置）。内存不⾜时，针对写操作，返回错误信息。
 
 建议：了解 Redis 的淘汰策略，在平时使⽤时应尽量主动设置 / 更新 Key 的 expire 时间，主动剔除不活跃的旧数据，有助于提升查询性能。
+
+
+## 5 HandlerInterceptorAdapter
+
+### 5.1 HandlerInterceptorAdapter 介绍
+
+⼀般情况下，对来⾃浏览器的请求的拦截，是利⽤ Filter 实现的。⽽在 Spring 中，基于 Filter 这种⽅式可以实现 Bean 预处理、后处理。 ⽐如注⼊ FilterRegistrationBean，然后在这个 Bean 上传递⾃⼰继承 Filter 实现的⾃定义 Filter 进⼊即可。
+
+⽽ Spring MVC 也有拦截器，不仅可实现 Filter 的所有功能，还可以更精确的控制拦截精度。 Spring MVC 提供的 org.springframework.web.servlet.handler.HandlerInterceptorAdapter 这个适配器，继承此类，可以⾮常⽅便的实现⾃⼰的拦截器。
+
+Filter 和 Interceptor 的区别：
+- Filter 依赖 Servlet 容器，⽽ Interceptor 不依赖于 Servlet 容器。
+
+- Filter 是基于函数回调（doFilter() ⽅法）的，⽽ Interceptor 则是基于 Java 反射的（AOP 思想）。
+
+- Filter 对⼏乎所有的请求起作⽤，⽽ Interceptor 只能对 action 请求起作⽤。
+
+- Interceptor 可以访问 action 的上下⽂，值栈⾥的对象，⽽ Filter 不能。
+
+- 在 action 的⽣命周期⾥，Interceptor 可以被多次调⽤，⽽ Filter 只能在容器初始化时调⽤⼀次。
+
+- Filter 在过滤是只能对 request 和 response 进⾏操作，⽽ interceptor 可以对 request、response、handler、modelAndView、exception 进⾏操作。
+
+### 5.2 HandlerInterceptorAdapter 源码
+
+```java
+public abstract class HandlerInterceptorAdapter implements AsyncHandlerInterceptor {
+    // 默认构造函数
+    public HandlerInterceptorAdapter() {
+    }
+
+    /** 
+    * 预处理回调⽅法，实现处理器的预处理（例如登录校验） 第三个参数为响应的处理器，⼀般是⾃定义的 Controller
+    * 返回值：true 表示继续流程，如调⽤下⼀个拦截器或者是处理器；false 表示流程中断，不会再调⽤其他的响应器或者处理器
+    */
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        return true;
+    }
+
+    /** 
+    * 后处理回调⽅法，实现处理器的后处理（但是在渲染视图之前），此时我们可以通过 ModelAndView 对模型数据进⾏处理或者对视图进⾏处理。
+    */
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
+    }
+
+    /** 
+    * 整个请求处理完毕回调⽅法，即在视图渲染完毕时回调，⽐如性能监控中我们可以在此记录结束时间并输出消耗时间
+    * 还可以进⾏⼀些资源的清理，类似于 try...catch...finally 中的 finally。
+    */
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+    }
+
+    /**
+    * 不是 HandlerInterceptor 的接⼝实现，是 AsyncHandlerInterceptor 的，AsyncHandlerInterceptor 实现了 HandlerInterceptor。
+    * 在有异步请求时触发，在 preHandle 返回 true 之后才执⾏这⾥，这⾥执⾏完成之后会触发 postHandle 和 afterCompletion
+    */
+    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    }
+}
+```
+
+### 5.3 HandlerInterceptorAdapter 案例
+
+**第一步**：定义拦截器。
+
+```java
+@Component
+public class MyHandler extends HandlerInterceptorAdapter {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle");
+        return super.preHandle(request, response, handler);
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle");
+        super.postHandle(request, response, handler, modelAndView);
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion");
+        super.afterCompletion(request, response, handler, ex);
+    }
+
+    @Override
+    public void afterConcurrentHandlingStarted(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        super.afterConcurrentHandlingStarted(request, response, handler);
+    }
+}
+```
+
+**第二步**：定义配置类。
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    MyHandler myHandler;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+
+        registry.addInterceptor(myHandler)
+                .addPathPatterns("/**");
+    }
+}
+```
+
+**第三步**：创建 Controller 测试。
+
+```java
+@RestController
+public class TestController {
+
+    @RequestMapping("/user")
+    public UserVO getUserVO() {
+        System.out.println("controller");
+
+        UserVO userVO = new UserVO();
+        userVO.setName("zhang3");
+        userVO.setPaw("123456");
+
+        return userVO;
+    }
+}
+```
+
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+## 6 Tk-Mybatis
+
+### 6.1 Tk-Mybatis 介绍
+
+[官方 Github](https://github.com/abel533/Mapper/wiki)
+
+TK-Mybatis 是⼀个在 Mybatis 基础之上只做增强，不做改变的⼯具。为简化开发，提⾼效率⽽⽣。
+
+功能：
+- 代码⽣成器 MBG。
+
+- 通⽤ Mapper (最核⼼)。
+
+- 分⻚插件（PageHelper）。
+
+- 乐观锁。
+
+- 多数据源。
+
+- 全局 ID ⽣成器。
+
+### 6.2 入门案例
+
+**第一步**：添加依赖。
+
+```xml
+<!--Mysql连接-->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.17</version>
+</dependency>
+<!--Mybatis-->
+<dependency>
+    <groupId>org.mybatis.spring.boot</groupId>
+    <artifactId>mybatis-spring-boot-starter</artifactId>
+    <version>2.1.0</version>
+</dependency>
+<!--durid-->
+<dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>druid-spring-boot-starter</artifactId>
+    <version>1.1.16</version>
+</dependency>
+<!--tk-Mybatis-->
+<dependency>
+    <groupId>tk.mybatis</groupId>
+    <artifactId>mapper-spring-boot-starter</artifactId>
+    <version>2.1.5</version>
+</dependency>
+<!--lombok-->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+</dependency>
+```
+
+**第二步**：数据库配置。
+
+```yml
+spring:
+  datasource:
+  url: jdbc:mysql://localhost:3316/test_db
+  username: root
+  password: 123456
+  driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+**第三步**：配置实体类和表的映射。
+
+```java
+@Table(name = "user_tb")
+@Data
+public class UserDO {
+
+    // @Id 表示该字段是主键
+    @Id()
+    Integer id;
+
+    // @Column 表示该字段是普通字段
+    @Column()
+    String name;
+
+    @Column()
+    String password;
+
+    @Column()
+    Integer age;
+
+    @Column()
+    String male;
+}
+```
+
+**第四步**：配置 Mapper。
+
+```java
+import tk.mybatis.mapper.common.Mapper;
+
+public interface UserMapper extends Mapper<UserDO> {
+}
+```
+
+**第五步**：配置扫描包。
+
+```java
+import tk.mybatis.spring.annotation.MapperScan;
+
+// 这个注解加到启动类上或者是配置类上
+@MapperScan(basePackages = "com.gyh.tkdemo.mapper") 
+    public class TkDemoApplication {
+}
+```
+
+**第六步**：测试。
+
+```java
+@Autowired
+private UserService userService;
+
+@Test
+public void myTest() {
+    UserDO userDO = userService.selectById(1);
+    System.out.println(userDO);
+}
+
+@Test
+public void myTest2() {
+
+    Example example = new Example(UserDO.class);
+
+    example.createCriteria().andEqualTo("gender", "male");
+
+    List<UserDO> userList = userMappper.selectByExample(example);
+
+    System.out.println(userList);
+}
+```
+
+## 7 MapStruct
+
+### 7.1 MapStruct 介绍
+
+在⼀个成熟的⼯程中，尤其是现在的分布式系统中，应⽤与应⽤之间，还有单独的应⽤细分模块之后，DO ⼀般不会让外部依赖，这时候需要在提供对外接⼝的模块⾥放 DTO ⽤于对象传输，也即是 DO 对象对内，DTO 对象对外，DTO 可以根据业务需要变更，并不需要映射 DO 的全部属性。
+
+DTO：Data Transport Object（数据传输对象）。  
+
+DO：Data Object。
+
+VO：View Object（视图解析对象）。
+
+### 7.2 MapStruct 案例
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct-jdk8</artifactId>
+    <version>1.3.0.Final</version>
+</dependency>
+
+<dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct-processor</artifactId>
+    <version>1.3.0.Final</version>
+</dependency>
+```
+
+**第二步**：定义转换器接口。
+
+```java
+@Mapper(componentModel = "spring")
+public interface UserConvertor {
+
+    @Mappings({
+            @Mapping(source = "id", target = "id"),
+            @Mapping(source = "name", target = "name"),
+            @Mapping(source = "age", target = "age"),
+            @Mapping(source = "gender", target = "gender")
+    })
+    UserDTO convert2DTO(UserDO userDO);
+
+
+    /**
+     * List 和 List 之间的转换 依赖于单个 Bean 之间的转换
+     * @param list
+     * @return
+     */
+    List<UserDTO> convert2DTOs(List<UserDO> list);
+}
+```
+
+
+## 8 SPI
+
+### 8.1 SPI 介绍
+
+SPI 全称为 (Service Provider Interface) ，是 JDK 内置的⼀种服务提供发现机制。⽬前有不少框架⽤它来做服务的扩展发现（Dubbo、JDBC 等），简单来说，它就是⼀种动态替换发现的机制，比如有个接⼝，想运⾏时动态的给它添加实现，只需要添加⼀个实现。
+
+<div align="center">
+<img src="./img/p20.png">
+</div>
+
+Java SPI 的约定（约定俗成）：当服务的提供者提供了服务接⼝的⼀种实现之后，在 jar 包的 `META-INF/Services/` ⽬录中同时创建⼀个以服务接⼝命名的⽂件。该⽂件⾥就是实现该服务接⼝的具体实现类。⽽当外部程序装配这个模块的时候，就能通过该 jar 包 `META-INF/Services/` 的配置⽂件找到具体的实现类名。并装载实例化，完成模块的注⼊。基于这样的⼀个约定就能很好的找到服务接⼝的实现类，⽽不需要在代码⾥指定。
+
+### 8.2 入门案例
+
+**第一步**：定义接口。
+
+```java
+public interface CatService {
+    void sleep();
+}
+```
+
+**第二步**：实现接口。
+
+```java
+public class BlackCatService implements CatService {
+    @Override
+    public void sleep() {
+    System.out.println("⿊猫呼呼睡⼤觉。。。");
+    }
+}
+```
+
+```java
+public class WhiteCatService implements CatService {
+    @Override
+    public void sleep() {
+    System.out.println("⽩猫孜孜不倦的学习...");
+    }
+}
+```
+
+**第三步**：定义配置文件。
+
+在 `src/META-INF/services` ⽬录下新增和接⼝全类名⼀样的⼀个⽂件，⽂件⾥⾯配置需要接⼝动态加载的实现类的全类名，这样 Java 在调⽤接⼝的时候就能动态的去找到接⼝的实现，⽽对原来的代码没有丝毫的侵⼊性。
+
+`com.gyh.CatService`：
+```
+com.gyh.impl.BlackCatService
+
+com.gyh.impl.WhiteCatService
+```
+
+**第四步**：测试。
+
+```java
+public static void main(String[] args) {
+    ServiceLoader<CatService> serviceLoader = ServiceLoader.load(CatService.class);
+    
+    serviceLoader.forEach(service ->{
+        service.sleep();
+    });
+}
+```
