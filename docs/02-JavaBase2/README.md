@@ -894,7 +894,7 @@ class 类名 implements 接口名 {}
 
 - 接口与接口之间可以实现多重继承，一个类也可以实现多个接口。一个考虑接口的比较完整的类定义语法：  
   ```java
-  class 类名 extends 父类 implements 接口 1, 接口 2... {
+  class 类名 extends 父类 implements 接口1, 接口2 ... {
 
   }
   ```
