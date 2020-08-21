@@ -146,7 +146,6 @@
 bin：存放启动和关闭 Tomcat 的脚本文件。
 
 conf：存放 Tomcat 服务器的各种配置文件。
-- 推荐：修改 `./conf` -> `server.xml` -> connector -> port="8080" 为 "80"。
 
 lib：存放 Tomcat 服务器的支撑 jar 包。
 

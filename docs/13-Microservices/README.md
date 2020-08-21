@@ -79,6 +79,37 @@
   - [8 SPI](#8-spi)
     - [8.1 SPI 介绍](#81-spi-介绍)
     - [8.2 入门案例](#82-入门案例)
+  - [9 API ⽹关](#9-api-关)
+    - [9.1 API 网关介绍](#91-api-网关介绍)
+    - [9.2 架构图](#92-架构图)
+  - [10 JWT](#10-jwt)
+    - [10.1 JWT 介绍](#101-jwt-介绍)
+    - [10.2 使用场景](#102-使用场景)
+      - [10.2.1 Authorization](#1021-authorization)
+      - [10.2.2 Information Exchange](#1022-information-exchange)
+    - [10.3 Token 和 Session](#103-token-和-session)
+      - [10.3.1 基于 Session 的身份认证](#1031-基于-session-的身份认证)
+      - [10.3.2 基于 Token 的身份认证](#1032-基于-token-的身份认证)
+    - [10.4 JWT Token 格式](#104-jwt-token-格式)
+    - [10.5 使用](#105-使用)
+  - [11 Pipeline 设计模式](#11-pipeline-设计模式)
+    - [11.1 Pipeline 设计模式介绍](#111-pipeline-设计模式介绍)
+    - [11.2 接口代码建模](#112-接口代码建模)
+  - [12 RocketMQ](#12-rocketmq)
+    - [12.1 消息中间件](#121-消息中间件)
+    - [12.2 功能](#122-功能)
+      - [12.2.1 异步化](#1221-异步化)
+      - [12.2.2 限流削峰](#1222-限流削峰)
+      - [12.2.3 对比](#1223-对比)
+    - [12.3 模型](#123-模型)
+      - [12.3.1 相关概念](#1231-相关概念)
+      - [12.3.2 概念模型](#1232-概念模型)
+      - [12.3.3 部署模型](#1233-部署模型)
+      - [12.3.4 注意事项](#1234-注意事项)
+    - [12.4 下载使用](#124-下载使用)
+      - [12.4.1 下载](#1241-下载)
+      - [12.4.2 启动](#1242-启动)
+    - [12.5 整合](#125-整合)
 
 
 ## 1 Linux 基础
@@ -2529,3 +2560,517 @@ public static void main(String[] args) {
     });
 }
 ```
+ 
+
+## 9 API ⽹关
+
+### 9.1 API 网关介绍
+
+API 是 Application Programming Interface 缩写，翻译成中⽂就是应⽤程序接⼝。在实际微服务中可以理解⼀个个功能⽅法。就⽐如⼀个⽤户服务的微服务，可以对外提供 API 接⼝为，查找⽤户，创建⽤户等。
+
+⽹关：在计算机⽹络中，⽹关（Gateway）是转发其他服务器通信数据的服务器，接收从客户端发送来的请求时，它就像⾃⼰拥有资源的源服务器⼀样对请求进⾏处理。
+
+由于接⼊⽹关后，⽹关将转发请求。所以在这⼀层做请求认证，天然合适。这样这需要编写⼀次代码，在这⼀层过滤完毕，再转发给下⾯的 API。  
+所以 API ⽹关的通常作⽤是完成⼀些通⽤的功能，如请求认证，请求记录，请求限流，⿊⽩名单判断等。
+
+API ⽹关是⼀个服务器，是系统的唯⼀⼊⼝。 API ⽹关⽅式的核⼼要点是，所有的客户端和消费端都通过统⼀的⽹关接⼊微服务，在⽹关层处理所有的⾮业务功能。通常，⽹关也是提供 REST/HTTP 的访问 API。服务端通过 API-Gateway 注册和管理服务。
+
+### 9.2 架构图
+
+单入口：
+<div align="center">
+<img src="./img/p21.png">
+</div>
+
+多入口：
+<div align="center">
+<img src="./img/p22.png">
+</div>
+
+
+## 10 JWT
+
+### 10.1 JWT 介绍
+
+JWT（Json·Web·Token）是⼀个开放标准（RFC·7519），它定义了⼀种紧凑的、⾃包含的⽅式，⽤于作为 JSON 对象在各⽅之间安全的传输信息。该信息可以被验证和信任，因为它是数字签名的。
+
+JWT 是⽬前最流⾏的跨域身份解决⽅案。
+
+### 10.2 使用场景
+
+#### 10.2.1 Authorization
+
+Authorization（授权）是使⽤ JWT 的常⻅场景。⼀旦⽤户登录，后续每个请求都将包含 JWT，允许⽤户访问该令牌允许的路由、服务和资源。单点登录是现在⼴泛使⽤的 JWT 的⼀个特性，因为它的开销很⼩，并且可以轻松的跨域使⽤。
+
+
+同源：如果两个 URL 的 protocol、port（如果有指定的话）和 host 都相同的话，则这两个 URL 是同源。
+
+同源策略是⼀个重要的安全策略，它⽤于限制⼀个 origin 的⽂档或者它加载的脚本如何能与另⼀个源的资源进⾏交互。它能帮助阻隔恶意⽂档，减少可能被攻击的媒介。  
+因为有了浏览器同源策略的限制，所以有了跨域问题。
+
+单点登录：Single Sign On，简称为 SSO，是⽐较流⾏的企业业务整合的解决⽅案之⼀。SSO 的定义是在多个应⽤系统中，⽤户只需要登录⼀次就可以访问所有相互信任的应⽤系统。
+
+#### 10.2.2 Information Exchange
+
+对于安全的在各⽅之间传输信息⽽⾔，Json·Web·Token ⽆疑是⼀种很好的⽅式。因为 JWT 可以被签名，例如，⽤公钥/私钥配对，可以确定发送⼈。另外，由于签名是使⽤头和有效负载计算的，还可以验证内容有没有被篡改。
+
+### 10.3 Token 和 Session
+
+#### 10.3.1 基于 Session 的身份认证
+
+HTTP 协议是⽆状态的，也就是说，如果我们已经认证了⼀个⽤户，那么他下⼀次请求的时候，服务器不知道我是谁，我们必须再次认证。
+
+传统的做法是将已经认证过的⽤户信息存储到服务器上，⽐如 session。⽤户下次请求的时候带着 sessionId，然后服务器检查⽤户是否已经认证过。
+
+这种基于服务器的身份认证⽅式存在⼀些问题：
+- Sessions：每次⽤户认证通过以后，服务器需要创建⼀条记录来保存⽤户信息，通常是在内存中。那么随着认证通过的⽤户越来越多，服务器在这⾥的开销就会越来越⼤。
+
+- Scalability：由于 Session 是在内存中的，这就带来⼀些扩展性的问题。
+
+- CORS：当我们想要扩展我们的应⽤，当我们的数据被多个移动设备使⽤时，我们必须考虑跨资源共享问题。当使⽤ AJAX 调⽤另⼀个域名下获取资源时，我们可能会遇到禁⽌请求的问题。
+
+- CSRF（跨站请求伪造）：⽤户很容易受到 CSRF 的攻击。
+
+#### 10.3.2 基于 Token 的身份认证
+
+基于 Token 的身份认证，在服务端不需要存储⽤户的登录信息，⼤概流程如下：
+1. 客户端使⽤⽤户名、密码请求登录；
+
+2. 服务器收到请求去验证⽤户名和密码；
+
+3. 验证成功之后服务端会签发⼀个 Token，再把这个 Token 发送给客户端；
+
+4. 客户端收到 Token 以后可以把它存储起来，存到客户端内存或者其他地⽅；
+
+5. 客户端每次向服务器请求资源的时候需要带着服务器签发的 Token；
+
+6. 服务端收到请求，然后去验证客户端请求⾥⾯带着的 Token，如果验证成功，就向客户端返回请求的数据。
+
+
+Token 和 Session 对⽐：
+- 他们都可以存储⽤户信息，然⽽，Session 是把⽤户信息保存在服务端的，⽽ JWT 是把⽤户信息保存在客户端的，当然，也可以保存到服务端，甚⾄保存到数据库中。
+
+- Session ⽅式存储⽤户信息最⼤的问题在于要暂⽤服务器⼤量的内存，增加服务器的开销。⽽基于 Token 的⽅式将⽤户状态分散到了各个客户端中，可以明显的减轻服务端的内存压⼒。
+
+- Session 的状态存储在服务端，客户端只有 sessionId，⽽ Token 的状态是存储在客户端。
+
+使⽤ Token 的好处：
+- ⽆状态和可拓展性：Token 存储在客户端，完全⽆状态，可拓展。我们的负载均衡器可以将⽤户传递到任意服务器，因为在任何地⽅都没有状态或会话信息。
+
+- 安全：Token 不是 Cookie。每次请求的时候 token 都会被发送，可以作为请求参数发送，可以放在请求头⾥⾯发送，也可以放在Cookie⾥⾯被发送。即使在你的实现中将token存储到客户端的 Cookie 中，这个 Cookie 也只是⼀种存储机制，⽽⾮身份认证机制。没有基于会话的信息可以操作，因为我们没有会话。
+
+### 10.4 JWT Token 格式
+
+JSON·Web·Token 由三部分组成，他们之间⽤圆点 `·` 连接，这三部分分别是：
+- Header
+
+- Payload
+
+- Signature
+
+Header 两部分信息组成：
+- type：声明类型，这⾥是 JWT。
+
+- alg：声明加密的算法 通常直接使⽤ HMAC SHA256。
+
+Payload 就是存放有效信息的地⽅（不强制）。
+- iss：JWT 签发者。
+
+- sub：JWT 所⾯向的⽤户。
+
+- aud：接收 JWT 的⼀⽅。
+
+- exp：JWT 的过期时间，这个过期时间必须要⼤于签发时间。
+
+- nbf：定义在什么时间之前，该 JWT 都是不可⽤的。
+
+- iat：JWT 的签发时间。
+
+- jti：JWT 的唯⼀身份标识，主要⽤来作为⼀次性 token，从⽽回避重放攻击。
+
+- **claim**：JWT 存放信息的地⽅。
+
+Signature 就是签名信息。
+
+因此，⼀个典型的 JWT 看起来是这个样⼦的：
+```
+xxxxxxxx·yyyyyyyyyy·zzzzzzzzzzz
+```
+
+示例：
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ3bGd6cyIsImV4cCI6MTU4Nzk3MzY1N
+ywidXNlciI6Ijk2MkYxODkwNTVFMzRFNzVERjVGMzQ0QTgxODNCODdGIn0.APehq9dxRiilgTOGyuz
+9qtZxvPDIJ5QIIVUCLYeX1QE
+```
+
+### 10.5 使用
+
+
+创建 JWT：
+```java
+String token = JwtTokenUtils.builder().msg("xxx").build().creatJwtToken();
+```
+
+解析 JWT:
+```java
+String msg = JwtTokenUtils.builder().token(token).build().freeJwt();
+```
+
+## 11 Pipeline 设计模式
+
+### 11.1 Pipeline 设计模式介绍
+
+Pipeline 模式⼜称为流⽔线模式，pipeline ⼜称为管道，是⼀种在计算机普遍使⽤的技术。例如一条 cpu 流⽔线，⼀个流⽔线分为 4 部分，每个部分可以独⽴⼯作，于是可以处理多个数据流。linux 管道也是⼀个常⽤的管道技术。  
+
+在分布式处理领域，由于管道模式是数据驱动，⽽⽬前流⾏的 Spark 分布式处理平台也是数据驱动的，两者⾮常合拍，于是在 spark 的新的 api ⾥⾯ pipeline 模式得到了⼴泛的应⽤。还有 java web 中的 struct 的filter、netty 的 pipeline，⽆处不⻅ pipeline 模式。
+
+解决的问题：有时⼀些线程的步骤⽐较冗⻓，⽽且由于每个阶段的结果与下阶段的执⾏有关系，⼜不能分开。
+
+解决思路：可以将任务的处理分解为若⼲个处理阶段，上⼀个阶段任务的结果交给下⼀个阶段来处理，这样每
+个线程的处理是并⾏的，可以充分利⽤资源提⾼计算效率。
+
+管道模型包含两个部分：pipeline 管道、valve 阀⻔（也称为 handler）、Context 产品。
+- pipeline 管道，可以⽐作⻋间⽣产线，在这⾥可认为是容器的逻辑处理总线。
+- valve 阀⻔，可以⽐作⽣产线上的⼯⼈，负责完成各⾃的部分⼯作。阀⻔也可以叫做 Handler 处理者。
+
+
+### 11.2 接口代码建模
+
+**第一步**：Handler 接⼝。
+
+```java
+public interface Handler {
+    //处理
+    boolean handle(PipelineContext context);
+}
+```
+
+**第二步**：
+
+
+
+## 12 RocketMQ
+
+### 12.1 消息中间件
+
+消息中间件：消息中间件利⽤⾼效可靠的消息传递机制进⾏平台⽆关的数据交流，并基于数据通信来进⾏分布式系统的集成。
+
+RocketMQ 是阿⾥巴巴开源的⼀个消息中间件，是⼀个队列模型的消息中间件，具有⾼性能、⾼可靠、
+⾼实时、分布式特点。
+
+### 12.2 功能
+
+#### 12.2.1 异步化
+
+将⼀些可以进⾏异步化的操作通过发送消息来进⾏异步化，提⾼效率。
+
+具体场景：⽤户为了使⽤某个应⽤，进⾏注册，系统需要发送注册邮件并验证短信。对这两个操作的处
+理⽅式有两种：串⾏及并⾏。
+
+串⾏⽅式：新注册信息⽣成后，先发送注册邮件，再发送验证短信。  
+在这种⽅式下，需要最终发送验证短信后再返回给客户端。
+
+<div align="center">
+<img src="./img/p23.png">
+</div>
+
+并⾏处理：新注册信息写⼊后，发短信和发邮件并⾏处理。  
+在这种⽅式下，发短信和发邮件需处理完成后再返回给客户端。  
+
+<div align="center">
+<img src="./img/p24.png">
+</div>
+
+假设以上三个⼦系统处理的时间均为 50 ms，且不考虑⽹络延迟，则总的处理时间：  
+- 串⾏：50 + 50 + 50 = 150 ms。
+- 并⾏：50 + 50 = 100 ms。
+
+使⽤消息队列：在写⼊消息队列后⽴即返回成功给客户端，则总的响应时间依赖于写⼊消息队列的时间，⽽写⼊消息队列的时间本身是可以很快的，基本可以忽略不计，因此总的处理时间相⽐串⾏提⾼了 2 倍，相⽐并⾏提⾼了⼀倍。
+
+<div align="center">
+<img src="./img/p25.png">
+</div>
+
+#### 12.2.2 限流削峰
+
+在⾼并发场景下把请求存⼊消息队列，利⽤排队思想降低系统瞬间峰值。
+
+具体场景：购物⽹站开展秒杀活动，⼀般由于瞬时访问量过⼤，服务器接收过⼤，会导致流量暴增，相
+关系统⽆法处理请求甚⾄崩溃。⽽加⼊消息队列后，系统可以从消息队列中取数据，相当于消息队列做
+了⼀次缓冲。
+
+<div align="center">
+<img src="./img/p26.png">
+</div>
+
+优点：
+- 请求先⼊消息队列，⽽不是由业务处理系统直接处理，做了⼀次缓冲，极⼤地减少了业务处理系统的压⼒。
+
+- 队列⻓度可以做限制，事实上，秒杀时，后⼊队列的⽤户⽆法秒杀到商品，这些请求可以直接被抛弃，返回活动已结束或商品已售完信息。
+
+
+#### 12.2.3 对比
+
+消息中间件不仅仅只有 RocketMQ，市⾯上还有很多其他的消息中间件，这⾥列举⼏个常⻅的和 RocketMQ 作为⼀个对⽐。
+
+ActiveMQ：ActiveMQ 是 Apache 出品，能⼒强劲的开源消息总线。ActiveMQ 是⼀个完全⽀持 JMS1.1 和 J2EE 1.4 规范的 JMS Provider 实现。
+
+> JMS: 全称是 Java Message Service，即消息服务应⽤程序接⼝，是⼀个 Java ⾯向消息中间件平台的 API，⽤于在两个应⽤程序之间，或分布式系统中发送消息，进⾏异步通信。
+
+RabbitMQ：AMQP 协议的领导实现，⽀持多种场景。淘宝的 MySQL 集群内部有使⽤它进⾏通讯，OpenStack 开源云平台的通信组件，最先在⾦融⾏业得到运⽤。
+
+> AMQP: 即Advanced Message Queuing Protocol，⼀个提供统⼀消息服务的应⽤层标准⾼级消息队列协议，是应⽤层协议的⼀个开放标准，为⾯向消息的中间件设计。
+
+Kafka: Kafka 是最初由 Linkedin 公司开发，是⼀个分布式、⽀持分区的（partition）、多副本的（replica），基于 zookeeper 协调的分布式消息系统，它的最⼤的特性就是可以实时的处理⼤量数据以满⾜各种需求场景：⽐如基于 hadoop 的批处理系统、低延迟的实时系统、storm/Spark 流式处理引擎，web/nginx ⽇志、访问⽇志，消息服务等等。⽤ scala 语⾔编写，Linkedin 于 2010 年贡献给了 Apache 基⾦会并成为顶级开源项⽬。
+
+<div align="center">
+<img src="./img/p27.png">
+</div>
+
+
+### 12.3 模型
+
+#### 12.3.1 相关概念
+
+Producer：消息⽣产者，负责消息的产⽣，由业务系统负责产⽣。  
+Consumer：消息消费者，负责消息消费，由后台业务系统负责异步消费。  
+Topic：消息的逻辑管理单位。
+
+这三者是 RocketMq 中最最基本的概念。
+
+<div align="center">
+<img src="./img/p28.png">
+</div>
+
+具体来说是 Producer 将消息发往具体的 Topic。Consumer 订阅 Topic，主动拉取或被动接受消息，如果 Consumer 消费消息失败则默认会重试 16 次。
+
+#### 12.3.2 概念模型
+
+<div align="center">
+<img src="./img/p29.png">
+</div>
+
+Broker：消息的中转⻆⾊，负责存储消息，转发消息，⼀般也称为 server，可以理解为⼀个存放消息的服务，⾥⾯可以有多个 Topic。
+
+MessageQueue：消息的物理管理单位，⼀个 Topic 下有多个 Queue，默认⼀个 Topic 创建时会创建四个 MessageQueue。
+
+ConsumerGroup：具有同样消费逻辑消费同样消息的 Consumer，可以归并为⼀个 group。
+
+ProducerGroup：具有同样属性的⼀些 Producer 可以归并为同⼀个 Group 同样属性是指：发送同样 Topic 类型的消息。
+
+Nameserver 注册中⼼。作⽤：
+- 每个 Broker 启动的时候会向 namesrv 注册。
+
+- Producer 发送消息的时候根据 Topic 获取路由到 Broker ⾥⾯ Topic 的信息。
+
+- Consumer 根据 Topic 到 Namesrv 获取 Topic 的路由到 Broker 的信息。
+
+#### 12.3.3 部署模型
+
+<div align="center">
+<img src="./img/p30.png">
+</div>
+
+步骤：
+1. 注册中⼼ Nameserver 启动；
+
+2. 消息中转服务 Broker 启动。
+   - 启动的时候会去创建 Topic 并创建对应的 MessageQueue。
+
+   - 启动的时候会去注册中⼼注册，把⾃⼰的地址以及负责的 Topic 告诉注册中⼼。
+
+   - Broker 和 Nameserver 之间通过⼼跳机制来检测对⽅是否存活。
+
+> 连接：单个 broker 和所有 nameserver 保持⻓连接。  
+> ⼼跳：
+> - ⼼跳间隔：每隔 30 秒（此时间⽆法更改）向所有 nameserver 发送⼼跳，⼼跳包含了⾃身的 topic 配置信息。
+> - ⼼跳超时：nameserver 每隔 10 秒钟（此时间⽆法更改），扫描所有还存活的 broker 连接，
+若某个连接 2 分钟内（当前时间与最后更新时间差值超过 2 分钟，此时间⽆法更改）没有发送⼼跳
+数据，则断开连接。
+
+3. 消息⽣产者 Produer 启动。
+   - 启动的时候会去注册中⼼注册。  
+     1. 把⾃⼰的 IP 地址告诉注册中⼼；
+     2. 把⾃⼰⽣产的 Topic 告诉注册中⼼。
+
+   运⾏时：
+   - 单个⽣产者者和⼀台 nameserver 保持⻓连接，定时查询 topic 配置信息，如果该 nameserver 挂掉，⽣产者会⾃动连接下⼀个 nameserver，直到有可⽤连接为⽌，并能⾃动重连。
+
+   - 单个⽣产者和该⽣产者关联的所有 broker 保持⻓连接。
+
+   - 默认情况下，⽣产者每隔 30 秒从 nameserver 获取所有 topic 的最新队列情况，这意味着某个 broker 如果宕机，⽣产者最多要 30 秒才能感知，在此期间，发往该 broker 的消息发送失败。该时间可⼿动配置
+
+   - 默认情况下，⽣产者每隔 30 秒向所有 broker 发送⼼跳，该时间由 DefaultMQProducer 的heartbeatBrokerInterval 参数决定，可⼿动配置。  
+     broker 每隔 10 秒钟（此时间⽆法更改），扫描所有还存活的连接，若某个连接 2 分钟内（当前时间与最后更新时间差值超过 2 分钟，此时间⽆法更改）没有发送⼼跳数据，则关闭连接。
+
+4. 消息消费者 Consumer 启动。
+   - 启动的时候会去注册中⼼注册。
+     1. 把⾃⼰的 IP 地址告诉注册中⼼；
+     2. 把⾃⼰可以消费的 Topic 告诉注册中⼼。
+
+   运⾏时：
+   - 单个消费者和⼀台 nameserver 保持⻓连接，定时查询 topic 配置信息，如果该 nameserver 挂掉，消费者会⾃动连接下⼀个 nameserver，直到有可⽤连接为⽌，并能⾃动重连。
+
+   - 单个消费者和该消费者关联的所有 broker 保持⻓连接。
+
+   - 默认情况下，消费者每隔 30 秒从 nameserver 获取所有 topic 的最新队列情况，这意味着某个 broker 如果宕机，客户端最多要 30 秒才能感知。该时间由 DefaultMQPushConsumer 的 pollNameServerInteval 参数决定，可⼿动配置。
+
+   - 默认情况下，消费者每隔 30 秒向所有 broker 发送⼼跳，该时间由 DefaultMQPushConsumer 的 heartbeatBrokerInterval 参数决定，可⼿动配置。  
+     broker 每隔 10 秒钟（此时间⽆法更改），扫描所有还存活的连接，若某个连接2分钟内（当前时间与最后更新时间差值超过2分钟，此时间⽆法更改）没有发送⼼跳数据，则关闭连接，并向该消费者分组的所有消费者发出通知，分组内消费者重新分配队列继续消费。
+
+#### 12.3.4 注意事项
+
+RocketMQ 的消息是存储到磁盘上的，这样既能保证断电后恢复，⼜可以让存储的消息量超出内存的限制。RocketMQ 为了提⾼性能，会尽可能地保证磁盘的顺序写。消息在通过 Producer 写⼊ RocketMQ 的时候，有两种写磁盘⽅式：
+- 异步刷盘：在返回写成功状态时，消息可能只是被写⼊了内存中，写操作的返回快，吞吐量⼤；当内存⾥的消息量积累到⼀定程度时，统⼀触发写磁盘操作，快速写⼊。
+
+- 同步刷盘：在返回写成功状态时，消息已经被写⼊磁盘。具体流程是，消息写⼊内存后，⽴刻通知刷盘线程刷盘，然后等待刷盘完成，刷盘线程执⾏完成后唤醒等待的线程，返回消息写成功的状态。
+
+同步刷盘还是异步刷盘，是通过 Broker 配置⽂件⾥的 flushDiskType 参数设置的，这个参数被设置成SYNC_FLUSH、ASYNC_FLUSH 中的⼀个。
+
+如果⼀个 broker 组有 Master 和 Slave，消息需要从 Master 复制到 Slave 上，有同步和异步两种复制⽅式。
+- 同步复制是等 Master 和 Slave 均写成功后才反馈给客户端写成功状态。
+
+- 异步复制⽅式是只要 Master 写成功即可反馈给客户端写成功状态。
+
+同步复制和异步复制是通过 Broker 配置⽂件⾥的 brokerRole 参数进⾏设置的，这个参数可以被设置成 ASYNC_MASTER、SYNC_MASTER、SLAVE 三个值中的⼀个。
+
+### 12.4 下载使用
+
+#### 12.4.1 下载
+
+[官⽹地址](http://rocketmq.apache.org)。
+
+下载安装包后，解压。
+
+配置环境变量：
+<div align="center">
+<img src="./img/p31.png">
+</div>
+
+#### 12.4.2 启动
+
+⾸先启动注册中⼼ nameserver ，默认启动在 9876 端⼝，打开 cmd 命令窗⼝，进⼊bin⽬录，执⾏命令：
+```bash
+start mqnamesrv.cmd
+```
+
+接着启动 RocketMQ 服务，也就是 broker。进⼊ bin ⽬录，执⾏命令：
+```bash
+start mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true
+```
+
+注意：`autoCreateTopicEnable=true` 这个设置表示开启⾃动创建 topic 功能，真实⽣产环境不建议开
+启。
+
+### 12.5 整合
+
+**第一步**：导包。
+
+```xml
+<dependency>
+    <groupId>org.apache.rocketmq</groupId>
+    <artifactId>rocketmq-client</artifactId>
+    <version>4.4.0</version>
+</dependency>
+```
+
+**第二步**：消息生产者实现。
+
+```java
+public static void main(String[] args){
+    
+    // 新增消息⽣产者
+    DefaultMQProucer producer = new DefaultMQProucer("producer_group");
+
+    // 配置注册中⼼
+    producer.setNamesrvAddr("localhost:9876");
+
+    // 启动
+    producer.start();
+
+    // 新建消息对象
+    Message message = new Message("topicA", "message".context.getBytes(Charset.forName("utf-8")));
+
+    // messageDelayLevel=  1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h
+    message.setDelayTimeLevel(3);
+
+    // 发送消息
+    try {
+
+        SendResult sendResult = mqProducer.send(message);
+
+        /**
+        *     SEND_OK,             发送成功
+        *     FLUSH_DISK_TIMEOUT,  刷盘超时 
+        *     FLUSH_SLAVE_TIMEOUT, 同步到 slave 超时
+        *     SLAVE_NOT_AVAILABLE; 从节点不可用
+        */
+        SendStatus sendStatus = sendResult.getSendStatus();
+
+        if (SendStatus.SEND_OK .equals(sendStatus)) {
+            System.out.println("发送消息成功！" + System.currentTimeMillis());
+
+        } else {
+            System.out.println("发送消息失败！");
+        }
+
+    } catch (MQClientException e) {
+        e.printStackTrace();
+    } catch (RemotingException e) {
+        e.printStackTrace();
+    } catch (MQBrokerException e) {
+        e.printStackTrace();
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+**第三步**：消息消费者实现。
+
+```java
+public static void main(String[] args) throws MQClientException {
+    
+    DefaultMQPushConsumer mqConsumer = new DefaultMQPushConsumer("consumer_group");
+    mqConsumer.setNamesrvAddr("localhost:9876");
+    
+    // 订阅topic
+    try {
+        consumer.subscribe("topicA", "*");
+    } catch (MQClientException e) {
+        e.printStackTrace();
+    }
+    
+    // 设置消息监听器
+    mqConsumer.registerMessageListener(new MessageListenerConcurrently() {
+        @Override
+        public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+            MessageExt message = msgs.get(0);
+            
+            // 获取消息内容
+            byte[] body = message.getBody();
+            String bodyStr = new String(body);
+
+            // 做一些我们自己需要的业务逻辑操作
+            System.out.println("收到的消息内容是:" + bodyStr);
+
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+            // 假如在这里消费失败的话，rocketmq 默认会去重试，重试 16 次
+        }
+    });
+
+            
+    try {
+        consumer.start();
+    } catch (MQClientException e) {
+        e.printStackTrace();
+    }
+}
+```
+
+如果写完代码之后抛出错误 `org.apache.rocketmq.client.exception.MQClientException: No route info of this topic, xxx`。表示 rocketMQ 中没有创建这个 topic，说明开启 autoCreateTopicEnable 失效，这个时候需要⼿动创建 topic。进⼊ bin ⽬录，执⾏命令：
+```bash
+sh ./mqamdin updateTopic -n localhost:9876 -b localhost:10911 -t topicName
+```
+然后重新启动⼀下程序即可。
