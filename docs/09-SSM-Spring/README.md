@@ -724,7 +724,7 @@ DI（Dependency Injection）：依赖注入。
 
 - 注入：Spring 容器给应用程序注入应用程序运行所必须的资源。
 
-AOP（Aspect Oriented Programming）：面向切面编程。
+AOP（Aspect Oriented Programming）：面向切面编程。  
 OOP（Object Oriented Programming）：面向对象编程。
 
 Spring 优点：
