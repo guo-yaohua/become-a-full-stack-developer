@@ -109,7 +109,7 @@ public class Singleton {
 
     public static Singleton getInstance(){
 
-        if (singleton == null){
+        if (singleton == null) {
             singleton = new Singleton();
         }
         return singleton;
@@ -189,15 +189,15 @@ public class Singleton4 {
 public class Singleton5 {
     private Singleton5(){}
 
-    static class Inner{
+    static class Inner {
         static Singleton5 singleton5 = new Singleton5();
 
-        public static Singleton5 provideSingleton5(){
+        public static Singleton5 provideSingleton5() {
             return singleton5;
         }
     }
 
-    public static Singleton5 getInstance(){
+    public static Singleton5 getInstance() {
         return Inner.provideSingleton5();
     }
 }
