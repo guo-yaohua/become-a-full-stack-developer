@@ -14,7 +14,7 @@
     - [1.5 默认页面和端口](#15-默认页面和端口)
   - [2 Servlet](#2-servlet)
     - [2.1 概述](#21-概述)
-    - [2.2 实现第一个 Servlet](#22-实现第一个-servlet)
+    - [2.2 实现一个 Servlet](#22-实现一个-servlet)
       - [2.2.1 FirstServlet](#221-firstservlet)
       - [2.2.2 Servlet 执行流程](#222-servlet-执行流程)
     - [2.3 Servlet 接口实现类](#23-servlet-接口实现类)
@@ -67,48 +67,45 @@
       - [6.4.1 设置 Maxage](#641-设置-maxage)
       - [6.4.2 设置 path](#642-设置-path)
       - [6.4.3 设置 domain](#643-设置-domain)
-  - [7 Session](#7-session)
-    - [7.1 Session 概述](#71-session-概述)
-  - [8 JSP](#8-jsp)
+    - [6.5 Session](#65-session)
+  - [7 JSP](#7-jsp)
+    - [7.1 概述](#71-概述)
+    - [7.2 JSP 语法](#72-jsp-语法)
+      - [7.2.1 JSP 模板元素](#721-jsp-模板元素)
+      - [7.2.2 JSP 表达式](#722-jsp-表达式)
+      - [7.2.3 JSP 脚本片断](#723-jsp-脚本片断)
+      - [7.2.4 JSP 声明](#724-jsp-声明)
+      - [7.2.5 JSP 注释](#725-jsp-注释)
+      - [7.2.6 JSP 指令](#726-jsp-指令)
+    - [7.3 JSP 九大隐式对象](#73-jsp-九大隐式对象)
+      - [7.3.1 out 隐式对象](#731-out-隐式对象)
+      - [7.3.2 pageContext 对象](#732-pagecontext-对象)
+  - [8 Listener](#8-listener)
     - [8.1 概述](#81-概述)
-    - [8.2 JSP 语法](#82-jsp-语法)
-      - [8.2.1 JSP 模板元素](#821-jsp-模板元素)
-      - [8.2.2 JSP 表达式](#822-jsp-表达式)
-      - [8.2.3 JSP 脚本片断](#823-jsp-脚本片断)
-      - [8.2.4 JSP 声明](#824-jsp-声明)
-      - [8.2.5 JSP 注释](#825-jsp-注释)
-      - [8.2.6 JSP 指令](#826-jsp-指令)
-    - [8.3 JSP 九大隐式对象](#83-jsp-九大隐式对象)
-      - [8.3.1 out 隐式对象](#831-out-隐式对象)
-      - [8.3.2 pageContext 对象](#832-pagecontext-对象)
-  - [9 Listener](#9-listener)
+    - [8.2 编写 Listener](#82-编写-listener)
+  - [9 Filter](#9-filter)
     - [9.1 概述](#91-概述)
-    - [9.2 编写 Listener](#92-编写-listener)
-  - [10 Filter](#10-filter)
+    - [9.2 工作原理](#92-工作原理)
+    - [9.3 创建过滤器](#93-创建过滤器)
+    - [9.4 Filter 链](#94-filter-链)
+    - [9.5 Filter 生命周期](#95-filter-生命周期)
+  - [10 JSON](#10-json)
     - [10.1 概述](#101-概述)
-    - [10.2 工作原理](#102-工作原理)
-    - [10.3 创建过滤器](#103-创建过滤器)
-    - [10.4 Filter 链](#104-filter-链)
-    - [10.5 Filter 生命周期](#105-filter-生命周期)
-  - [11 JSON](#11-json)
-    - [11.1 概述](#111-概述)
-    - [11.2 JSON 和 XML](#112-json-和-xml)
-    - [11.3 Java 操作 JSON](#113-java-操作-json)
-  - [12 MVC](#12-mvc)
+    - [10.2 JSON 和 XML](#102-json-和-xml)
+    - [10.3 Java 操作 JSON](#103-java-操作-json)
+  - [11 MVC](#11-mvc)
+  - [12 Maven](#12-maven)
     - [12.1 概述](#121-概述)
-    - [12.2 案例](#122-案例)
-  - [13 Maven](#13-maven)
-    - [13.1 概述](#131-概述)
-    - [13.2 安装和配置 Maven](#132-安装和配置-maven)
-      - [13.2.1 安装 Maven](#1321-安装-maven)
-      - [13.2.2 设置国内镜像](#1322-设置国内镜像)
-      - [13.2.3 设置默认 JDK 版本](#1323-设置默认-jdk-版本)
-      - [13.2.3 本地仓库](#1323-本地仓库)
-    - [13.3 IDEA 开发 Maven 项目](#133-idea-开发-maven-项目)
-    - [13.4 认识 Maven](#134-认识-maven)
-      - [13.4.1 Maven 目录结构](#1341-maven-目录结构)
-      - [13.4.2 Maven 常用命令](#1342-maven-常用命令)
-      - [13.4.3 Maven 生命周期](#1343-maven-生命周期)
+    - [12.2 安装和配置 Maven](#122-安装和配置-maven)
+      - [12.2.1 安装 Maven](#1221-安装-maven)
+      - [12.2.2 设置国内镜像](#1222-设置国内镜像)
+      - [12.2.3 设置默认 JDK 版本](#1223-设置默认-jdk-版本)
+      - [12.2.3 本地仓库](#1223-本地仓库)
+    - [12.3 IDEA 开发 Maven 项目](#123-idea-开发-maven-项目)
+    - [12.4 认识 Maven](#124-认识-maven)
+      - [12.4.1 Maven 目录结构](#1241-maven-目录结构)
+      - [12.4.2 Maven 常用命令](#1242-maven-常用命令)
+      - [12.4.3 Maven 生命周期](#1243-maven-生命周期)
 
 
 ## 1. Tomcat
@@ -239,7 +236,7 @@ Sun 公司在其 API 中提供了一个 Servlet 接口，用户若想开发一�
 
 2. 把开发好的 Java 类部署到 Web 服务器中。
 
-注：按照一种约定俗成的称呼习惯，通常我们也把实现了servlet 接口的 Java 程序，称之为 Servlet。
+注：按照一种约定俗成的称呼习惯，通常我们也把实现了 Servlet 接口的 Java 程序，称之为 Servlet。
 
 Servlet 在 Web 应用中的位置：
 ```
@@ -266,7 +263,7 @@ html、jsp、css、js 文件等：这些文件一般存在 Web 应用根目录�
 
 WEB-INF：必须直接放在应用下一级目录里。Java 类、jar 包、Web 应用的配置文件存在这个目录下，该目录下的文件外界无法非法直接访问，由 Web 服务器负责调用。
 
-### 2.2 实现第一个 Servlet
+### 2.2 实现一个 Servlet
 
 #### 2.2.1 FirstServlet
 
@@ -1281,7 +1278,7 @@ public class Servlet1 extends HttpServlet {
         Cookie cookie = new Cookie("username", username);
         response.addCookie(cookie);
         response.getWriter().println("登录成功，即将跳转至个人主页");
-        response.setHeader("refresh","2;url=" + request.getContextPath() + "/info");
+        response.setHeader("refresh", "2;url=" + request.getContextPath() + "/info");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -1415,9 +1412,7 @@ path1 界面多次请求，Cookie 值也不会出现 name，访问 path2 界面�
 如果在父域名下，设置了一个 Cookie 的 domain 是 gyh.com，那么接下来，下面所有的子域名均可以共享这个 Cookie。
 
 
-## 7 Session
-
-### 7.1 Session 概述
+### 6.5 Session
 
 保存会话数据的两种技术 Cookie 和 Session。
 - Cookie 是客户端技术，程序把每个用户的数据以 Cookie 的形式写给用户各自的浏览器。当用户使用浏览器再去访问服务器中的 web 资源时，就会带着各自的数据去。这样，Web 资源处理的就是用户各自的数据了。
@@ -1427,9 +1422,9 @@ path1 界面多次请求，Cookie 值也不会出现 name，访问 path2 界面�
 服务器给每个浏览器创建了一块区域，专门用来存放数据。只要是一个浏览器的行为，均可以把这些数据存放在这个 Session 中。即，浏览器和某个 Sessionn 对象做了一个绑定。
 
 
-## 8 JSP
+## 7 JSP
 
-### 8.1 概述
+### 7.1 概述
 
 JSP 全称 Java Server Pages，它和 Servle 技术一样，都是 SUN 公司定义的一种用于开发动态 Web 资源的技术。  
 
@@ -1459,15 +1454,15 @@ JSP 页面中的 Java 代码服务器是执行步骤：先找到 JSP 页面，�
 
 - 因此最好的办法就是根据这两门技术的特点，让 Servlet 只负责响应请求产生数据，并把数据通过转发技术带给 JSP，数据的显示 JSP 来做。
 
-### 8.2 JSP 语法
+### 7.2 JSP 语法
 
-#### 8.2.1 JSP 模板元素
+#### 7.2.1 JSP 模板元素
 
 JSP 页面中的 HTML 内容称之为 JSP 模版元素。  
 
 JSP 模版元素定义了网页的基本骨架，即，定义了页面的结构和外观。
 
-#### 8.2.2 JSP 表达式
+#### 7.2.2 JSP 表达式
 
 JSP 表达式（expression）用于将程序数据输出到客户端。  
 语法：
@@ -1483,7 +1478,7 @@ JSP 引擎在翻译 JSP 表达式时，会将程序数据转成字符串，然�
 
 JSP 脚本表达式中的变量或表达式后面不能有分号 `;`。
 
-#### 8.2.3 JSP 脚本片断
+#### 7.2.3 JSP 脚本片断
 
 JSP 脚本片断（scriptlet）用于在 JSP 页面中编写多行 Java 代码。  
 语法：
@@ -1527,7 +1522,7 @@ JSP 脚本片断中的 Java 代码必须严格遵循 Java 语法。例如，每�
 %> 
 ```
 
-#### 8.2.4 JSP 声明
+#### 7.2.4 JSP 声明
 
 JSP 页面中编写的所有代码，默认会翻译到 Servlet 的 service 方法中， 而 JSP 声明中的 Java 代码被翻译到 `_jspService` 方法的外面。  
 语法：
@@ -1564,7 +1559,7 @@ public void jspDestroy()
 %>
 ```
 
-#### 8.2.5 JSP 注释
+#### 7.2.5 JSP 注释
 
 JSP 注释的格式：
 ```jsp
@@ -1579,7 +1574,7 @@ JSP 注释和 HTML 注释区别：
 - JSP 注释，在翻译称为 Java 代码时，就会消失。
 
 
-#### 8.2.6 JSP 指令
+#### 7.2.6 JSP 指令
 
 JSP 指令（directive）是为 JSP 引擎而设计的，它们并不直接产生任何可见输出，而只是告诉引擎如何处理 JSP 页面中的其余部分。在 JSP 2.0 规范中共定义了三个指令：
 - page 指令。
@@ -1644,7 +1639,7 @@ include 指令用于引入其它 JSP 页面，如果使用 include 指令引入�
 
 - 由于使用 include 指令将会涉及到两个 JSP 页面，并会把两个 JSP 翻译成一个 Servlet，所以这两个 JSP 页面的指令不能冲突（除了 pageEncoding 和导包除外）。 
 
-### 8.3 JSP 九大隐式对象
+### 7.3 JSP 九大隐式对象
 
 JSP 引擎先将 JSP 翻译成一个 `_jspServlet`（实质上也是一个 Servlet），然后按照 Servlet 的调用方式进行调用。  
 
@@ -1669,7 +1664,7 @@ JSP 引擎在调用 JSP 对应的 `_jspServlet` 时，会传递或创建 9 个�
 
 - pageContext
 
-#### 8.3.1 out 隐式对象
+#### 7.3.1 out 隐式对象
 
 out 隐式对象用于向客户端发送文本数据。  
 
@@ -1696,7 +1691,7 @@ JSP 页面中的 out 隐式对象的类型为 JspWriter，JspWriter 相当于一
 <img src="./img/p16.png">
 </div>
 
-#### 8.3.2 pageContext 对象 
+#### 7.3.2 pageContext 对象 
 
 pageContext 对象是 JSP 技术中最重要的一个对象，它代表 JSP 页面的运行环境，这个对象不仅封装了对其它 8 大隐式对象的引用，它自身还是一个域对象，可以用来保存数据。并且，这个对象还封装了 Web 开发中经常涉及到的一些常用操作，检索其它域对象中的属性等。 
 
@@ -1742,9 +1737,9 @@ scope 代表各个域的常量：
 
 `findAttribute` 方法：查找各个域中的属性（从下往上找）。
 
-## 9 Listener
+## 8 Listener
 
-### 9.1 概述
+### 8.1 概述
 
 Listener 是监听器。
 
@@ -1766,7 +1761,7 @@ Web：
 
 - 触发事件：监听器里面的代码执行。
 
-### 9.2 编写 Listener
+### 8.2 编写 Listener
 
 编写 listener 步骤：
 1. 编写一个类实现 ServletContextListener 接口；
@@ -1789,9 +1784,9 @@ public class MyServletContextListener implements ServletContextListener {
 }
 ```
 
-## 10 Filter
+## 9 Filter
 
-### 10.1 概述
+### 9.1 概述
 
 过滤器（Filter）是 Servlet 规范的高级特性。过滤器技术是从 Servlet2.3 规范开始引入的。是一种 Web 应用程序组件，可以部署在 Web 应用程序中。
 
@@ -1802,7 +1797,7 @@ Filter 的功能：
 
 - 可以在请求到达 Servlet 之前修改 Request 对象，也可以在响应之后修改 Response 对象（如：设置字符编码格式）。
 
-### 10.2 工作原理
+### 9.2 工作原理
 
 过滤器介于客户端与 Servlet/JSP 等相关的资源之间，对于与过滤器关联的 Servlet 来说，过滤器可以在 Servlet 被调用之前检查并且修改 Request 对象，在 Servlet 调用之后检查并修改 Response 对象。   
 <div align="center">
@@ -1827,7 +1822,7 @@ Filter 的功能：
 8. Web 容器将响应的结果返回到客户端，并在浏览器上显示。
  
 
-### 10.3 创建过滤器
+### 9.3 创建过滤器
 
 创建过滤器的步骤如下：
 1. 创建一个实现 Filter 接口的 Java 类；
@@ -1886,7 +1881,7 @@ public class FilterDemo implements Filter {
 </filter-mapping>
 ```
 
-### 10.4 Filter 链
+### 9.4 Filter 链
 
 多个 Filter 对同一个资源进行了拦截，那么当我们在开始的 Filter 中执行 `chain.doFilter(request,response)` 时，是访问下一下 Filter，直到最后一个 Filter 执行时，它后面没有了 Filter，才会访问 Web 资源。
 
@@ -1895,7 +1890,7 @@ public class FilterDemo implements Filter {
 
 - 对于注解的方式，按照类名的 ASCII 码表顺序。
 
-### 10.5 Filter 生命周期
+### 9.5 Filter 生命周期
 
 Filter 的生命周期：
 1. Init：随着应用的启动而实例化；
@@ -1904,9 +1899,9 @@ Filter 的生命周期：
 
 3. Destroy：应用的卸载或者服务器关闭。
 
-## 11 JSON
+## 10 JSON
 
-### 11.1 概述
+### 10.1 概述
 
 JSON（JavaScript Object Notation）是一种轻量级的数据交换格式。它基于 JavaScript 的一个子集，它利用了 JavaScript 的一些模式来表示结构化数据。
 - 一种数据格式，而非编程语言。
@@ -1917,7 +1912,7 @@ JSON（JavaScript Object Notation）是一种轻量级的数据交换格式。�
 
 需要记住一点：`{}` 表示的是一个对象，`[]` 表示的是一个数组或者集合。
 
-### 11.2 JSON 和 XML
+### 10.2 JSON 和 XML
 
 XML 数据格式：
 ```xml
@@ -1976,7 +1971,7 @@ var pro ={
 
 - 数据效率：JSON 作为数据包格式传输的时候具有更高的效率，这是因为 JSON 不像 XML 那样需要有严格的闭合标签，这就让有效数据量与总数据包比大大提升，从而减少同等数据流量的情况下，网络的传输压力。
 
-### 11.3 Java 操作 JSON
+### 10.3 Java 操作 JSON
 
 其他类型数据生成json字符串：
 ```java
@@ -2054,9 +2049,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 }
 ```
 
-## 12 MVC
-
-### 12.1 概述
+## 11 MVC
 
 MVC（Model-View-Controller）：把一个应用的输入、处理、输出流程按照 Model、View、Controller 的方式进行分离，这样一个应用被分成三个块，即模型层、视图层、控制层。
 - 数据模型（Model）：封装的是数据模型和所有基于对这些数据的操作。在一个组件中，Model 往往表示组件的状态和操作状态的方法。
@@ -2065,17 +2058,16 @@ MVC（Model-View-Controller）：把一个应用的输入、处理、输出流�
 
 - 控制器（Controller）：封装的是外界作用于模型的操作，通常，这些操作会转发到模型上，并调用模型中相应的一个或者多个方法。一般 Controller 在 Model 和 View 之间起到了沟通的作用，处理用户在 View 上的输入，并转发给 Model。这样 Model 和 View 两者之间可以做到松散耦合，甚至可以彼此不知道对方，而由 Controller 连接起这两个部分。
 
-MVC 模式广泛用于 Web 程序、GUI 程序的架构，优点：
+MVC 模式广泛用于 Web 程序、GUI 程序的架构。  
+优点：
 - 分离数据和其表示，使得添加或者删除一个用户数据变得很容易，甚至可以在程序执行时动态的进行。Model 和 View 能够单独的开发，增加了程序了可维护性，可扩展性，并使测试变得更为容易。
 
 - 将控制逻辑和表现界面分离，允许程序能够在运行时根据工作流、用户习惯或者模型状态来动态选择不同的用户界面（JSP）。
 
-### 12.2 案例
 
+## 12 Maven
 
-## 13 Maven
-
-### 13.1 概述
+### 12.1 概述
 
 > Maven 是一个项目管理工具，它包含了一个项目对象模型（POM：Project Object Model），一组标准集合，一个项目生命周期（Project Lifecycle），一个依赖管理系统（Dependency Management System），和用来运行定义在生命周期阶（phase）中插件（plugin）目标（goal）的逻辑。
 
@@ -2093,9 +2085,9 @@ Maven 一键构建项目流程：Maven 将整个构建过程分为多个阶段�
 
 - package 命令，对应上述的编译阶段，用于将 Java 打包成 jar 包或者 war 包。
 
-### 13.2 安装和配置 Maven
+### 12.2 安装和配置 Maven
 
-#### 13.2.1 安装 Maven
+#### 12.2.1 安装 Maven
 
 [官网地址](https://maven.apache.org/download.cgi)。
 
@@ -2128,7 +2120,7 @@ Maven 下载后，将 Maven 解压到一个没有中文没有空格的路径下�
 <img src="./img/p21.png">
 </div>
 
-#### 13.2.2 设置国内镜像
+#### 12.2.2 设置国内镜像
 
 在 `conf/settings.xml` 文件中 `<mirrors>` 节点下新增：
 ```xml
@@ -2140,7 +2132,7 @@ Maven 下载后，将 Maven 解压到一个没有中文没有空格的路径下�
 </mirror>
 ```
 
-#### 13.2.3 设置默认 JDK 版本
+#### 12.2.3 设置默认 JDK 版本
 
 在 `conf/settings.xml`文件中新增 `<profile>` 节点：
 ```xml
@@ -2158,7 +2150,7 @@ Maven 下载后，将 Maven 解压到一个没有中文没有空格的路径下�
 </profile>
 ```
 
-#### 13.2.3 本地仓库
+#### 12.2.3 本地仓库
 
 Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的项目 A、项目 B 等都会通过 Maven 软件从远程仓库下载 jar 包并存在本地仓库，当第二次需要此 jar 包时则不再从远程仓库下载，因为本地仓库已经存在了，可以将本地仓库理解为缓存，有了本地仓库就不用每次从远程仓库下载了。
 <div align="center">
@@ -2171,7 +2163,7 @@ Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的
 <img src="./img/p23.png">
 </div>
 
-### 13.3 IDEA 开发 Maven 项目
+### 12.3 IDEA 开发 Maven 项目
 
 第一步：选择本地 Maven 目录，指定 settings 配置文件。  
 <div align="center">
@@ -2223,9 +2215,9 @@ Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的
 <img src="./img/p31.png">
 </div>
 
-### 13.4 认识 Maven
+### 12.4 认识 Maven
 
-#### 13.4.1 Maven 目录结构
+#### 12.4.1 Maven 目录结构
 
 <div align="center">
 <img src="./img/p32.png">
@@ -2245,7 +2237,7 @@ Maven 的工作需要从仓库下载一些 jar 包，如下图所示，本地的
 
 注意：如果是普通的 Java 项目，那么就没有 `webapp` 目录。
 
- #### 13.4.2 Maven 常用命令
+ #### 12.4.2 Maven 常用命令
 
 **（1）mvn compile**
 
@@ -2273,7 +2265,7 @@ mvn package 是 Maven 工程的打包命令，对于 Java 工程执行 package �
 
 mvn install 是 Maven 工程的安装命令，执行 install 将 Maven 打成 jar 包或 war 包发布到本地仓库。
 
-#### 13.4.3 Maven 生命周期
+#### 12.4.3 Maven 生命周期
 
 Maven 对项目构建过程分为三套相互独立的生命周期。
 - clean：在进行真正的构建之前进行一些清理工作。
