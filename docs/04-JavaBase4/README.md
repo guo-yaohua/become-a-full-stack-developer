@@ -3,29 +3,33 @@
 ## 目录
 - [四、高级类型](#四高级类型)
   - [目录](#目录)
-  - [集合类](#集合类)
-    - [Collection](#collection)
-    - [Iterator接口](#iterator接口)
-    - [List](#list)
-  - [数组和链表](#数组和链表)
-    - [数组](#数组)
-    - [链表](#链表)
-    - [空间换取时间](#空间换取时间)
-    - [链表问题](#链表问题)
-    - [数组VS链表](#数组vs链表)
-  - [List](#list-1)
-    - [ArraysList](#arrayslist)
-    - [Vector](#vector)
-    - [LinkedList](#linkedlist)
-    - [List常见问题](#list常见问题)
-  - [JDK5的新特性](#jdk5的新特性)
-    - [静态导入](#静态导入)
-    - [泛型](#泛型)
-    - [可变长参数](#可变长参数)
-    - [增强for循环](#增强for循环)
+  - [1 集合类](#1-集合类)
+    - [1.1 Collection](#11-collection)
+    - [1.2 Iterator 接口](#12-iterator-接口)
+    - [1.3 List](#13-list)
+  - [2 数组和链表](#2-数组和链表)
+    - [2.1 数组](#21-数组)
+    - [2.2 链表](#22-链表)
+    - [2.3 空间换取时间](#23-空间换取时间)
+    - [2.4 链表问题](#24-链表问题)
+      - [2.4.1 判断链表中是否有环](#241-判断链表中是否有环)
+      - [2.4.2 反转单链表](#242-反转单链表)
+    - [2.5 数组 VS 链表](#25-数组-vs-链表)
+  - [3 List](#3-list)
+    - [3.1 ArraysList](#31-arrayslist)
+    - [3.2 Vector](#32-vector)
+    - [3.3 LinkedList](#33-linkedlist)
+    - [3.4 List 常见问题](#34-list-常见问题)
+      - [3.4.1 去重](#341-去重)
+      - [3.4.2 用 ArrayList 实现栈数据结构](#342-用-arraylist-实现栈数据结构)
+  - [4 JDK5 的新特性](#4-jdk5-的新特性)
+    - [4.1 静态导入](#41-静态导入)
+    - [4.2 泛型](#42-泛型)
+    - [4.2 可变长参数](#42-可变长参数)
+    - [4.3 增强 for 循环](#43-增强-for-循环)
 
 
-## 集合类
+## 1 集合类
 
 类集在整个 Java 中最为核心的用处就在于其实现了动态数组的操作，并且定义了大量的操作标准。在整个类集框架中，其核心接口为：Collection、List、Set、Map、Iterator、Enumeration。
 
@@ -33,7 +37,7 @@
 <img src="./img/p1.png">
 </div>
 
-### Collection
+### 1.1 Collection
 
 
 Collection 是层次结构中的根接口。Collection 表示一组对象，这些对象也称为 collection 的元素。一些 collection 允许有重复的元素，而另一些则不允许。一些 collection 是有序的，而另一些则是无序的。
@@ -42,14 +46,14 @@ Collection 常见接口 API：
 - `boolean add(E e)`：将指定元素添加到此 collection 中。  
   如果此 collection 由于调用而发生更改，则返回 true。如果此 collection 不允许有重复元素，并且已经包含了指定的元素，则返回 false。
 
-- `boolean remove(Object o)`：如果此 collection 包含一个或多个满足 (o == null ? e == null : o.equals(e)) 的元素 e，则移除这样的元素。  
+- `boolean remove(Object o)`：如果此 collection 包含一个或多个满足 `o == null ? e == null : o.equals(e)` 的元素 e，则移除这样的元素。  
   如果此 collection 包含指定的元素（或者此 collection 由于调用而发生更改），则返回 true 。 
 
 - `void clear()`：移除此 collection 中的所有元素。  
   如果此 collection 不支持 clear 操作，此方法抛出一个异常： `UnsupportedOperationException`。
 
 
-- `boolean contains(Object o)`：当且仅当此 collection 至少包含一个满足 (o == null ? e == null : o.equals(e)) 的元素 e 时，返回 true。 
+- `boolean contains(Object o)`：当且仅当此 collection 至少包含一个满足 `o == null ? e == null : o.equals(e)` 的元素 e 时，返回 true。 
 
 - `boolean isEmpty()`：如果此 collection 不包含元素，则返回 true。
 
@@ -136,7 +140,7 @@ public class TestDemo {
     }
 }
 
-/* 运行结过：
+/* 运行结果：
 [Hello, World]
 [Hello]
 []
@@ -152,11 +156,11 @@ false
 */
 ```
 
-### Iterator接口
+### 1.2 Iterator 接口
 
 它是对集合进行迭代的迭代器，依赖于集合对象存在。
 
-Iterator接口 API：
+Iterator 接口 API：
 - `boolean hasNext()`：如果仍有元素可以迭代，则返回 true。
 
 - `E next()`：返回迭代的下一个元素。
@@ -203,17 +207,18 @@ World
         }
   }
   ```
-  就会报错：ConcurrentModificationException。
+  就会报错：`ConcurrentModificationException`。
 
 - 用迭代器遍历集合的时候，不要使用 while 循环，可以使用 for 循环，最好使用 for each 循环。
 
 
-### List
+### 1.3 List
 
-List：有序的 collection（也称为序列）。  
+List：有序的 Collection（也称为序列）。
+
 此接口的用户可以对列表中每个元素的插入位置进行精确地控制。用户可以根据元素的整数索引（在列表中的位置）访问元素，并搜索列表中的元素。  
 
-与 set 不同，列表通常允许重复的元素。更确切地讲，列表通常允许满足 `e1.equals(e2)` 的元素对 e1 和 e2，并且如果列表本身允许 null 元素的话，通常它们允许多个 null 元素。
+与 Set 不同，列表通常允许重复的元素。更确切地讲，列表通常允许满足 `e1.equals(e2)` 的元素对 e1 和 e2，并且如果列表本身允许 null 元素的话，通常它们允许多个 null 元素。
 
 常见 API：
 - `void add(int index, E element)`：在列表的指定位置插入指定元素。
@@ -230,7 +235,7 @@ List：有序的 collection（也称为序列）。
 
 - `E set(int index, E element)`：用指定元素替换列表中指定位置的元素。
 
-- `List<E> subList(int fromIndex, int toIndex)`：返回列表中指定的 fromIndex（包括 ）和 toIndex（不包括）之间的部分视图。（如果 fromIndex 和 toIndex 相等，则返回的列表为空）。返回的列表由此列表支持，因此返回列表中的非结构性更改将反映在此列表中，反之亦然。返回的列表支持此列表支持的所有可选列表操作。  
+- `List<E> subList(int fromIndex, int toIndex)`：返回列表中指定的 fromIndex（包括）和 toIndex（不包括）之间的部分视图。（如果 fromIndex 和 toIndex 相等，则返回的列表为空）。返回的列表由此列表支持，因此返回列表中的非结构性更改将反映在此列表中，反之亦然。返回的列表支持此列表支持的所有可选列表操作。  
   即修改子列表，原列表也会修改。示例：  
   ```java
   import java.util.ArrayList;
@@ -282,9 +287,9 @@ ListIterator 接口常见 API：
 
 - `void set(E e)`：用指定元素替换 next 或 previous 返回的最后一个元素。
 
-## 数组和链表
+## 2 数组和链表
 
-### 数组
+### 2.1 数组
 
 常见的数据结构有：数组、链表、栈、队列、树、哈希表和图。
 
@@ -318,7 +323,7 @@ ListIterator 接口常见 API：
 
 总结：数组增删慢，查找快。
 
-### 链表
+### 2.2 链表
 
 形象地说，链表就是用一串链子将结点串联起来。
 
@@ -366,8 +371,6 @@ ListIterator 接口常见 API：
 
 总结：链表增删快，查找慢。
 
-
-
 很容易验证，前面那些操作，双向链表和单链表的时间复杂度是一样的。但是双向链表有单链表没有的独特魅力 —— 它有一条指向前驱结点的链接。
 
 双向链表基本操作：
@@ -389,7 +392,7 @@ ListIterator 接口常见 API：
 
 思想：用空间换取时间。
 
-### 空间换取时间
+### 2.3 空间换取时间
 
 缓存就是一种用空间换取时间的技术。内存大小是有限的，所以缓存不能无限大。那么当缓存满的时候，再向缓存中添加数据，就需要采取一些策略。
 
@@ -411,10 +414,11 @@ LRU 算法中我们就用到了链表！
   - 缓存满了，删除尾节点, 在头结点添加。
 
 
-### 链表问题
+### 2.4 链表问题
 
-（1）
-判断链表中是否有环：
+#### 2.4.1 判断链表中是否有环
+
+解决方法：
 - 给一个阈值（10ms），如果在遍历链表的过程中 10ms 还没有结束，就认为有环。
 
 - 迷雾森林。  
@@ -466,14 +470,14 @@ LRU 算法中我们就用到了链表！
   }
   ```
 
-**（2）反转单链表**  
+#### 2.4.2 反转单链表
 
 示例：
 ```java
 public class TestDemo {
     public static Node reverse(Node head) {
         if (head.next == null) return head;
-        // 如果链表不止一个结点，反转head.next
+        // 如果链表不止一个结点，反转 head.next
         Node reversed = reverse(head.next);
         // 反转head结点
         head.next.next = head;
@@ -501,7 +505,7 @@ public class TestDemo {
 }
 ```
 
-### 数组VS链表
+### 2.5 数组 VS 链表
 
 <div align="center">
 <img src="./img/p7.png">
@@ -517,20 +521,20 @@ public class TestDemo {
 - 如果业务对内存的使用非常苛刻，数组更适合。因为结点有指针域，更消耗内存。而且对链表的频繁插入和删除，会导致结点对象的频繁创建和销毁，有可能会导致频繁的 GC 活动。
 
 
-## List
+## 3 List
 
 ```java
-public interface List<E>extends Collection<E>
+public interface List<E> extends Collection<E>
 ```
 
-List：有序的 collection（也称为序列）。此接口的用户可以对列表中每个元素的插入位置进行精确地控制。用户可以根据元素的整数索引（在列表中的位置）访问元素，并搜索列表中的元素。
+List：有序的 Collection（也称为序列）。此接口的用户可以对列表中每个元素的插入位置进行精确地控制。用户可以根据元素的整数索引（在列表中的位置）访问元素，并搜索列表中的元素。
 
-与 set 不同，列表通常允许重复的元素。更确切地讲，列表通常允许满足 e1.equals(e2) 的元素对 e1 和 e2，并且如果列表本身允许 null 元素的话，通常它们允许多个 null 元素。难免有人希望通过在用户尝试插入重复元素时抛出运行时异常的方法来禁止重复的列表，但我们希望这种用法越少越好。
+与 Set 不同，列表通常允许重复的元素。更确切地讲，列表通常允许满足 e1.equals(e2) 的元素对 e1 和 e2，并且如果列表本身允许 null 元素的话，通常它们允许多个 null 元素。难免有人希望通过在用户尝试插入重复元素时抛出运行时异常的方法来禁止重复的列表，但我们希望这种用法越少越好。
 
-### ArraysList
+### 3.1 ArraysList
 
 ```java
-public class ArrayList<E>extends AbstractList<E>implements List<E>, RandomAccess, Cloneable, Serializable
+public class ArrayList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable
 ```
 
 特性：
@@ -554,10 +558,10 @@ API：
 - `void trimToSize()`：将此 ArrayList 实例的容量调整为列表的当前大小。  
   慎用，确保元素不会在添加的情况下用。
 
-### Vector
+### 3.2 Vector
 
 ```java
-public class Vector<E>extends AbstractList<E>implements List<E>, RandomAccess, Cloneable, Serializable
+public class Vector<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable
 ```
 
 特性：
@@ -605,10 +609,10 @@ Enumeration --> Iterator：
 
 - `E nextElement()` --> `E next()`。
 
-### LinkedList
+### 3.3 LinkedList
 
 ```java
-public class LinkedList<E>extends AbstractSequentialList<E>implements List<E>, Deque<E>, Cloneable, Serializable
+public class LinkedList<E> extends AbstractSequentialList<E> implements List<E>, Deque<E>, Cloneable, Serializable
 ```
 
 Deque 接口：双端队列，可以在两端插入和删除。
@@ -628,18 +632,18 @@ LinkedList 特性：
 - `LinkedList(Collection c)`。
 
 API:
-- `Iterator<E> descendingIterator()`： 返回以逆向顺序在此双端队列的元素上进行迭代的迭代器。。
+- `Iterator<E> descendingIterator()`：返回以逆向顺序在此双端队列的元素上进行迭代的迭代器。
 
-- `boolean removeFirstOccurrence(Object o)`：从此列表中移除第一次出现的指定元素（从头部到尾部遍历列表时）。。
+- `boolean removeFirstOccurrence(Object o)`：从此列表中移除第一次出现的指定元素（从头部到尾部遍历列表时）。
 
-- `boolean removeLastOccurrence(Object o)`：从此列表中移除最后一次出现的指定元素（从头部到尾部遍历列表时）。。
+- `boolean removeLastOccurrence(Object o)`：从此列表中移除最后一次出现的指定元素（从头部到尾部遍历列表时）。
 
 在两端的操作：
-- `boolean offerFirst(E e)`：在此列表的开头插入指定的元素。。
+- `boolean offerFirst(E e)`：在此列表的开头插入指定的元素。
 
 - `boolean pollFirst`：获取并移除此列表的头（第一个元素）。
 
-- `boolean peekFirst`：获取但不移除此列表的第一个元素；如果此列表为空，则返回 null。。
+- `boolean peekFirst`：获取但不移除此列表的第一个元素；如果此列表为空，则返回 null。
 
 栈的 API：
 - `void push(E e)`。
@@ -648,14 +652,14 @@ API:
 
 - `E peek()`。
 
-注：Java 中提供了 Stack 类，但是我们应该优先使用 Deque , 而不应该使用 Stack。
+注：Java 中提供了 Stack 类，但是我们应该优先使用 Deque，而不应该使用 Stack。
 - Stack 同步的，效率相对来说比较低。
 
-- Stack 继承了 Vector, 所以 Stack 拥有 Vector 中所有的方法，使用起来不安全。
+- Stack 继承了 Vector，所以 Stack 拥有 Vector 中所有的方法，使用起来不安全。
 
-### List常见问题
+### 3.4 List 常见问题
 
-**（1）去重**  
+#### 3.4.1 去重
 
 输入：[a, b, c, a, a, b, c]  
 输出：[a, b, c]
@@ -663,17 +667,17 @@ API:
 思路 1：
 1. 新键一个 `List result = new ArrayList();`；
 
-2. 遍历原来的 list, 判断元素是否在 result 中存在：
+2. 遍历原来的 list，判断元素是否在 result 中存在：
    - 存在：不添加。
    - 不存在：添加。
 
-3. 遍历结束后, 返回 result。
+3. 遍历结束后，返回 result。
 
 
 思路 2：
 1. 逆序遍历 list；
 
-2. 获取元素, 截取从 0 到 nextIndex 的子列表，判断元素是否在子列表中存在：
+2. 获取元素，截取从 0 到 nextIndex 的子列表，判断元素是否在子列表中存在：
    - 存在：删除元素。
    - 不存在：继续遍历。
 
@@ -730,8 +734,7 @@ public class TestDemo {
 */
 ```
 
-**（2）用ArrayList实现栈数据结构**  
-
+#### 3.4.2 用 ArrayList 实现栈数据结构
 ```java
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -782,9 +785,9 @@ public class MyStack {
 如果两个类之间有「is a」的关系，可以使用继承。
 
 
-## JDK5的新特性
+## 4 JDK5 的新特性
 
-### 静态导入
+### 4.1 静态导入
 
 导包：
 - 必须导入到类这一级别。
@@ -824,7 +827,7 @@ public class StaticImportDemo1 {
 ```
 
 
-### 泛型
+### 4.2 泛型
 
 泛型类：
 - 泛型定义在类上面。
@@ -886,7 +889,7 @@ public class StaticImportDemo1 {
 
 - ? super Animal --> Object
 
-### 可变长参数
+### 4.2 可变长参数
 
 作用：定义方法的时候不知道该定义多少个参数，我们就可以使用可变长参数。
 
@@ -919,7 +922,7 @@ public class TestDemo {
 
 注：可变长参数只能位于最后。因此一个方法中最多有 1 个可变长参数.如果一个方法中需要多个可变长参数，只能依靠传入数组。
 
-### 增强for循环
+### 4.3 增强 for 循环
 
 好处：简化数组和 Collection 集合的遍历。
 
