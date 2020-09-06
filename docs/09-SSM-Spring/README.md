@@ -92,9 +92,9 @@
 - 提供静态方法供人调用。 
 
 使用场景：
-- Servlet
+- Servlet。
 
-- ServletContext
+- ServletContext。
 
 示例：
 ```java
