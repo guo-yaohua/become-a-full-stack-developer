@@ -175,7 +175,6 @@ public class Singleton4 {
 
     public static Singleton4 getInstance(){
 
-
         return singleton4;
     }
 }
@@ -193,6 +192,7 @@ public class Singleton5 {
         static Singleton5 singleton5 = new Singleton5();
 
         public static Singleton5 provideSingleton5() {
+
             return singleton5;
         }
     }
@@ -326,8 +326,10 @@ public class DreamOneCarFactory implements CarFactory{
 ```java
 public class HouseOwner {
 
-    public boolean rentHouse(Integer money){
+    public boolean rentHouse(Integer money) {
+
         if (money >= 1500){
+
             return true;
         }
         return false;
@@ -341,7 +343,8 @@ public class HouseProxy {
 
     HouseOwner houseOwner = new HouseOwner();
 
-    public boolean rentHouse(Integer money){
+    public boolean rentHouse(Integer money) {
+
         money = money - 500;
         return houseOwner.rentHouse(money);
     }
@@ -351,9 +354,10 @@ public class HouseProxy {
 **（2）代理类继承委托类**
 
 ```java
-public class HouseProxy2 extends HouseOwner{
+public class HouseProxy2 extends HouseOwner {
 
-    public boolean rentHouse(Integer money){
+    public boolean rentHouse(Integer money) {
+
         money = money - 500;
         return super.rentHouse(money);
     }
@@ -399,7 +403,7 @@ public class HelloServiceImpl implements HelloService{
 public class ProxyTest {
 
     @Test
-    public void mytest(){
+    public void mytest() {
         // 先获得委托类对象的实例
         HelloService helloService = new HelloServiceImpl();
         
@@ -447,7 +451,7 @@ cglib（Code Generation Library）动态代理：cglib 是一个第三方代码�
  */
 public class HelloService2 {
 
-    public void sayHello2(){
+    public void sayHello2() {
         System.out.println("hello world2");
         
         try {
@@ -495,7 +499,6 @@ public class CglibProxyTest {
 
 建造者（builder）也是生产实例，更侧重参数的设置。
 
-·
 ```java
 public class Foot {
     Integer size;
