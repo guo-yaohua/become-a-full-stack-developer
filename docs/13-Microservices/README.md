@@ -50,7 +50,7 @@
       - [4.2.2 Windows 安装 Redis](#422-windows-安装-redis)
     - [4.3 Redis 启动](#43-redis-启动)
       - [4.3.1 Linxu 启动 Redis](#431-linxu-启动-redis)
-      - [4.3.1 Windows 启动 Redis](#431-windows-启动-redis)
+      - [4.3.2 Windows 启动 Redis](#432-windows-启动-redis)
     - [4.4 核心配置文件 Redis.conf](#44-核心配置文件-redisconf)
     - [4.5 Redis 持久化](#45-redis-持久化)
       - [4.5.1 RDB](#451-rdb)
@@ -117,24 +117,13 @@
 
 UNIX：UNIX 操作系统由肯•汤普森（Ken Thompson）和丹尼斯•⾥奇（Dennis Ritchie）发明。  
 
-> 1965 年开始的 Multics ⼯程计划，该计划由⻉尔实验室、美国麻省理⼯学院和通⽤电⽓公司联合发
-起，⽬标是开发⼀种交互式的、具有多道程序处理能⼒的分时操作系统，以取代当时⼴泛使⽤的批处理操作
-系统。但是该计划最终却以失败收场。  
-> 以肯•汤普森为⾸的⻉尔实验室研究⼈员吸取了 Multics ⼯程计划失败的经验教训，于 1969 年实现了
-⼀种分时操作系统的雏形，1970 年该系统正式取名为 UNIX。  
-> 但是之前的操作系统⼤多使⽤汇编语⾔编写，对硬件依赖性强，可移植性很差，1971-1972 年，肯•汤普
-森的同事丹尼斯•⾥奇发明了传说中的 C 语⾔，UNIX 系统的绝⼤部分源代码都⽤ C 语⾔进⾏了重写，这为提
-⾼ UNIX 系统的可移植性打下了基础。
+> 1965 年开始的 Multics ⼯程计划，该计划由⻉尔实验室、美国麻省理⼯学院和通⽤电⽓公司联合发起，⽬标是开发⼀种交互式的、具有多道程序处理能⼒的分时操作系统，以取代当时⼴泛使⽤的批处理操作系统。但是该计划最终却以失败收场。  
+> 以肯•汤普森为⾸的⻉尔实验室研究⼈员吸取了 Multics ⼯程计划失败的经验教训，于 1969 年实现了⼀种分时操作系统的雏形，1970 年该系统正式取名为 UNIX。  
+> 但是之前的操作系统⼤多使⽤汇编语⾔编写，对硬件依赖性强，可移植性很差，1971-1972 年，肯•汤普森的同事丹尼斯•⾥奇发明了传说中的 C 语⾔，UNIX 系统的绝⼤部分源代码都⽤ C 语⾔进⾏了重写，这为提⾼ UNIX 系统的可移植性打下了基础。
 
-LINUX：Linux 内核最初只是由芬兰⼈林纳斯·托瓦兹（Linus Torvalds）在赫尔⾟基⼤学上学时出于个
-⼈爱好⽽编写的。Linux 是⼀套免费使⽤和⾃由传播的类 Unix 操作系统，是⼀个基于 POSIX 和 UNIX
-的多⽤户、多任务、⽀持多线程和多 CPU 的操作系统。Linux 能运⾏主要的 UNIX ⼯具软件、应⽤程序
-和⽹络协议。它⽀持 32 位和 64 位硬件。Linux 继承了 Unix 以⽹络为核⼼的设计思想，是⼀个性能稳
-定的多⽤户⽹络操作系统。  
+LINUX：Linux 内核最初只是由芬兰⼈林纳斯·托瓦兹（Linus Torvalds）在赫尔⾟基⼤学上学时出于个⼈爱好⽽编写的。Linux 是⼀套免费使⽤和⾃由传播的类 Unix 操作系统，是⼀个基于 POSIX 和 UNIX的多⽤户、多任务、⽀持多线程和多 CPU 的操作系统。Linux 能运⾏主要的 UNIX ⼯具软件、应⽤程序和⽹络协议。它⽀持 32 位和 64 位硬件。Linux 继承了 Unix 以⽹络为核⼼的设计思想，是⼀个性能稳定的多⽤户⽹络操作系统。  
 
-Linux 是⼀个类似 Unix 的操作系统，Unix 要早于 Linux，Linux 的初衷就是要替代 UNIX，并在功能
-和⽤户体验上进⾏优化，所以 Linux 模仿了 UNIX（但并没有抄袭 UNIX 的源码），使得 Linux 在外
-观和交互上与 UNIX ⾮常类似。
+Linux 是⼀个类似 Unix 的操作系统，Unix 要早于 Linux，Linux 的初衷就是要替代 UNIX，并在功能和⽤户体验上进⾏优化，所以 Linux 模仿了 UNIX（但并没有抄袭 UNIX 的源码），使得 Linux 在外观和交互上与 UNIX ⾮常类似。
 
 #### 1.1.2 Linux 的发行版本
 
@@ -651,12 +640,12 @@ sudo apt update
 
 **第一步**：在⽬标服务器上安装 SSH 服务（Ubuntu 16 默认⾃带了这个服务）。
 
-```bash
-# 查看ssh服务是否启动
-ps aux|grep ssh
+```
+# 查看 ssh 服务是否启动
+ps aux | grep ssh
 
 # 如果出现 sshd 进程则表示已经启动，如果没有出现那么执⾏下⾯的命令
-#更新apt源
+# 更新 apt 源
 sudo apt update
 
 # 安装 ssh
@@ -668,7 +657,7 @@ sudo service ssh restart
 
 **第二步**：连接。
 
-```bash
+```
 # 执⾏命令
 ssh [username]@[ip]
 ```
@@ -985,7 +974,7 @@ http{
 ### 3.2 微服务架构介绍
 
 微服务是指开发一个单个小型的但有业务功能的服务，每个服务都有自己的处理和轻量通讯机制，可以部署在单个或多个服务器上。  
-微服务也指一种种松耦合的、有一定的有界上下文的面向服务架构。也就是说，如果每个服务都要同时修改，那么它们就不是微服务，因为它们紧耦合在一起；如果你需要掌握一个服务太多的上下文场景使用条件，那么它就是一个有上下文边界的服务。
+微服务也指一种松耦合的、有一定的有界上下文的面向服务架构。也就是说，如果每个服务都要同时修改，那么它们就不是微服务，因为它们紧耦合在一起；如果你需要掌握一个服务太多的上下文场景使用条件，那么它就是一个有上下文边界的服务。
 
 架构图：  
 <div align="center">
@@ -1356,7 +1345,7 @@ spring.dubbo.registry=N/A
 启动类：
 ```java
 @SpringBootApplication
-@EnableDubboConfiguration   // dubbo 2.6.0 版本需要添加次注解
+@EnableDubboConfiguration   // dubbo 2.6.0 版本需要添加此注解
 public class ProviderApplication {
 
     public static void main(String[] args) {
@@ -1567,17 +1556,17 @@ Redis 是 C 语⾔开发，安装 Redis 需要先将官⽹下载的源码进⾏�
 
 
 **第一步**：获取 Redis 资源。
-```bash
+```
 wget http://download.redis.io/releases/redis-5.0.5.tar.gz
 ```
 
 **第二步**：解压。
-```bash
+```
 tar xzf redis-5.0.5.tar.gz
 ```
 
 **第三步**：安装。
-```bash
+```
 cd redis-5.0.5
 
 sudo make
@@ -1588,7 +1577,7 @@ sudo make install PREFIX=/usr/local/redis
 ```
 
 **第四步**：移动配置文件到安装目录下。
-```bash
+```
 cd ..
 
 sudo mkdir /usr/local/redis/etc
@@ -1598,7 +1587,7 @@ sudo mv redis.conf /usr/local/redis/etc
 
 **第五步**：将 redis-cli、redis-server 拷贝到 bin 下，让 redis-cli 指令可以在任意目录下直接使用
 
-```bash
+```
 cp /usr/local/redis/bin/redis-server /usr/local/bin/
 
 cp /usr/local/redis/bin/redis-cli /usr/local/bin/
@@ -1606,9 +1595,7 @@ cp /usr/local/redis/bin/redis-cli /usr/local/bin/
 
 #### 4.2.2 Windows 安装 Redis
 
-Windows 版本：<a href="./file/Redis-x64-3.2.100.zip" download="Redis-x64-3.2.100.zip"> Redis-x64-3.2.100.zip </a>
-
-下载后直接解压即可。
+Windows 版本：<a href="./file/Redis-x64-3.2.100.zip" download="Redis-x64-3.2.100.zip"> Redis-x64-3.2.100.zip </a>，下载后直接解压即可。
 
 建议 Redis 安装的⽬录增加到环境变量。
 
@@ -1618,7 +1605,7 @@ Windows 版本：<a href="./file/Redis-x64-3.2.100.zip" download="Redis-x64-3.2.
 
 
 Linux 启动 Redis 服务端：
-```bash
+```
 # 进⼊对应的安装⽬录
 cd /usr/local/redis
 
@@ -1627,7 +1614,7 @@ cd /usr/local/redis
 ```
 
 Linux 启动 Redis 客户端：
-```bash
+```
 # 进⼊对应的安装⽬录
 cd /usr/local/redis
 
@@ -1635,26 +1622,26 @@ cd /usr/local/redis
 ./bin/redis-cli
 ```
 
-#### 4.3.1 Windows 启动 Redis
+#### 4.3.2 Windows 启动 Redis
 
 Windows 启动 Redis 服务端：进⼊对应的安装⽬录，打开命令窗⼝。执⾏命令。
-```bash
+```
 redis-server redis.window.conf
 ```
 
 Windows 启动 Redis 客户端：进⼊对应的安装⽬录，打开命令窗⼝。执⾏命令。
-```bash
+```
 redis-cli
 ```
 
 ### 4.4 核心配置文件 Redis.conf
 
-**配置 1**：Redis 默认不是以守护进程的⽅式运⾏，可以通过该配置项修改，使⽤ yes 启动守护进程。（Windows 不支持）
+**配置 1**：Redis 默认不是以守护进程的⽅式运⾏，可以通过该配置项修改，使⽤ yes 启动守护进程（Windows 不支持）。
 ```conf
 daemonize no
 ```
 
-**配置 2**：当客户端闲置多⻓时间后关闭连接(单位是秒)
+**配置 2**：当客户端闲置多⻓时间后关闭连接（单位是秒）。
 ```conf
 timeout 300
 ```
@@ -1740,21 +1727,18 @@ rdbcompression yes
 
 AOF：由于快照⽅式是在⼀定时间间隔内做⼀次的，那么如果 Redis 意外 down 掉的话，就会丢失最后⼀次快照后的所有修改。如果应⽤要求不能丢失任何修改的话，可以采取 AOF 持久化⽅式。
 
-AOF（Append-only file）⽐快照⽅式有更好的持久化性，是由于在使⽤ AOF 持久化⽅式时，Redis 会将每⼀
-个收到的写命令都通过 write 函数追加到⽂件中（默认是 appendonly.AOF）。当 Redis 重启时会通过执⾏
-⽂件中保存的写命令来在内存中重建整个数据库的内容。
+AOF（Append-only file）⽐快照⽅式有更好的持久化性，是由于在使⽤ AOF 持久化⽅式时，Redis 会将每⼀个收到的写命令都通过 write 函数追加到⽂件中（默认是 appendonly.AOF）。当 Redis 重启时会通过执⾏⽂件中保存的写命令来在内存中重建整个数据库的内容。
 
 有三种⽅式如下（默认每秒⼀次）：
-- `appendonly yes`：启⽤ AOF 持久化⽅式。
+- `appendfsync always`：收到写命令就⽴即写⼊磁盘，最慢，但是保证完全的持久化。  
 
-- `appendsync always`：收到写命令就⽴即写⼊磁盘，最慢，但是保证完全的持久化。  
-  appendsync 每秒钟写⼊磁盘⼀次，在性能和持久化⽅⾯做了很好的折中。
+- `appendfsync everysec`：每秒钟写⼊磁盘⼀次，在性能和持久化⽅⾯做了很好的折中。
 
-- `appendsync no`：完全依赖 os，性能最好，持久化没有保证。
+- `appendfsync no`：完全依赖 os，性能最好，持久化没有保证。
 
 **配置 1**：指定是否在每次操作后进⾏⽇志记录，Redis 在默认情况下是关闭的。
 ```conf
-appendonly no
+appendonly yes
 ```
 
 **配置 2**：AOF ⽂件的名字。
@@ -1782,7 +1766,7 @@ String 是 Redis 最基本的类型，⼀个 Key 对应⼀个 Value，⼀个键�
 
 String 类型是⼆进制安全的。Redis 的 String 可以包含任何数据，⽐如 JPG 图⽚或者序列化对象。
 
-⼆进制安全是指，在传输数据时，保证⼆进制数据的信息安全，也就是不被篡改、破译等，如果有被攻击，能够及时检测出来。
+⼆进制安全是指在传输数据时，保证⼆进制数据的信息安全，也就是不被篡改、破译等，如果有被攻击，能够及时检测出来。
 
 操作跟 Map ⾮常类似：
 - `SET key value`。
@@ -2916,12 +2900,12 @@ RocketMQ 的消息是存储到磁盘上的，这样既能保证断电后恢复�
 #### 11.4.2 启动
 
 ⾸先启动注册中⼼ nameserver ，默认启动在 9876 端⼝，打开 cmd 命令窗⼝，进⼊bin⽬录，执⾏命令：
-```bash
+```
 start mqnamesrv.cmd
 ```
 
 接着启动 RocketMQ 服务，也就是 broker。进⼊ bin ⽬录，执⾏命令：
-```bash
+```
 start mqbroker.cmd -n 117.0.0.1:9876 autoCreateTopicEnable=true
 ```
 
@@ -3035,7 +3019,7 @@ public static void main(String[] args) throws MQClientException {
 ```
 
 如果写完代码之后抛出错误 `org.apache.rocketmq.client.exception.MQClientException: No route info of this topic, xxx`。表示 rocketMQ 中没有创建这个 topic，说明开启 autoCreateTopicEnable 失效，这个时候需要⼿动创建 topic。进⼊ bin ⽬录，执⾏命令：
-```bash
+```
 sh ./mqamdin updateTopic -n localhost:9876 -b localhost:10911 -t topicName
 ```
 然后重新启动⼀下程序即可。
