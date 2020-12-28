@@ -1,4 +1,4 @@
-# 十、SpringMVC
+# 十、Spring MVC
 
 ## 目录
 
@@ -70,11 +70,11 @@
       - [5.3.9 viewResolver](#539-viewresolver)
       - [5.3.10 HandlerExceptionResolver](#5310-handlerexceptionresolver)
 
-## 1 SpringMVC
+## 1 Spring MVC
 
-### 1.1 SpringMVC 概述
+### 1.1 Spring MVC 概述
 
-SpringMVC：
+Spring MVC：
 - Spring 提供的 MVC 框架。
 
 - 是 Spring 框架的一部分，负责表示层。
@@ -83,7 +83,7 @@ SpringMVC：
 目标是消灭 servlet：提供了一个统一的处理器 DispatcherServlet。 
 
 
-SpringMVC 架构：
+Spring MVC 架构：
 <div align="center">
 <img src="./img/p1.png"><br>
 <img src="./img/p2.png">
@@ -147,7 +147,7 @@ mudule
 
 **第一步**：引入依赖、配置为 IDEA 中的标准 Web 应用。
 
-SpringMVC：spring-web、spring-webmvc、servlet-api（provided）。
+Spring MVC：spring-web、spring-webmvc、servlet-api（provided）。
 
 ```xml
 <packaging>war</packaging>
@@ -241,7 +241,7 @@ public class HelloHandler implements Controller {
 
 #### 1.3.2 案例 2
 
-**第一步**：同案例 1，搭建一个 SpringMVC 的 Web 应用。
+**第一步**：同案例 1，搭建一个 Spring MVC 的 Web 应用。
 
 **第二步**：引入 mvc 标签。
 
@@ -580,7 +580,7 @@ public class ParameterController {
 
 #### 1.6.3 自动封装
 
-由 SpringMVC 提供格式转换。  
+由 Spring MVC 提供格式转换。  
 
 **方式 1**：直接写在 handler 方法的形参上。
 
@@ -649,11 +649,11 @@ public User javabean(User user){
 }
 ```
 
-#### 1.6.4 SpringMVC 不包括的 converter。
+#### 1.6.4 Spring MVC 不包括的 converter。
 
 converter：请求参数的类型转换。
 
-若使用日期：SpringMVC 不能够直接转换 date，但是呢可以通过 `@DateTimeFormat` 注解，指定 date 日期的格式来转换。  
+若使用日期：Spring MVC 不能够直接转换 date，但是呢可以通过 `@DateTimeFormat` 注解，指定 date 日期的格式来转换。  
 示例：
 ```java
 @RestController
@@ -1112,7 +1112,7 @@ public BaseRespVo json(int id) throws Exception {
 
 ### 2.1 Spring MVC 拦截器概述
 
-SpringMVC 的处理器拦截器类似于 Servlet 开发中的过滤器 Filter，用于对处理器进行预处理和后处理。
+Spring MVC 的处理器拦截器类似于 Servlet 开发中的过滤器 Filter，用于对处理器进行预处理和后处理。
 
 常见使用场景
 - 日志记录：记录请求信息的日志，以便进行信息监控、信息统计、计算 PV（Page View）等。
@@ -1449,18 +1449,42 @@ Hibernate Validator 附加的 constraint：
 | @Range(min=, max=, message=) | 被注释的元素必须在合适的范围内 |
 
 
-## 5 整合 Spring 和 SpringMVC
+## 5 整合 Spring 和 Spring MVC
 
-### 5.1 Spring 容器和 SpringMVC 容器的分家
-
+Spring 容器和 Spring MVC 容器的分家：
 <div>
 <img src="./img/p12.png">
 </div>
 
-**第一步**：在 web.xml 中加载配置文件。
+### 5.1 XML 形式配置 Spring MVC 项目
+
+**第一步**：添加 Spring 配置文件和 Spring MVC 配置文件。
+
+application.xml：
+```xml
+<context:component-scan base-package="com.gyh">
+    <!--Spring 容器移除 Controller-->
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+```
+
+application-mvc.xml：
+```xml
+<context:component-scan base-package="com.gyh">
+    <!--Spring MVC 容器仅添加 Controller-->
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+</context:component-scan>
+
+<mvc:annotation-driven/>
+```
+
+> `<mvc:annotation-driven>` 会自动注册 RequestMappingHandlerMapping 和 RequestMappingHandlerAdapter 这两个 Bean，这是 Spring MVC 为 @Controller 分发请求所必需的，并且提供了数据绑定支持，@NumberFormatannotation 支持，@DateTimeFormat 支持，@Valid 支持，读写 XML 的支持（JAXB）和读写 JSON 的支持（默认 Jackson）等功能。
+
+
+**第二步**：在 web.xml 中加载配置文件。
 
 ```xml
-<!--利用 listener 在 spring-mvc 配置文件加载之前加载 spring 配置文件-->
+<!--利用 listener 在 Spring MVC 配置文件加载之前加载 Spring 配置文件-->
 <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 </listener>
@@ -1469,6 +1493,7 @@ Hibernate Validator 附加的 constraint：
     <param-value>classpath:application.xml</param-value>
 </context-param>
 
+<!--Spring MVC 配置-->
 <servlet>
     <servlet-name>dispatcherServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -1483,33 +1508,45 @@ Hibernate Validator 附加的 constraint：
 </servlet-mapping>
 ```
 
-**第二步**：Spring 配置文件和 SpringMVC 配置文件。
+### 5.2 JavaConfig 形式配置 Spring MVC 项目
 
-application.xml：
+#### 5.2.1 方式一
+
+**第一步**：添加依赖。
 ```xml
-<context:component-scan base-package="com.gyh">
-    <!--排除掉扫描范围-->
-    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-</context:component-scan>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.2.11.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>servlet-api</artifactId>
+    <version>3.0-alpha-1</version>
+</dependency>
 ```
 
-application-mvc.xml：
-```xml
-<context:component-scan base-package="com.gyh">
-    <!--扫描范围-->
-    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-</context:component-scan>
+**第二步**：添加配置文件。
 
-<mvc:annotation-driven/>
+```java
+@Configuration
+@ComponentScan(value = "com.gyh", 
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, 
+                value = {Controller.class, EnableWebMvc.class}))
+public class SpringConfiguration {
+}
 ```
 
-### 5.2 使用 javaconfig 来使用 SpringMVC
+```java
+@EnableWebMvc
+@ComponentScan(value = "com.gyh.controller",
+        includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, 
+                value = Controller.class))
+public class WebConfiguration implements WebMvcConfigurer {
+}
+```
 
-web.xml：启动类。  
-application.xml：配置类。  
-application-mvc.xml：配置类。  
-
-#### 5.2.1 web.xml 启动类
+**第三步**：加载配置文件。
 
 ```java
 public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -1520,15 +1557,17 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{SpringConfiguration.class};
     }
+    
     /**
-     * 加载 SpringMvc 的启动类
+     * 加载 Spring Mvc 的启动类
      */
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class[]{WebConfiguration.class};
     }
+
     /**
-     * 配置DispatcherServlet的url-pattern /
+     * 配置 DispatcherServlet 的 url-pattern /
      */
     @Override
     protected String[] getServletMappings() {
@@ -1537,34 +1576,68 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 }
 ```
 
-#### 5.2.2 Spring 配置类
+#### 5.2.2 方式二
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.2.11.RELEASE</version>
+</dependency>
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.1</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+**第二步**：添加配置文件。
 
 ```java
 @Configuration
-@ComponentScan(value = "com.gyh", 
-        excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, 
-                value = {Controller.class, EnableWebMvc.class}))
-public class SpringConfiguration {
-
+@ComponentScan(basePackages = "com.gyh", useDefaultFilters = true,
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION,
+                classes = Controller.class)})
+public class SpringConfig {
 }
 ```
-
-#### 5.2.3 SpringMVC 配置类
 
 ```java
-@EnableWebMvc
-@ComponentScan(value = "com.gyh.controller",
-        includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, value = Controller.class))
-public class WebConfiguration implements WebMvcConfigurer {
-
+@Configuration
+@ComponentScan(basePackages = "com.gyh", useDefaultFilters = false,
+        includeFilters = {@ComponentScan.Filter(type = FilterType.ANNOTATION,
+                classes = Controller.class), @ComponentScan.Filter(type = FilterType.ANNOTATION,
+                classes = Configuration.class)})
+public class SpringMVCConfig {
 }
 ```
 
-### 5.3 SpringMVC 的组件
+**第三步**：加载配置文件。
+
+```java
+public class WebInit implements WebApplicationInitializer {
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+        ctx.setServletContext(servletContext);
+        ctx.register(SpringMVCConfig.class);
+
+        ServletRegistration.Dynamic springmvc = servletContext.addServlet("springmvc", new DispatcherServlet(ctx));
+        springmvc.addMapping("/");
+        springmvc.setLoadOnStartup(1);
+    }
+}
+```
+
+### 5.3 Spring MVC 的组件
 
 #### 5.3.1 characterEncodingFilter
 
-web.xml 启动类中：
+启动类中：
+
 ```java
 @Override
 protected Filter[] getServletFilters() {
