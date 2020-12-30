@@ -2,10 +2,10 @@
 
 ## 目录
 
-- [十、SpringMVC](#十springmvc)
+- [十、Spring MVC](#十spring-mvc)
   - [目录](#目录)
-  - [1 SpringMVC](#1-springmvc)
-    - [1.1 SpringMVC 概述](#11-springmvc-概述)
+  - [1 Spring MVC](#1-spring-mvc)
+    - [1.1 Spring MVC 概述](#11-spring-mvc-概述)
     - [1.2 Web 应用的目录结构](#12-web-应用的目录结构)
       - [1.2.1 服务器下的目录结构](#121-服务器下的目录结构)
       - [1.2.2 IDEA 中的目录结构](#122-idea-中的目录结构)
@@ -24,7 +24,7 @@
       - [1.6.1 post 请求乱码](#161-post-请求乱码)
       - [1.6.2 使用 request 封装](#162-使用-request-封装)
       - [1.6.3 自动封装](#163-自动封装)
-      - [1.6.4 SpringMVC 不包括的 converter。](#164-springmvc-不包括的-converter)
+      - [1.6.4 Spring MVC 不包括的 converter。](#164-spring-mvc-不包括的-converter)
       - [1.6.5 File](#165-file)
       - [1.6.6 cookie 和 session](#166-cookie-和-session)
       - [1.6.7 json 数据作为形参](#167-json-数据作为形参)
@@ -52,13 +52,12 @@
   - [4 Hibernate-Validator](#4-hibernate-validator)
     - [4.1 入门案例](#41-入门案例)
     - [4.2 常见注解](#42-常见注解)
-  - [5 整合 Spring 和 SpringMVC](#5-整合-spring-和-springmvc)
-    - [5.1 Spring 容器和 SpringMVC 容器的分家](#51-spring-容器和-springmvc-容器的分家)
-    - [5.2 使用 javaconfig 来使用 SpringMVC](#52-使用-javaconfig-来使用-springmvc)
-      - [5.2.1 web.xml 启动类](#521-webxml-启动类)
-      - [5.2.2 Spring 配置类](#522-spring-配置类)
-      - [5.2.3 SpringMVC 配置类](#523-springmvc-配置类)
-    - [5.3 SpringMVC 的组件](#53-springmvc-的组件)
+  - [5 整合 Spring 和 Spring MVC](#5-整合-spring-和-spring-mvc)
+    - [5.1 XML 形式配置 Spring MVC 项目](#51-xml-形式配置-spring-mvc-项目)
+    - [5.2 JavaConfig 形式配置 Spring MVC 项目](#52-javaconfig-形式配置-spring-mvc-项目)
+      - [5.2.1 方式一](#521-方式一)
+      - [5.2.2 方式二](#522-方式二)
+    - [5.3 Spring MVC 更多配置](#53-spring-mvc-更多配置)
       - [5.3.1 characterEncodingFilter](#531-characterencodingfilter)
       - [5.3.2 静态资源映射](#532-静态资源映射)
       - [5.3.3 interceptor 过滤器](#533-interceptor-过滤器)
@@ -1632,11 +1631,11 @@ public class WebInit implements WebApplicationInitializer {
 }
 ```
 
-### 5.3 Spring MVC 的组件
+### 5.3 Spring MVC 更多配置
+
 
 #### 5.3.1 characterEncodingFilter
 
-启动类中：
 
 ```java
 @Override
@@ -1664,8 +1663,8 @@ public void addResourceHandlers(ResourceHandlerRegistry registry) {
 ```java
 @Override
 public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new CustomInterceptor());
-    registry.addInterceptor(new CustomInterceptor2()).addPathPatterns("/hello/**");
+
+    registry.addInterceptor(new CustomInterceptor()).addPathPatterns("/hello/**");
 }
 ```
 
