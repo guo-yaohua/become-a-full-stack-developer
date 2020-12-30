@@ -5,10 +5,11 @@
 - [十二、SpringBoot](#十二springboot)
   - [目录](#目录)
   - [1 SpringBoot](#1-springboot)
-    - [1.1 创建 SpringBoot 应用](#11-创建-springboot-应用)
+    - [1.1 创建 SpringBoot](#11-创建-springboot)
       - [1.1.1 网页端创建](#111-网页端创建)
       - [1.1.2 IDEA 创建](#112-idea-创建)
-    - [1.2 SpringBoot 介绍](#12-springboot-介绍)
+      - [1.1.3 改造 Maven 项目](#113-改造-maven-项目)
+    - [1.2 SpringBoot 配置](#12-springboot-配置)
       - [1.2.1 maven](#121-maven)
       - [1.2.2 启动类](#122-启动类)
       - [1.2.3 配置文件](#123-配置文件)
@@ -65,10 +66,8 @@ SpringBoot 优点：
 
 - SpringBoot 不需要额外配置 JavaEE 容器。可以通过 jar 包的形式来运行。
 
-Spring 当前最新版本 2.3.2，基于 Java 8，支持 Java 14。
 
-
-### 1.1 创建 SpringBoot 应用
+### 1.1 创建 SpringBoot
 
 #### 1.1.1 网页端创建
 
@@ -100,7 +99,42 @@ new project：
 <img src="./img/p5.png">
 </div>
 
-### 1.2 SpringBoot 介绍
+#### 1.1.3 改造 Maven 项目
+
+**第一步**：修改 pom.xml 文件。
+
+添加 `<parent>` 标签：
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.1.6.RELEASE</version>
+</parent>
+```
+
+添加依赖：
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+**第二步**：添加启动类。
+
+```java
+@RestController
+@EnableAutoConfiguration
+public class App {
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
+}
+```
+
+
+### 1.2 SpringBoot 配置
 
 #### 1.2.1 maven
 
