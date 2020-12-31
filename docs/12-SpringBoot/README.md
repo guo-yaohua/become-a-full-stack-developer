@@ -10,24 +10,17 @@
       - [1.1.2 IDEA 创建](#112-idea-创建)
       - [1.1.3 改造 Maven 项目](#113-改造-maven-项目)
     - [1.2 SpringBoot 配置](#12-springboot-配置)
-      - [1.2.1 maven](#121-maven)
+      - [1.2.1 pom 文件](#121-pom-文件)
       - [1.2.2 启动类](#122-启动类)
       - [1.2.3 配置文件](#123-配置文件)
-      - [1.2.4 搭建一个 springboot-web](#124-搭建一个-springboot-web)
-      - [1.2.5 SpringBoot 应用可以打包为 jar 包启动](#125-springboot-应用可以打包为-jar-包启动)
-    - [1.3 SpringBoot 配置文件](#13-springboot-配置文件)
-      - [1.3.1 配置文件形式](#131-配置文件形式)
-      - [1.3.2 ConfigurationProperties 注解](#132-configurationproperties-注解)
-      - [1.3.3 配置文件占位符](#133-配置文件占位符)
-      - [1.3.4 引入额外的配置文件](#134-引入额外的配置文件)
-      - [1.3.5 多配置文件](#135-多配置文件)
-    - [1.4 整合 Web](#14-整合-web)
-      - [1.4.1 静态资源](#141-静态资源)
-      - [1.4.2 文件上传组件](#142-文件上传组件)
-      - [1.4.3 SpringMVC 配置类](#143-springmvc-配置类)
-      - [1.4.4 Converter](#144-converter)
+    - [1.4 SpringBoot Web](#14-springboot-web)
+      - [1.4.1 搭建 SpringBoot Web 项目](#141-搭建-springboot-web-项目)
+      - [1.4.2 静态资源](#142-静态资源)
+      - [1.4.3 文件上传组件](#143-文件上传组件)
+      - [1.4.4 Spring MVC 配置类](#144-spring-mvc-配置类)
+      - [1.4.5 Converter](#145-converter)
     - [1.5 整合 MyBatis](#15-整合-mybatis)
-      - [1.5.1 datasource](#151-datasource)
+      - [1.5.1 配置 datasource](#151-配置-datasource)
       - [1.5.2 mapper](#152-mapper)
   - [2 Shiro 权限管理](#2-shiro-权限管理)
     - [2.1 权限管理](#21-权限管理)
@@ -127,6 +120,11 @@ new project：
 @EnableAutoConfiguration
 public class App {
 
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
@@ -136,9 +134,9 @@ public class App {
 
 ### 1.2 SpringBoot 配置
 
-#### 1.2.1 maven
+#### 1.2.1 pom 文件
 
-pom.xml 文件中，也可以修改 SpringBoot 版本。  
+项目创建后，在 pom.xml 文件中，仍可以修改 SpringBoot 版本：
 ```xml
 <parent>
     <groupId>org.springframework.boot</groupId>
@@ -150,113 +148,54 @@ pom.xml 文件中，也可以修改 SpringBoot 版本。
 
 #### 1.2.2 启动类
 
-Demo1TestApplication.java：
 ```java
-package com.gyh;    // 组件注册的范围
+package com.gyh.demoTest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Demo1TestApplication {
+public class DemoTestApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Demo1TestApplication.class, args);
+        SpringApplication.run(DemoTestApplication.class, args);
     }
-
 }
 ```
+
+`@SpringBootApplication` 注解默认设置扫描包的范围为启动类路径。
 
 #### 1.2.3 配置文件
 
-配置文件 application.properties 为 properties 文件，所以以 key-value 的形式进行配置。  
-示例：
-```properties
-server.port=8081
-server.servlet.context-path=/demo1
-```
+SpringBoot 支持两种配置文件形式：`.properties` 和 `.yml`。
+- `.properties`：`key=value` 形式。  
+  示例：
+  ```properties
+  server.port=8081
+  server.servlet.context-path=/demo1
+  ```
 
-#### 1.2.4 搭建一个 springboot-web
+- `.yml`：`key:value` 形式。    
+  示例：
+  ```yml
+  server:
+    port: 8081
+    servlet:
+      context-path: /demo1
+  ```
 
-**第一步**：引入依赖。
+  注：
+  - 下一级和上一级需要空格，几个空格都行，但是同一级需要对齐。
+  - `:` 后需要添加一个空格。
 
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-```
-
-通常 SpringBoot 支持某个框架的依赖都叫 spring-boot-starter-xxx。这个依赖会提供这个框架所必须的依赖，注册一些默认的组件。  
-如 spring-boot-starter-web：
-<div align="center">
-<img src="./img/p6.png">
-</div>
-
-**第二步**：controller。
-
-```java
-@RestController
-public class HelloController {
-
-    @RequestMapping("hello")
-    public BaseRespVO hello(){
-        return BaseRespVO.ok("hello SpringBoot");
-    }
-}
-```
-
-**第三步**：启动项目。
-
-<div align="center">
-<img src="./img/p7.png">
-</div>
-
-#### 1.2.5 SpringBoot 应用可以打包为 jar 包启动
-
-**第一步**：打包。
-
-<div align="center">
-<img src="./img/p8.png">
-</div>
-
-**第二步**：运行。
-
-<div align="center">
-<img src="./img/p9.png">
-</div>
-
-### 1.3 SpringBoot 配置文件
-
-#### 1.3.1 配置文件形式
-
-**（1）properties**  
-
-`key=value` 形式。
-示例：
-```properties
-server.port=8081
-server.servlet.context-path=/demo1
-```
-
-**（2）yml**
-
-`key:value` 形式。  
+配置文件可以给容器中组件的成员变量赋值。  
 示例：
 ```yml
-server:
-  port: 8081
-  servlet:
-    context-path: /demo1
+file:
+  baseName: zhang3
+  maxSize: 100
 ```
 
-注：
-- 下一级和上一级需要空格，几个空格都行，但是同一级需要对齐。
-- `:` 后需要添加一个空格。
-
-**（3）容器中的组件的成员变量赋值**  
-
-示例：
 ```java
 @Component
 @Data
@@ -269,17 +208,8 @@ public class FileComponent {
 }
 ```
 
-```yml
-file:
-  baseName: zhang3
-  maxSize: 100
-```
 
-#### 1.3.2 ConfigurationProperties 注解
-
-用于给容器中的组件的成员变量赋值，更简单更直接。
-
-通过注解的 prefix 属性，自动进行匹配。  
+`@ConfigurationProperties` 注解用于给容器中的组件的成员变量赋值，更简单更直接。通过其 prefix 属性，自动进行匹配。  
 示例：
 ```java
 @Component
@@ -293,13 +223,6 @@ public class FileComponent {
 }
 ```
 
-```yml
-# yml 可以通过 - 实现驼峰命名转换
-file:
-  base-name: zhang3
-  maxSize: 100
-```
-
 通过 spring-boot-configuration-processor 依赖，可以在写配置文件时给与提示。  
 ```xml
 <dependency>
@@ -308,9 +231,10 @@ file:
     <optional>true</optional>
 </dependency>
 ```
-引进依赖之后，可能会没用提示，重新 run 一下，properties 或 yml 文件就会给提示了。
+> 引进依赖后可能会没有提示，重新 run 一下即可。
 
-更复杂的类型时，如：
+配置文件面对复杂的类型，也支持不同的书写方式。  
+示例：
 ```java
 @Component
 @Data
@@ -328,7 +252,7 @@ public class FileComponent {
 }
 ```
 
-propertirs 形式：
+`.properties` 形式：
 ```properties
 file.baseName=zhang3
 file.maxSize=120
@@ -353,7 +277,7 @@ file.file-detail.name=li4
 file.file-detail.size=1000
 ```
 
-yml 形式：
+`.yml` 形式：
 ```yml
 file:
   base-name: zhang3
@@ -373,17 +297,14 @@ file:
     key2: value2
   map2: {key1: value1, key2: value2}
 
-  # file-detail 两种写法
-  name: li4
-  size: 2000
-  # file-detail: {name: li4, size: 2000}
+  # javabean 两种写法
+  fileDetail:
+    name: li4
+    size: 2000
+  # file-detail:{name: li4, size: 2000}
 ```
 
-#### 1.3.3 配置文件占位符
-
-**（1）随机数**  
-
-格式：
+配置文件支持随机数占位符，如：
 - `${random.value}`
 - `${random.int}`
 - `${random.long}`
@@ -398,9 +319,7 @@ file:
 
 注：随机数在应用启动的时候，就已经生成，在程序运行过程中不会发生改变。
 
-**（2）属性占位符**  
-
-示例：
+支持属性占位符，如：
 ```yml
 file:
   file-path: d://spring/boot/
@@ -408,32 +327,25 @@ file:
   xml-path: ${file.file-path}xml/
 ```
 
-#### 1.3.4 引入额外的配置文件
+配置文件中可以引入额外的配置文件：
+- `@PropertySource` 注解：SpringBoot 的 properties 类型。  
+  示例：
+  ```java
+  @PropertySource(value = "classpath:xxx.properties")
+  ```
 
-**（1）PropertySource 注解**
+- `@ImportResource` 注解。  
+  示例：
+  ```java
+  @ImportResource(locations = "classpath:bean.xml")
+  ```
 
-SpringBoot 的 properties 类型。
+  bean.xml：
+  ```xml
+  <bean class="com.gyh.component.SpringComponent"/>
+  ```
 
-示例：
-```java
-@PropertySource(value = "classpath:xxx.properties")
-```
-
-**（2）ImportResource 注解**  
-
-示例：
-```java
-@ImportResource(locations = "classpath:bean.xml")
-```
-
-bean.xml：
-```xml
-<bean class="com.gyh.component.SpringComponent"/>
-```
-
-#### 1.3.5 多配置文件
-
-可以识别的配置文件：
+可以配置多个配置文件：
 - 主配置文件：
   - application.properties
   - application.yml
@@ -443,8 +355,7 @@ bean.xml：
   - application-*.yml
 
 
-相同的 key 在不同的环境下有不同的值，把这些不同的值提取出来，分别放到不同的分配置文件中，然后通过主配置文件选择性地激活分配置文件。  
-把不同类型的配置放入到不同的配置文件，完成解耦。
+相同的 key 在不同的环境下有不同的值，把这些不同的值提取出来，分别放到不同的分配置文件中，然后通过主配置文件选择性地激活分配置文件。把不同类型的配置放入到不同的配置文件，完成解耦。
 
 示例：
 ```yml
@@ -498,9 +409,11 @@ server:
   port: 8083
 ```
 
-### 1.4 整合 Web
+### 1.4 SpringBoot Web
 
-spring-boot-starter-web
+#### 1.4.1 搭建 SpringBoot Web 项目
+
+**第一步**：引入依赖。
 
 ```xml
 <dependency>
@@ -509,7 +422,47 @@ spring-boot-starter-web
 </dependency>
 ```
 
-#### 1.4.1 静态资源
+通常 SpringBoot 支持某个框架的依赖都叫 spring-boot-starter-xxx。这个依赖会提供这个框架所必须的依赖，注册一些默认的组件。  
+如 spring-boot-starter-web：
+<div align="center">
+<img src="./img/p6.png">
+</div>
+
+**第二步**：Controller。
+
+```java
+@RestController
+public class HelloController {
+
+    @RequestMapping("hello")
+    public BaseRespVO hello(){
+        return BaseRespVO.ok("hello SpringBoot");
+    }
+}
+```
+
+**第三步**：启动项目。
+
+<div align="center">
+<img src="./img/p7.png">
+</div>
+
+
+SpringBoot 可以直接打包为 jar 包启动：
+
+**第一步**：打包。
+
+<div align="center">
+<img src="./img/p8.png">
+</div>
+
+**第二步**：运行。
+
+<div align="center">
+<img src="./img/p9.png">
+</div>
+
+#### 1.4.2 静态资源
 
 静态资源默认路径：
 - `classpath:\/META-INF\/resources\/`
@@ -517,7 +470,7 @@ spring-boot-starter-web
 - `classpath:\/static\/`
 - `classpath:\/public\/`
 
-自己可以添加配置：
+可以添加配置：
 ```yml
 spring:
   resources:
@@ -526,17 +479,17 @@ spring:
     static-path-pattern: /pic1/** #mapping
 ```
 
-#### 1.4.2 文件上传组件
+#### 1.4.3 文件上传组件
 
 multipartResolver 会自动注册。
 
-#### 1.4.3 SpringMVC 配置类
+#### 1.4.4 Spring MVC 配置类
 
-`@EnableWebMvc`：全面接管 mvc 的配置，配置文件中关于 web 的配置由这个配置类接管。
+`@EnableWebMvc`：全面接管 MVC 的配置，配置文件中关于 Web 的配置由这个配置类接管。
 
 `@Configuration`：该配置类和 SpringBoot 配置文件中的配置是一个合作关系。
 
-#### 1.4.4 Converter
+#### 1.4.5 Converter
 
 在 Converter 类上增加 `@Component` 注解，注册到容器中就生效了。
 
@@ -557,7 +510,8 @@ mybatis-spring-boot-starter
 </dependency>
 ```
 
-#### 1.5.1 datasource
+#### 1.5.1 配置 datasource
+
 ```yml
 spring:
   datasource:
