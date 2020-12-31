@@ -2125,10 +2125,10 @@ Maven 下载后，将 Maven 解压到一个没有中文没有空格的路径下�
 在 `conf/settings.xml` 文件中 `<mirrors>` 节点下新增：
 ```xml
 <mirror>
-    <id>nexus-aliyun</id>
-    <mirrorOf>central</mirrorOf>
-    <name>Nexus aliyun</name>
-    <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+    <id>aliyunmaven</id>
+    <mirrorOf>*</mirrorOf>
+    <name>阿里云公共仓库</name>
+    <url>https://maven.aliyun.com/repository/public</url>
 </mirror>
 ```
 
