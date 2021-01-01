@@ -9,11 +9,14 @@
       - [1.1.1 网页端创建](#111-网页端创建)
       - [1.1.2 IDEA 创建](#112-idea-创建)
       - [1.1.3 改造 Maven 项目](#113-改造-maven-项目)
-    - [1.2 SpringBoot 配置](#12-springboot-配置)
-      - [1.2.1 pom 文件](#121-pom-文件)
-      - [1.2.2 启动类](#122-启动类)
-      - [1.2.3 配置文件](#123-配置文件)
-    - [1.4 SpringBoot Web](#14-springboot-web)
+    - [1.2 启动类](#12-启动类)
+    - [1.3 pom 文件](#13-pom-文件)
+    - [1.4 application 配置文件](#14-application-配置文件)
+      - [1.4.1 配置文件形式](#141-配置文件形式)
+      - [1.4.2 属性注入](#142-属性注入)
+      - [1.4.4 多个配置文件](#144-多个配置文件)
+  - [2 Spring Boot 整合视图技术](#2-spring-boot-整合视图技术)
+  - [3 Spring Boot 整合 Web](#3-spring-boot-整合-web)
       - [1.4.1 搭建 SpringBoot Web 项目](#141-搭建-springboot-web-项目)
       - [1.4.2 静态资源](#142-静态资源)
       - [1.4.3 文件上传组件](#143-文件上传组件)
@@ -53,7 +56,7 @@
 SpringBoot 优点：
 - 构建项目非常方便。
 
-- 配置比较简单。约定大于配置。
+- 配置简单，且约定大于配置。
 
 - 无缝集成主流第三方框架。
 
@@ -82,7 +85,7 @@ new project：
 <img src="./img/p3.png">
 </div>
 
-选择依赖和 SpringBoot 版本：
+选择依赖和 Spring Boot 版本：
 <div align="center">
 <img src="./img/p4.png">
 </div>
@@ -131,22 +134,7 @@ public class App {
 }
 ```
 
-
-### 1.2 SpringBoot 配置
-
-#### 1.2.1 pom 文件
-
-项目创建后，在 pom.xml 文件中，仍可以修改 SpringBoot 版本：
-```xml
-<parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.2.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
-</parent>
-```
-
-#### 1.2.2 启动类
+### 1.2 启动类
 
 ```java
 package com.gyh.demoTest;
@@ -165,28 +153,126 @@ public class DemoTestApplication {
 
 `@SpringBootApplication` 注解默认设置扫描包的范围为启动类路径。
 
-#### 1.2.3 配置文件
+main 方法中可以添加各种配置，例如禁用 Banner：
+```java
+public static void main(String[] args) {
 
-SpringBoot 支持两种配置文件形式：`.properties` 和 `.yml`。
-- `.properties`：`key=value` 形式。  
-  示例：
-  ```properties
-  server.port=8081
-  server.servlet.context-path=/demo1
-  ```
+    SpringApplicationBuilder builder = new SpringApplicationBuilder(DemoTestApplication.class);
+    SpringApplication build = builder.build();
+    build.setBannerMode(Banner.Mode.OFF);
+    build.run(args);
+}
+```
 
-- `.yml`：`key:value` 形式。    
-  示例：
-  ```yml
-  server:
-    port: 8081
-    servlet:
-      context-path: /demo1
-  ```
+### 1.3 pom 文件
 
-  注：
-  - 下一级和上一级需要空格，几个空格都行，但是同一级需要对齐。
-  - `:` 后需要添加一个空格。
+任一方式创建 Spring Boot 项目后，在 pom.xml 文件中都存在 `<parent>` 标签：
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.3.2.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+</parent>
+```
+
+`<parent>` 标签的基本功能：
+- 定义了 Java 编译版本为 1.8 。
+
+- 使用 UTF-8 格式编码。
+
+- 继承自 spring-boot-dependencies，这个里边定义了依赖的版本，也正是因为继承了这个依赖，所以我们在写依赖时才不需要写版本号。
+
+- 执行打包操作的配置。
+
+- 自动化的资源过滤。
+
+- 自动化的插件配置。
+
+- 针对 `application.properties` 和 `application.yml` 的资源过滤，包括通过 profile 定义的不同环境的配置文件，例如 `application-dev.properties` 和 `application-dev.yml`。
+
+在 `xx\.m2\repository\org\springframework\boot\spring-boot-starter-parent\2.4.0.RELEASE\spring-boot-starter-parent-2.4.0.RELEASE.pom` 可以看到它这些功能的实现：
+```xml
+<modelVersion>4.0.0</modelVersion>
+<parent>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-dependencies</artifactId>
+  <version>2.4.0</version>
+</parent>
+<artifactId>spring-boot-starter-parent</artifactId>
+<packaging>pom</packaging>
+<name>spring-boot-starter-parent</name>
+<description>Parent pom providing dependency and plugin management for applications built with Maven</description>
+<properties>
+  <java.version>1.8</java.version>
+  <resource.delimiter>@</resource.delimiter>
+  <maven.compiler.source>${java.version}</maven.compiler.source>
+  <maven.compiler.target>${java.version}</maven.compiler.target>
+  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+</properties>
+
+...
+```
+
+再查看其 `<parent>` 指向的的 `spring-boot-dependencies` 文件，可以发现其 `<properties>` 文件中存在大量的版本定义，这即是 Spring Boot 项目中部分依赖不需要写版本号的原因。
+
+```xml
+<properties>
+    <activemq.version>5.16.0</activemq.version>
+    <antlr2.version>2.7.7</antlr2.version>
+    <appengine-sdk.version>1.9.83</appengine-sdk.version>
+
+    ...
+</properties>
+```
+
+实际开发中，公司可能会要求 Spring Boot 项目继承自公司内部的 parent ，此时可以自行定义 dependencyManagement 节点来解决依赖的版本号问题。  
+示例：
+```xml
+<dependencyManagement>
+    <dependencies>    
+        <dependency>         
+            <groupId>org.springframework.boot</groupId>   
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>2.4.0.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+
+### 1.4 application 配置文件
+
+#### 1.4.1 配置文件形式
+
+Spring Boot 支持 properties 配置 和 yaml 配置。
+
+properties 配置：无序，后缀 `.properties`，`key=value` 形式。  
+示例：
+```properties
+server.port=8081
+server.servlet.context-path=/demo1
+```
+
+yaml 配置：有序，后缀 `.yml / .yaml`，`key:value` 形式。    
+示例：
+```yml
+server:
+  port: 8081
+  servlet:
+    context-path: /demo1
+```
+
+注：
+- 下一级和上一级需要空格，几个空格都行，但是同一级需要对齐。
+- `:` 后需要添加一个空格。
+
+
+
+#### 1.4.2 属性注入
 
 配置文件可以给容器中组件的成员变量赋值。  
 示例：
@@ -208,8 +294,25 @@ public class FileComponent {
 }
 ```
 
+配置文件中可以引入额外的配置文件：
+- `@PropertySource` 注解：只支持 properties 类型。  
+  示例：
+  ```java
+  @PropertySource(value = "classpath:file.properties")
+  ```
 
-`@ConfigurationProperties` 注解用于给容器中的组件的成员变量赋值，更简单更直接。通过其 prefix 属性，自动进行匹配。  
+- `@ImportResource` 注解。  
+  示例：
+  ```java
+  @ImportResource(locations = "classpath:bean.xml")
+  ```
+
+  bean.xml：
+  ```xml
+  <bean class="com.gyh.component.SpringComponent"/>
+  ```
+
+以上属性注入方式 Spring 就已经提供，Spring Boot 提供了更方便的形式：`@ConfigurationProperties` 注解。  
 示例：
 ```java
 @Component
@@ -327,25 +430,10 @@ file:
   xml-path: ${file.file-path}xml/
 ```
 
-配置文件中可以引入额外的配置文件：
-- `@PropertySource` 注解：SpringBoot 的 properties 类型。  
-  示例：
-  ```java
-  @PropertySource(value = "classpath:xxx.properties")
-  ```
 
-- `@ImportResource` 注解。  
-  示例：
-  ```java
-  @ImportResource(locations = "classpath:bean.xml")
-  ```
+#### 1.4.4 多个配置文件
 
-  bean.xml：
-  ```xml
-  <bean class="com.gyh.component.SpringComponent"/>
-  ```
-
-可以配置多个配置文件：
+实际开发中会配置多个配置文件：
 - 主配置文件：
   - application.properties
   - application.yml
@@ -409,7 +497,9 @@ server:
   port: 8083
 ```
 
-### 1.4 SpringBoot Web
+## 2 Spring Boot 整合视图技术
+
+## 3 Spring Boot 整合 Web
 
 #### 1.4.1 搭建 SpringBoot Web 项目
 
@@ -448,7 +538,44 @@ public class HelloController {
 </div>
 
 
-SpringBoot 可以直接打包为 jar 包启动：
+spring-boot-starter-web 自带 Tomcat，可以在配置文件中定义 Tomcat 部分属性。
+示例：
+```yml
+server:
+  # 修改服务器端口号
+  port: 8081
+  servlet:
+    # 修改上下文路径
+    context-path: /test
+  tomcat:
+    # 配置 Tomcat URL 编码
+    uri-encoding: utf-8
+```
+
+也可以不使用 Tomcat，使用别的服务。比如使用 Jetty：
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jetty</artifactId>
+</dependency>
+```
+
+<div align="center">
+<img src="./img/p16.png">
+</div>
+
+Spring Boot 可以直接打包为 jar 包启动：
 
 **第一步**：打包。
 
