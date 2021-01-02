@@ -16,6 +16,14 @@
       - [1.4.2 属性注入](#142-属性注入)
       - [1.4.4 多个配置文件](#144-多个配置文件)
   - [2 Spring Boot 整合视图技术](#2-spring-boot-整合视图技术)
+    - [2.1 整和 FreeMarker](#21-整和-freemarker)
+      - [2.1.1 搭建项目](#211-搭建项目)
+      - [2.1.2 FreeMarker 配置](#212-freemarker-配置)
+    - [2.2 整合 Thymeleaf](#22-整合-thymeleaf)
+      - [2.2.1 搭建项目](#221-搭建项目)
+      - [2.2.2 Thymeleaf 配置](#222-thymeleaf-配置)
+    - [2.3 整合 JSP](#23-整合-jsp)
+      - [2.3.1 搭建项目](#231-搭建项目)
   - [3 Spring Boot 整合 Web](#3-spring-boot-整合-web)
       - [1.4.1 搭建 SpringBoot Web 项目](#141-搭建-springboot-web-项目)
       - [1.4.2 静态资源](#142-静态资源)
@@ -498,6 +506,261 @@ server:
 ```
 
 ## 2 Spring Boot 整合视图技术
+
+### 2.1 整和 FreeMarker
+
+#### 2.1.1 搭建项目
+
+**第一步**：引入依赖。
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-freemarker</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+**第二步**：Controller。
+
+```java
+@Controller
+public class UserController {
+
+    @GetMapping("/user")
+    public String users(Model model) {
+
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            User user = new User();
+            user.setId((long) i);
+            user.setUsername("zhang3 >>> " + i);
+            user.setAddress("www.zhang3.com");
+            users.add(user);
+        }
+
+        model.addAttribute("users", users);
+        return "user";
+    }
+}
+```
+
+**第三步**：FreeMarker。
+
+resources/templates/user.ftlh：
+```ftlh
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>user-table</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <td>编号</td>
+        <td>用户名</td>
+        <td>用户地址</td>
+    </tr>
+    <#list users as u>
+        <tr>
+            <td>${u.id}</td>
+            <td>${u.username}</td>
+            <td>${u.address}</td>
+        </tr>
+    </#list>
+</table>
+</body>
+</html>
+```
+
+**第四步**：启动项目。
+<div align="center">
+<img src="./img/p17.png">
+</div>
+
+#### 2.1.2 FreeMarker 配置
+
+FreeMarker 在 org.springframework.boot.autoconfigure.freemarker 包下的 FreeMarkerProperties.class 中定义了默认配置。Coder 可以在 application 配置文件中修改具体配置项。  
+示例：
+```properties
+# 自定义 FreeMarker 模板位置，模板的默认位置在 classpath 下面的 templates 目录中
+spring.freemarker.template-loader-path=classpath:/freeMarker
+
+# 自定义模板的编码格式，默认就是 UTF-8
+spring.freemarker.charset=UTF-8
+
+# 定义模板的 content-type
+spring.freemarker.content-type=text/html
+
+# 是否开启 FreeMarker 缓存
+spring.freemarker.cache=false
+
+# 配置模板后缀
+spring.freemarker.suffix=.ftl
+```
+
+### 2.2 整合 Thymeleaf
+
+#### 2.2.1 搭建项目
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+**第二步**：Controller。
+
+```java
+@Controller
+public class BookController {
+
+    @GetMapping("/book")
+    public String book(Model model) {
+
+        List<Book> bookList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Book book = new Book();
+            book.setId(i);
+            book.setName("三国演义:" + i+1);
+            book.setAuthor("罗贯中");
+            book.setPrice(30D);
+            bookList.add(book);
+        }
+
+        model.addAttribute("bookList", bookList);
+        return "book";
+    }
+}
+```
+
+**第三步**：Thymeleaf。
+
+resources/templates/book.html：
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <td>图书编号</td>
+        <td>图书名称</td>
+        <td>图书作者</td>
+        <td>图书价格</td>
+    </tr>
+    <tr th:each="book : ${bookList}">
+        <td th:text="${book.id}"></td>
+        <td th:text="${book.name}"></td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.price}"></td>
+    </tr>
+</table>
+</body>
+</html>
+```
+
+**第四步**：启动项目。
+<div align="center">
+<img src="./img/p18.png">
+</div>
+
+
+#### 2.2.2 Thymeleaf 配置
+
+Thymeleaf 在 org.springframework.boot.autoconfigure.thymeleaf 包下的 ThymeleafProperties.class 中定义了默认配置。Coder 可以在 application 配置文件中修改具体配置项。
+
+### 2.3 整合 JSP
+
+#### 2.3.1 搭建项目
+
+**第一步**：添加依赖。
+
+```xml
+<dependency>
+    <groupId>org.apache.tomcat.embed</groupId>
+    <artifactId>tomcat-embed-jasper</artifactId>
+</dependency>
+<dependency>
+    <groupId>jstl</groupId>
+    <artifactId>jstl</artifactId>
+    <version>1.2</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+**第二步**：添加 webapp。
+
+<div align="center">
+<img src="./img/p19.png">
+</div>
+
+**第三步**：添加 Jsp 配置。
+
+WebMvcConfig.java
+```java
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+        registry.jsp("/jsp/", ".jsp");
+    }
+}
+```
+
+**第四步**：Controller。
+
+```java
+@Controller
+public class HelloController {
+    
+    @GetMapping("/hello")
+    public String hello(Model model, String name) {
+        
+        model.addAttribute("name", name);
+        return "hello";
+    }
+}
+```
+
+**第五步**：Jsp。
+
+webapp/jsp/hello.jsp：
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Jsp</title>
+</head>
+<body>
+<h1>${str}</h1>
+</body>
+</html>
+```
+
+**第六步**：启动项目。
+
+<div align="center">
+<img src="./img/p20.png">
+</div>
+
 
 ## 3 Spring Boot 整合 Web
 
