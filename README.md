@@ -28,11 +28,11 @@
 
 - [九、SSM-Spring](./docs/09-SSM-Spring/README.md)
 
-- [十、SSM-SpringMVC](./docs/09-SSM-SpringMVC/README.md)
+- [十、SSM-SpringMVC](./docs/10-SSM-SpringMVC/README.md)
 
-- [十一、SSM-MyBatis](./docs/09-SSM-MyBatis/README.md)
+- [十一、SSM-MyBatis](./docs/11-SSM-MyBatis/README.md)
 
-- [十二、SpringBoot](./docs/09-SpringBoot/README.md)
+- [十二、SpringBoot](./docs/12-SpringBoot/README.md)
 
 - [十三、微服务](./docs/13-Microservices/README.md)
 

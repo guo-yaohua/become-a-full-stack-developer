@@ -25,12 +25,14 @@
     - [2.3 整合 JSP](#23-整合-jsp)
       - [2.3.1 搭建项目](#231-搭建项目)
   - [3 Spring Boot 整合 Web](#3-spring-boot-整合-web)
-      - [1.4.1 搭建 SpringBoot Web 项目](#141-搭建-springboot-web-项目)
-      - [1.4.2 静态资源](#142-静态资源)
-      - [1.4.3 文件上传组件](#143-文件上传组件)
-      - [1.4.4 Spring MVC 配置类](#144-spring-mvc-配置类)
-      - [1.4.5 Converter](#145-converter)
-    - [1.5 整合 MyBatis](#15-整合-mybatis)
+    - [3.1 搭建 SpringBoot Web 项目](#31-搭建-springboot-web-项目)
+    - [3.2 静态资源](#32-静态资源)
+    - [3.3 文件上传组件](#33-文件上传组件)
+    - [3.4 Spring MVC 配置类](#34-spring-mvc-配置类)
+    - [3.5 Converter](#35-converter)
+    - [3.6 处理 JSON](#36-处理-json)
+      - [3.6.1 Gson 处理 JSON](#361-gson-处理-json)
+  - [4 整合 MyBatis](#4-整合-mybatis)
       - [1.5.1 配置 datasource](#151-配置-datasource)
       - [1.5.2 mapper](#152-mapper)
   - [2 Shiro 权限管理](#2-shiro-权限管理)
@@ -764,7 +766,7 @@ webapp/jsp/hello.jsp：
 
 ## 3 Spring Boot 整合 Web
 
-#### 1.4.1 搭建 SpringBoot Web 项目
+### 3.1 搭建 SpringBoot Web 项目
 
 **第一步**：引入依赖。
 
@@ -852,7 +854,7 @@ Spring Boot 可以直接打包为 jar 包启动：
 <img src="./img/p9.png">
 </div>
 
-#### 1.4.2 静态资源
+### 3.2 静态资源
 
 静态资源默认路径：
 - `classpath:\/META-INF\/resources\/`
@@ -869,21 +871,45 @@ spring:
     static-path-pattern: /pic1/** #mapping
 ```
 
-#### 1.4.3 文件上传组件
+### 3.3 文件上传组件
 
 multipartResolver 会自动注册。
 
-#### 1.4.4 Spring MVC 配置类
+### 3.4 Spring MVC 配置类
 
 `@EnableWebMvc`：全面接管 MVC 的配置，配置文件中关于 Web 的配置由这个配置类接管。
 
 `@Configuration`：该配置类和 SpringBoot 配置文件中的配置是一个合作关系。
 
-#### 1.4.5 Converter
+### 3.5 Converter
 
 在 Converter 类上增加 `@Component` 注解，注册到容器中就生效了。
 
-### 1.5 整合 MyBatis
+### 3.6 处理 JSON
+
+#### 3.6.1 Gson 处理 JSON
+
+**第一步**：导入依赖。
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+</dependency>
+```
+
+## 4 整合 MyBatis
 
 mybatis-spring-boot-starter
 
