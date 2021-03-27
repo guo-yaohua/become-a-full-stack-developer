@@ -1,5 +1,3 @@
-### JRE 与 JDK
-
 JRE（JAVA  Runtime Environment） 是 Java 程序的运行时环境，包含 JVM 和运行时所需要的核心类库。
 
 JDK（JAVA  Develop kit) 是 Java 程序开发工具包，包含 JRE 和开发人员使用的工具。

@@ -1,5 +1,3 @@
-### HelloWorld
-
 Java 程序运行原理：  
 <div align="center">
 <img src="./img/p2.png">
@@ -36,7 +34,7 @@ HelloWorld!
 javac -encoding UTF-8 HelloWorld.java
 ```
 
-#### IDEA 方式
+#### IDEA方式
 
 [IDEA 官网地址](https://www.jetbrains.com/idea)，选择版本，下载安装即可。  
 
