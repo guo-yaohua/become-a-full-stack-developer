@@ -1,7 +1,4 @@
-<div class="cover-main">
-<img width="180px" src="icon/icon.JPG">
+# 全栈之路-Java卷 <small>0.0.1</small>
 
-<h1 id="Java"><a><span>全栈之路-Java卷</span></a></h1>
-
-<a href="#/menu">开始阅读</a></p></div>
-<div class="mask"></div></section>
+[GitHub](https://github.com/guo-yaohua/become-a-full-stack-developer/tree/master/docs/Java)
+[Start](/_sidebar)

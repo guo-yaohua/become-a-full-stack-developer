@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>全栈之路-Java卷</title>
@@ -8,43 +9,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
 </head>
+
 <body>
   <div id="app">Loading...</div>
   <script>
     window.$docsify = {
       name: '全栈之路-Java卷',
-      repo: 'https://github.com/guo-yaohua/become-a-full-stack-developer/docs/Java',
       loadSidebar: true,
       subMaxLevel: 4,
       autoHeader: true,
-        search: {
-            paths: 'auto',
-            placeholder: '🔍 搜索 ',
-            noData: '哎呀，没有找到呀！ ',
-            // Headline depth, 1 - 6
-            depth: 3
-        },
-        copyCode: {
-            buttonText : '复制',
-            errorText  : 'Error',
-            successText: 'OK!'
-        },
-        pagination: {
-            previousText: '上一章',
-            nextText: '下一章',
-        },
-        coverpage: true
+      coverpage: true,
+      onlyCover: true,
+      auto2top: true,
+      topMargin: 90,
+      // 代码块复制
+      copyCode: {
+        buttonText: 'COPY',
+        errorText: 'Error',
+        successText: 'Copied'
+      },
+      disqus: 'shortname'
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <!--代码块复制插件-->
-  <script src="//unpkg.com/docsify-copy-code"></script>
-  <!--语法高亮插件-->
+  <!-- 代码块复制插件 -->
+  <script src="https://unpkg.com/docsify-copy-code"></script>
+  <!-- 语法高亮插件 -->
   <script src="//unpkg.com/prismjs/components/prism-java.min.js"></script>
-  <!--分页插件-->
+  <!-- 分页插件 -->
   <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
   <!-- 图片缩放插件 -->
-<script src="https://cyc-1256109796.cos.ap-guangzhou.myqcloud.com/zoom-image.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
+
+
 </body>
+
 </html>
