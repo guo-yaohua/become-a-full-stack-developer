@@ -20,10 +20,12 @@
   <div id="app">加载中...</div>
   <script>
     window.$docsify = {
-      repo: 'guo-yaohua/become-a-full-stack-developer',
 
       // 导航栏
       loadSidebar: true,
+      alias: {
+        '/Java/.*/_sidebar.md': '/Java/_sidebar.md'
+      },
       subMaxLevel: 3,
 
       // 封面

@@ -15,7 +15,6 @@
         text-decoration: none;">全栈之路 - Java</a></h1>
 </div>
 
-* [Home](/)
 * 基础篇
   * Java 入门
     * [Java 语言概述](Java/basis/JavaIntroduction)

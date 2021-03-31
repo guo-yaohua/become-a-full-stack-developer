@@ -1,5 +1,3 @@
-### Java 语言概述
-
 Java 是由任职于 Sun 公司的 James Gosling 和同事们共同研发，并于 1995 年 5 月推出的 Java 面向对象程序设计语言和 Java 平台的总称。  
 
 版本历史：
@@ -34,7 +32,7 @@ Java 语言的特点：
 1. 跨平台  
    Java 程序是在 Java 虚拟机上运行，而非直接运行于操作系统。因此使用 Java 语言编写的应用程序在不同的系统平台上都可以运行。  
     <div align="center">
-    <img src="./img/p1.png">
+    <img src="./Java/basis/img/p1.png">
     </div>
 
 2. 面向对象  

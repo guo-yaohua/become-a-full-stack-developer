@@ -3,7 +3,7 @@ JRE（JAVA  Runtime Environment） 是 Java 程序的运行时环境，包含 JV
 JDK（JAVA  Develop kit) 是 Java 程序开发工具包，包含 JRE 和开发人员使用的工具。
 
 <div align="center">
-<img src="./img/p18.png">
+<img src="./Java/basis/img/p18.png">
 </div>
 
 JDK的下载和安装：[JDK8 下载地址](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)。  
