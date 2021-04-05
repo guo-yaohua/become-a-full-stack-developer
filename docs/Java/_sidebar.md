@@ -17,6 +17,13 @@
 
 * 基础篇
   * Java 入门
-    * [Java 语言概述](Java/basis/JavaIntroduction)
-    * [JRE 与 JDK](Java/basis/JDKAndJRE)
-    * [HelloWorld](Java/basis/helloWorld)
+    * [Java 语言概述](Java/basis/intro)
+    * [JRE 与 JDK](Java/basis/jdk-jre)
+    * [HelloWorld](Java/basis/hello-world)
+    * [关键字](Java/basis/keyword)
+    * [标识符](Java/basis/identifier)
+    * [注释](Java/basis/comments)
+    * [数据类型及转换](Java/basis/data-type)
+    * [运算符](Java/basis/operator)
+    * [变量](Java/basis/variable)
+    * [控制流程](Java/basis/control)
