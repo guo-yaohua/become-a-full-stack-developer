@@ -18,8 +18,8 @@
 * 基础篇
   * Java 入门
     * [HelloWorld](Java/basis/hello-world)
-    * [基础语法](Java/basis/basic-grammar)
-    * [控制流程](Java/basis/control)
-    * [方法](Java/basis/method)
+    * [语法基础](Java/basis/basic-grammar)
     * [数组](Java/basis/array)
+    * [方法](Java/basis/method)
+    * [流程控制](Java/basis/control)
     * [内存模型](Java/basis/memory)
