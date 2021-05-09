@@ -26,3 +26,5 @@
   * 面向对象
     * [基础概念](Java/object-oriented/control)
     * [面向对象特殊语法](Java/object-oriented/special-grammar)
+    * [面向对象三大特征](Java/object-oriented/characteristic.md)
+    * [抽象类和接口](Java/object-oriented/abstract-and-interface.md)
