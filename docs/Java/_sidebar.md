@@ -28,3 +28,5 @@
     * [面向对象特殊语法](Java/object-oriented/special-grammar)
     * [面向对象三大特征](Java/object-oriented/characteristic.md)
     * [抽象类和接口](Java/object-oriented/abstract-and-interface.md)
+    * [内部类](Java/object-oriented/nested-class.md)
+    * [常见类](Java/object-oriented/common-class.md)
