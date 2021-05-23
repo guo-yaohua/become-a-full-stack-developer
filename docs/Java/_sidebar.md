@@ -30,3 +30,7 @@
     * [抽象类和接口](Java/object-oriented/abstract-and-interface.md)
     * [内部类](Java/object-oriented/nested-class.md)
     * [常见类](Java/object-oriented/common-class.md)
+  * 高级特性
+    * [异常](Java/advanced-feature/throwable.md)
+    * [IO 流](Java/advanced-feature/io.md)
+    * [多线程](Java/advanced-feature/thread.md)
