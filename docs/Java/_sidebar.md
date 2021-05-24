@@ -34,3 +34,5 @@
     * [异常](Java/advanced-feature/throwable.md)
     * [IO 流](Java/advanced-feature/io.md)
     * [多线程](Java/advanced-feature/thread.md)
+    * [网络编程](Java/advanced-feature/net.md)
+    * [反射](Java/advanced-feature/reflection.md)
