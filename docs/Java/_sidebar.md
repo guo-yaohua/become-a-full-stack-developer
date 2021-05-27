@@ -37,3 +37,4 @@
     * [网络编程](Java/advanced-feature/net.md)
     * [反射](Java/advanced-feature/reflection.md)
     * [注解](Java/advanced-feature/annotation.md)
+    * [GC](Java/advanced-feature/gc.md)
