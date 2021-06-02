@@ -30,6 +30,10 @@
     * [抽象类和接口](Java/object-oriented/abstract-and-interface.md)
     * [内部类](Java/object-oriented/nested-class.md)
     * [常见类](Java/object-oriented/common-class.md)
+  * 集合类
+    * [集合框架](Java/collection/collections.md)
+    * [Collection 和 Iterator](Java/collection/collection-and-iterator.md)
+    * [List](Java/collection/list.md)
   * 高级特性
     * [异常](Java/advanced-feature/throwable.md)
     * [IO 流](Java/advanced-feature/io.md)
@@ -38,3 +42,5 @@
     * [反射](Java/advanced-feature/reflection.md)
     * [注解](Java/advanced-feature/annotation.md)
     * [GC](Java/advanced-feature/gc.md)
+  * JDK 新特性
+    * [JDK5](Java/jdk-new-features/jdk5.md)
