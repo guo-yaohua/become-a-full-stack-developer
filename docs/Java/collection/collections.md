@@ -18,7 +18,7 @@ Java 工具包提供了强大的数据结构。在 Java 中的数据结构主要
 类集在整个 Java 中最为核心的用处就在于其实现了动态数组的操作，并且定义了大量的操作标准。在整个类集框架中，其核心接口为：Collection、List、Set、Map、Iterator、Enumeration。
 
 ```mermaid
-graph RL
+graph BT
 ArrayList -.-> List
 LinkedList -.-> List
 LinkedHashList -.-> HashSet -.-> Set

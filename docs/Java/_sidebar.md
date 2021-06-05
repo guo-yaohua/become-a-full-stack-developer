@@ -34,6 +34,7 @@
     * [集合框架](Java/collection/collections.md)
     * [Collection 和 Iterator](Java/collection/collection-and-iterator.md)
     * [List](Java/collection/list.md)
+    * [Map](Java/collection/map.md)
   * 高级特性
     * [异常](Java/advanced-feature/throwable.md)
     * [IO 流](Java/advanced-feature/io.md)

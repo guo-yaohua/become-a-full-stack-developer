@@ -83,19 +83,29 @@ ListIterator 接口常见 API：
 
 - `void set(E e)`：用指定元素替换 next 或 previous 返回的最后一个元素。
 
-## ArraysList
+## ArrayList
 
 ```java
 public class ArrayList<E> extends AbstractList<E>
         implements List<E>, RandomAccess, Cloneable, java.io.Serializable
 ```
 
-特性：
+ArrayList 特性：
 - 底层数据结构是数组，增删慢，查找快。
 
 - 不同步，线程不安全，效率高。
 
-- 存储 null 元素。
+- 支持存储 null 元素。
+
+```java
+transient Object[] elementData;
+```
+elementData 是 ArrayList 的数据域，被 transient 修饰，序列化时会调用 writeObject 写入流，反序列化时调用 readObject 重新赋值到新对象的 elementData。原因是 elementData 容量通常大于实际存储元素的数量，所以只需发送真正有实际值的数组元素。elementData 大小大于等于 size。
+
+```java
+protected transient int modCount = 0;
+```
+modCount 记录了 ArrayList 结构性变化的次数，继承自 AbstractList。所有涉及结构变化的方法都会增加该值。expectedModCount 是迭代器初始化时记录的 modCount 值，每次访问新元素时都会检查 modCount 和 expectedModCount 是否相等，不相等就会抛出异常。这种机制叫做 fail-fast，所有集合类都有这种机制。
 
 构造方法：
 - `ArrayList()`：默认初始大小为 10。
@@ -119,16 +129,33 @@ public class LinkedList<E>
     implements List<E>, Deque<E>, Cloneable, java.io.Serializable
 ```
 
-Deque 接口：双端队列，可以在两端插入和删除。
+> Deque 接口：双端队列，可以在两端插入和删除。
 
 LinkedList 特性：
 - 底层数据结构是链表，增删快，查找慢。
 
-- 不同步, 线程不安全, 效率高。
+- 不同步，线程不安全，效率高。
 
 - 允许 null 元素。
 
-- 实现了 Deque 这个接口，可以当作栈，队列和双端队列来使用。
+- 实现了 Deque 这个接口，所以可以当作栈、队列和双端队列来使用。
+
+```java
+/**
+  * Pointer to first node.
+  * Invariant: (first == null && last == null) ||
+  *            (first.prev == null && first.item != null)
+  */
+transient Node<E> first;
+
+/**
+  * Pointer to last node.
+  * Invariant: (first == null && last == null) ||
+  *            (last.next == null && last.item != null)
+  */
+transient Node<E> last;
+```
+first 和 last 分别指向首尾节点的引用。
 
 构造方法：
 - `LinkedList()`。
